@@ -1,0 +1,39 @@
+{% extends "layout/basic.html" %}
+
+{% block content %}
+    {% for recr in recrs %}
+        <div class="b">
+            <h2>{{ recr.name }}  - возраст: {{ recr.age }}</h2>
+            <p>{{ recr.email }}</p>
+            <p><a href="{% url 'by_planet' recr.planet.pk %}">{{ recr.planet.name }}</a></p>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">#}
+{#    <title>Главная - Выбор кто Вы?</title>#}
+{#</head>#}
+{#<body>#}
+{#    <h1>Ситх или рекрут?</h1>#}
+{#    <div>#}
+{#        <a href="{% url 'index' %}">Главная</a>#}
+{#        <a href="{% url 'add' %}">Добавить</a>#}
+{#        {% for planet in planets %}#}
+{#        <a href="{% url 'by_planet' planet.pk %}">{{ planet.name }}</a>#}
+{#        {% endfor %}#}
+{#    </div>#}
+{#    {% for recr in recrs %}#}
+{#    <div>#}
+{#        <h2>{{ recr.name }}  - возраст: {{ recr.age }}</h2>#}
+{#        <p>{{ recr.email }}</p>#}
+{#        <p><a href="{% url 'by_planet' recr.planet.pk %}">{{ recr.planet.name }}</a></p>#}
+{#        <p><a href="/si/{{ recr.planet.pk }}">{{ recr.planet.name }}</a></p>#}
+{##}
+{#    </div>#}
+{#    {% endfor %}#}
+{#</body>#}
+{#</html>#}
+{##}

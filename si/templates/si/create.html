@@ -1,0 +1,14 @@
+{% extends "layout/basic.html" %}
+
+{% block title %}Добавление рекрута{% endblock %}
+{% block header %}{{ 'Введите свои данные:' }}{% endblock %}
+
+{% block content %}
+    <h2>Добавление рекрута</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Добавить">
+    </form>
+{% endblock %}
+
