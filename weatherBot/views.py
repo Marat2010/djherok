@@ -10,7 +10,7 @@ def index(request):
     r = requests.get(URL + 'getMe')
     print(r.json())
 
-    return HttpResponse("<h1>Скрипт бота 'Test' </h1>" + r.json())
+    return HttpResponse("<h1>Скрипт бота 'Test' </h1>" + str(r.json()))
 
 
 
