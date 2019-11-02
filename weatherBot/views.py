@@ -1,13 +1,26 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import requests
+
+URL = 'https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/'
 
 def index(request):
     # bot.polling(none_stop=True)
-    return HttpResponse("<h1>Скрипт бота 'Test'</h1>")
+
+    r = requests.get(URL + 'getMe')
+    print(r.json())
+
+    return HttpResponse("<h1>Скрипт бота 'Test' </h1>" + r.json())
 
 
 
 
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://7687a4b2.ngrok.io/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://marat2010.pythonanywhere.com/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/getWebhookInfo
+# https://7687a4b2.ngrok.io
+# deleteWebhook     getWebhookInfo  setWebhook
+# -------------------------------------------
 
 # __author__ = '@begyy'
 # from rest_framework.response import Response
