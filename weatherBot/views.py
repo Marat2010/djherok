@@ -17,7 +17,7 @@ def index(request):
     r = requests.get(URL + 'getMe')
     write_json(r.json())
 
-    return HttpResponse("<h1>Скрипт бота 'Test' </h1>" + str(r.json()))
+    return HttpResponse("<h1>Скрипт бота 'Test1' </h1>" + str(r.json()))
 
 
 
