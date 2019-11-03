@@ -27,7 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
-                 '13ef0bd4.ngrok.io'
+                 '*',
+                 '*.localhost.run',
+                 'marat-hoab.localhost.run'
                  ]
 
 
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'si.apps.SiConfig',
     'weatherBot.apps.WeatherBotConfig',
+    'bot.apps.BotConfig',
 ]
 
 MIDDLEWARE = [

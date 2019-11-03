@@ -3,7 +3,11 @@ from django.http import HttpResponse
 import requests
 import json
 
+import urllib
+from urllib.request import urlopen
+
 URL = 'https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/'
+URL = URL + 'getMe'
 
 
 def write_json(data, filename='answer.json'):
@@ -14,7 +18,9 @@ def write_json(data, filename='answer.json'):
 def index(request):
     # bot.polling(none_stop=True)
 
-    r = requests.get(URL + 'getMe')
+    # r = requests.get(URL + 'getMe')
+    r = requests.get(URL)
+
     write_json(r.json())
 
     return HttpResponse("<h1>Скрипт бота 'Test1' </h1>" + str(r.json()))
