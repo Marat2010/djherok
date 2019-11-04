@@ -37,8 +37,12 @@ def bot(request):
 
 @tbot.message_handler(content_types=["text"])
 def get_okn(message):
+    URL = 'https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/'
+    URL = URL + 'getMe'
+    r = requests.get(URL)
+
     tbot.send_message(message.chat.id, "--Hello--, bot!")
-    tbot.send_message(message.chat.id, 'r')
+    tbot.send_message(message.chat.id, str(r.json()))
     return HttpResponse("--qwqw1---")
 
 
