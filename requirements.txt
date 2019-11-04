@@ -16,14 +16,13 @@ odfpy==1.4.0
 openpyxl==3.0.0
 #pkg-resources==0.0.0
 pyowm==2.10.0
-pyTelegramBotAPI==3.6.6
+pyTelegramBotAPI==3.5.2
 pytz==2019.3
 PyYAML==5.1.2
 requests==2.10.0
 six==1.12.0
 sqlparse==0.3.0
 tablib==0.14.0
-telebot==0.0.3
 urllib3==1.25.6
 whitenoise==4.1.4
 xlrd==1.2.0
