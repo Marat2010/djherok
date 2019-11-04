@@ -21,7 +21,7 @@ tbot = telebot.TeleBot(TOKEN)
 @csrf_exempt
 def bot(request):
     # if request.META['CONTENT_TYPE'] == 'application/json':
-    if request.META.get('HTTP_CONTENT_TYPE') == 'application/json':
+    if request.content_type == 'application/json':
         json_data = request.body.decode('utf-8')
         update = telebot.types.Update.de_json(json_data)
         tbot.process_new_updates([update])
