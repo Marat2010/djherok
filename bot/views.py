@@ -20,21 +20,18 @@ tbot = telebot.TeleBot(TOKEN)
 
 @csrf_exempt
 def bot(request):
-    pass
-    # if request.META['CONTENT_TYPE'] == 'application/json':
-    #
-    json_data = request.body.decode('utf-8')
-    update = telebot.types.Update.de_json(json_data)
-    tbot.process_new_updates([update])
-    return HttpResponse("qwqw1")
-    #
-    # else:
-    #     raise PermissionDenied
+    if request.META['CONTENT_TYPE'] == 'application/json':
+        json_data = request.body.decode('utf-8')
+        update = telebot.types.Update.de_json(json_data)
+        tbot.process_new_updates([update])
+        return HttpResponse("qwqw1")
+    else:
+        raise PermissionDenied
 
 
 @tbot.message_handler(content_types=["text"])
 def get_okn(message):
-    tbot.send_message(message.chat.id, "-Hello1-, bot!")
-    return HttpResponse("qwqw1")
+    tbot.send_message(message.chat.id, "--Hello--, bot!")
+    return HttpResponse("--qwqw1---")
 
 
