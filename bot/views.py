@@ -26,7 +26,7 @@ def bot(request):
     #     json_data = request.body.decode('utf-8')
     #     update = telebot.types.Update.de_json(json_data)
     #     tbot.process_new_updates([update])
-    #     return HttpResponse("qwqw1")
+    return HttpResponse("qwqw1")
     #
     # else:
     #     raise PermissionDenied
