@@ -6,10 +6,11 @@ import re
 #--------------
 
 
-# https://api.telegram.org/bot856048822:AAG2vyULOMJ_xflmyAxU5KL-W-z5DyhJ9Gg/setWebhook?url=https://7687a4b2.ngrok.io/
+# https://api.telegram.org/bot856048822:AAG2vyULOMJ_xflmyAxU5KL-W-z5DyhJ9Gg/setWebhook?url=https://edcd2e43.ngrok.io/bot/
 # https://api.telegram.org/bot856048822:AAG2vyULOMJ_xflmyAxU5KL-W-z5DyhJ9Gg/setWebhook?url=https://marat2010.pythonanywhere.com/
 # https://api.telegram.org/bot856048822:AAG2vyULOMJ_xflmyAxU5KL-W-z5DyhJ9Gg/getWebhookInfo
 # https://7687a4b2.ngrok.io
+# https://edcd2e43.ngrok.io/bot/
 # deleteWebhook     getWebhookInfo  setWebhook
 # -------------------------------------------
 

@@ -1,14 +1,16 @@
 # Setting up Webhook
 # https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/setWebhook?url=https://mysite.com/cbbf15d8-0421-4512-84d9-5e5d977e3aef/
-
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://edcd2e43.ngrok.io/bot/
 from django.shortcuts import render
 
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import csrf_exempt
+# import pyTelegramBotAPI
 import telebot
 
 TOKEN = '919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE'
+# tbot = telebot.TeleBot(TOKEN)
 tbot = telebot.TeleBot(TOKEN)
 
 
