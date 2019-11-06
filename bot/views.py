@@ -41,8 +41,8 @@ def get_okn(message):
     URL = URL + 'getMe'
     r = requests.get(URL)
 
-    tbot.send_message(message.chat.id, "1--Hello--, bot!")
-    tbot.send_message(message.chat.id, r.json())
+    tbot.send_message(message.chat.id, "2--Hello--, bot!")
+    tbot.send_message(message.chat.id, str(r.json()))
     return HttpResponse("--qwqw1---")
 
 
