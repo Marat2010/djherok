@@ -6,8 +6,8 @@ import json
 import urllib
 from urllib.request import urlopen
 
-URL = 'https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/'
-URL = URL + 'getMe'
+URL_Base = 'https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/'
+URL = URL_Base + 'getMe'
 
 
 def write_json(data, filename='answer.json'):
@@ -23,9 +23,12 @@ def index(request):
 
     write_json(r.json())
 
-    return HttpResponse("<h1>---Скрипт бота 'Test1'---- </h1>" + str(r.json()))
+    # return HttpResponse("<h1>---Скрипт бота 'Test1'---- </h1>" + str(r.json()))
 
 
+# URL = URL_Base + 'getWebhookInfo'
+if __name__ == '__main__':
+    index(URL)
 
 
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://7687a4b2.ngrok.io/
