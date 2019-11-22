@@ -27,11 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
-                 '*',
-                 '*.localhost.run',
-                 'marat-hoab.localhost.run'
+                 '.ngrok.io',
+                 '.localhost.run',
                  ]
-
 
 # Application definition
 
@@ -44,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'si.apps.SiConfig',
     'weatherBot.apps.WeatherBotConfig',
-    'bot.apps.BotConfig',
 ]
 
 MIDDLEWARE = [
@@ -125,4 +122,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
+# STATIC_ROOT = "/home/marat/PycharmProjects/djherok/static/"
+# STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'some_new_static_folder'),]
