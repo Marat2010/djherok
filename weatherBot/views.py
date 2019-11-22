@@ -1,14 +1,13 @@
 # from django.shortcuts import render
+# from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
 from django.http import HttpResponse
 import requests
 import json
 import pyowm
 from django.views.decorators.csrf import csrf_exempt
-# from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
+from weatherBot.const import token_telegram, token_pyowm
 
-token_telegram2 = '919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE'
-URL = 'https://api.telegram.org/bot' + token_telegram2 + '/'    # print(URL)
-token_pyowm = '1c4167b8491542040e7654217ecf9786'
+URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
 proxies = {'https': 'https://165.22.101.123:3128',
            'http': 'https://180.183.9.124:8213',
@@ -30,7 +29,8 @@ def read_json(filename=file_answer):
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    r = requests.post(url, json=answer, proxies=proxies)  # remove proxies on hosting
+    # r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
+    r = requests.post(url, json=answer)  # remove proxies on hosting
     return r
 
 
@@ -78,6 +78,8 @@ def index(request):
 
 if __name__ == '__main__':
     pass
+
+# https://api.telegram.org/bot814337205:AAHB61wNXswK4UH6TTd_UA1l5TijT13nWZ0/setWebhook?url=https://djherok.herokuapp.com/weatherBot/
 
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://0ae2a05d.ngrok.io/weatherBot/
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://marat2010.pythonanywhere.com/
