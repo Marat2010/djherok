@@ -5,8 +5,12 @@ import requests
 import json
 import pyowm
 import django.views.decorators.csrf
-from weatherBot.const import token_telegram, token_pyowm
+# from weatherBot.const import token_telegram, token_pyowm
+import os
 
+
+token_telegram = os.environ['token_telegram']
+token_pyowm = os.environ['token_pyowm']
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
 proxies = {'https': 'https://165.22.101.123:3128',
