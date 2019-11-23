@@ -23,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^+2a(li9%n!!g2x^yp%sr(jw*#^fh!3^66hek@3d!f3uug4bly'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
@@ -126,9 +127,9 @@ USE_TZ = True
 # STATIC_ROOT = "/home/marat/PycharmProjects/djherok/static/"
 # STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_URL = '/media/'
 
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'some_new_static_folder'),]

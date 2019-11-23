@@ -4,7 +4,7 @@ from django.http import HttpResponse
 import requests
 import json
 import pyowm
-from django.views.decorators.csrf import csrf_exempt
+import django.views.decorators.csrf
 from weatherBot.const import token_telegram, token_pyowm
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
@@ -50,7 +50,7 @@ def answer_weather(message):
     return answer
 
 
-@csrf_exempt
+@django.views.decorators.csrf.csrf_exempt
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
