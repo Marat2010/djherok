@@ -72,7 +72,7 @@ def index(request):
     else:
         d = read_json()
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)
-        print("Вывод:\n" + d)
+        # print("Вывод:\n" + d)
         return HttpResponse("Последнее сообщение:\n" + d, content_type="application/json")
 
 
