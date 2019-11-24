@@ -11,6 +11,7 @@ import os
 
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
+
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
 proxies = {'https': 'https://165.22.101.123:3128',
@@ -54,8 +55,26 @@ def answer_weather(message):
     return answer
 
 
+def forecast(message):
+    try:
+        fc = owm.three_hours_forecast(message)
+        f = fc.get_forecast()
+        lst = f.get_weathers()
+    except pyowm.exceptions.api_response_error.NotFoundError:
+        answer_fc = 'Введите сначала город.'
+    else:
+        # print(f)
+        # print(lst)
+        answer_fc = 'Время по Гринвичу (GMT+00:00):\n'
+        for w in lst:
+            answer_fc += '{} {} {} \n'.format(w.get_reference_time('iso'), w.get_detailed_status(), w.get_temperature('celsius')["temp"])
+        # print(answer_fc)
+    return answer_fc
+
+
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
+    previous_message = ''
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
         r = json.loads(r)
@@ -69,8 +88,12 @@ def index(request):
             answer = 'Введите название города, где интересует погода.\
                     \nИностранные или некоторые города вводите на английском, '\
                      'например Сочи-Sochi, Киев-Kiev.'
+        elif '/forecast' in message:
+            message = previous_message
+            answer = forecast(message)
         else:
             answer = answer_weather(message)
+            previous_message = message
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
     else:

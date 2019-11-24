@@ -23,10 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECRET_KEY = '^+2a(li9%n!!g2x^yp%sr(jw*#^fh!3^66hek@3d!f3uug4bly'
 SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = False
-DEBUG = True
+DEBUG = False
 # DEBUG = True
-# DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
+DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
@@ -45,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'si.apps.SiConfig',
     'weatherBot.apps.WeatherBotConfig',
-    'weatherBot.const',
+    # 'weatherBot.const',
 ]
 
 MIDDLEWARE = [
