@@ -67,7 +67,7 @@ def forecast(message):
     else:
         # print(f)
         # print(lst)
-        answer_fc = 'Время по Гринвичу (GMT+00:00):\n'
+        answer_fc = '{}. Время по Гринвичу (GMT+00:00):\n'.format(message)
         for w in lst:
             answer_fc += '{} {} {} \n'.format(w.get_reference_time('iso'), w.get_detailed_status(), w.get_temperature('celsius')["temp"])
         # print(answer_fc)
@@ -81,6 +81,9 @@ def index(request):
         r = request.body.decode('utf-8')
         r = json.loads(r)
         print(r)            # pprint(r)
+        d = read_json()
+        previous_message = d['message']['text']
+        print(previous_message)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
