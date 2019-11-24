@@ -62,6 +62,8 @@ def forecast(message):
         lst = f.get_weathers()
     except pyowm.exceptions.api_response_error.NotFoundError:
         answer_fc = 'Введите сначала город.'
+    except pyowm.exceptions.api_call_error.APICallError:
+        answer_fc = '-Введите сначала город.-'
     else:
         # print(f)
         # print(lst)
