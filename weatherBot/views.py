@@ -76,7 +76,7 @@ def forecast(message):
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
-    previous_message = ''
+    previous_message = 'Paris'
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
         r = json.loads(r)
@@ -91,8 +91,7 @@ def index(request):
                     \nИностранные или некоторые города вводите на английском, '\
                      'например Сочи-Sochi, Киев-Kiev.'
         elif '/forecast' in message:
-            message = previous_message
-            answer = forecast(message)
+            answer = forecast(previous_message)
         else:
             answer = answer_weather(message)
             previous_message = message
@@ -100,6 +99,7 @@ def index(request):
         return HttpResponse(r, content_type="application/json")
     else:
         d = read_json()
+        print('чтение ---- {}'.format(d['message']['text']))
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)
         # print("Вывод:\n" + d)
         return HttpResponse("Последнее сообщение:\n" + d, content_type="application/json")
