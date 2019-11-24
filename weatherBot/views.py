@@ -34,8 +34,8 @@ def read_json(filename=file_answer):
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    # r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
-    r = requests.post(url, json=answer)  # remove proxies on hosting
+    r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
+    # r = requests.post(url, json=answer)  # remove proxies on hosting
     return r
 
 
