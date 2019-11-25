@@ -67,23 +67,24 @@ def forecast(message):
     else:
         # print(f)
         # print(lst)
-        answer_fc = '{}. Время по Гринвичу (GMT+00:00):\n'.format(message)
+        answer_fc = '<b>{}.</b> Время по Гринвичу (GMT+00:00):\n'.format(message)
         for w in lst:
-            answer_fc += '{} {} {} \n'.format(w.get_reference_time('iso'), w.get_detailed_status(), w.get_temperature('celsius')["temp"])
+            answer_fc += '{}: {}, {}гр. {} м/с \n'.format(w.get_reference_time('iso')
+                                                          , w.get_detailed_status()
+                                                          , w.get_temperature('celsius')["temp"]
+                                                          , w.get_wind()["speed"])
         # print(answer_fc)
     return answer_fc
 
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
-    previous_message = 'Paris'
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
         r = json.loads(r)
-        print(r)            # pprint(r)
         d = read_json()
         previous_message = d['message']['text']
-        print(previous_message)
+        # print(previous_message)  # print(r)  # pprint(r)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
@@ -97,14 +98,11 @@ def index(request):
             answer = forecast(previous_message)
         else:
             answer = answer_weather(message)
-            previous_message = message
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
     else:
         d = read_json()
-        print('чтение ---- {}'.format(d['message']['text']))
-        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)
-        # print("Вывод:\n" + d)
+        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
         return HttpResponse("Последнее сообщение:\n" + d, content_type="application/json")
 
 
