@@ -8,7 +8,7 @@ import django.views.decorators.csrf
 # from weatherBot.const import token_telegram, token_pyowm
 import os
 
-
+days_fc = 3  #days of forecast
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 
@@ -18,6 +18,20 @@ proxies = {'https': 'https://165.22.101.123:3128',
            'http': 'https://180.183.9.124:8213',
            'ftp': 'https://ua-139-170-1.fri-gate0.biz:443'}
 file_answer = './weatherBot/answer.json'
+
+
+def get_wind_direction(deg):
+    direction = ['С ', 'СВ', ' В', 'ЮВ', 'Ю ', 'ЮЗ', ' З', 'СЗ']
+    for i in range(0, 8):
+        step = 45.
+        min_c = i*step - 45/2.
+        max_c = i*step + 45/2.
+        if i == 0 and deg > 360-45/2.:
+            deg = deg - 360
+        if (deg >= min_c) and (deg <= max_c):
+            res = direction[i]
+            break
+    return res
 
 
 def write_json(data, filename=file_answer):
@@ -43,16 +57,20 @@ def answer_weather(message):
     try:
         owm.weather_at_place(message)
     except pyowm.exceptions.api_response_error.NotFoundError:
-        answer = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
+        answer_w = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         temp = w.get_temperature('celsius')["temp"]
-        answer = 'В городе {}, темп-ра: {} C°\n'.format(w.get_detailed_status(), temp)
-        answer += 'Скорость ветра: {} м/c({}°).\n'.format(w.get_wind()["speed"], w.get_wind()["deg"])
-        answer += 'Где интересует погода? : '
-    return answer
+        answer_w = 'В городе {}, темп-ра: {:4.2f} C°\n'.format(w.get_detailed_status(), temp)
+        answer_w += 'Скорость (направление) ветра: {:4.2f} м/c({}°-{}).\n'.format(
+            w.get_wind()["speed"],
+            w.get_wind()["deg"],
+            get_wind_direction(w.get_wind()["deg"]))
+        # answer_w += 'Скорость ветра: {} м/c({}°).\n'.format(w.get_wind()["speed"], w.get_wind()["deg"])
+        answer_w += 'Где интересует погода? : '
+    return answer_w
 
 
 def forecast(message):
@@ -67,11 +85,17 @@ def forecast(message):
     else:
         # print(f)  # print(lst)
         answer_fc = '{} (время по Гринвичу-GMT+00:00):\n'.format(message)
+        i = 0
         for w in lst:
-            answer_fc += '{}: {} C°, {} м/с({}°), {}\n'.format(w.get_reference_time('iso')
-                                                          , w.get_temperature('celsius')["temp"]
-                                                          , w.get_wind()["speed"], w.get_wind()["deg"]
-                                                           , w.get_detailed_status())
+            answer_fc += '{}: {:4.2f} C°, {:4.2f} м/с({:3}°-{:2}), {}\n'.format(
+                w.get_reference_time('iso'),
+                w.get_temperature('celsius')["temp"],
+                w.get_wind()["speed"],
+                w.get_wind()["deg"],
+                get_wind_direction(w.get_wind()["deg"]),
+                w.get_detailed_status())
+            i += 1
+            if i > (days_fc*8): break
         # print(answer_fc)
     return answer_fc
 
