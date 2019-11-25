@@ -34,8 +34,8 @@ def read_json(filename=file_answer):
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
-    # r = requests.post(url, json=answer)  # remove proxies on hosting
+    # r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
+    r = requests.post(url, json=answer)  # remove proxies on hosting
     return r
 
 
@@ -63,11 +63,10 @@ def forecast(message):
     except pyowm.exceptions.api_response_error.NotFoundError:
         answer_fc = 'Введите сначала город.'
     except pyowm.exceptions.api_call_error.APICallError:
-        answer_fc = '-Введите сначала город.-'
+        answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
-        # print(f)
-        # print(lst)
-        answer_fc = '<b>{}.</b> Время по Гринвичу (GMT+00:00):\n'.format(message)
+        # print(f)  # print(lst)
+        answer_fc = '{} (время по Гринвичу-GMT+00:00):\n'.format(message)
         for w in lst:
             answer_fc += '{}: {}, {}гр. {} м/с \n'.format(w.get_reference_time('iso')
                                                           , w.get_detailed_status()
