@@ -64,15 +64,15 @@ def answer_weather(message):
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
         temp = w.get_temperature('celsius')["temp"]
-        answer_w = 'В городе {}, темп-ра: {:4.2f} C°\n'.format(w.get_detailed_status(), temp)
-        answer_w += 'Скор-ть (напр-е) ветра: {:4.2f} м/c ({}°-{}).\n'.format(
+        answer_w = 'В городе {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(), temp)
+        answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(
             w.get_wind()["speed"],
             w.get_wind()["deg"],
             get_wind_direction(w.get_wind()["deg"]))
         answer_w += 'Влажн: {} %, Давл: {} мм.рт.ст.\n'.format(
             w.get_humidity(),
             int(w.get_pressure()["press"]/1.333224))
-        answer_w += 'Время: {}\n'.format(date_w.strftime("%H:%M %d.%m.%Y"))
+        answer_w += 'Время(GMT+00): {}\n'.format(date_w.strftime("%H:%M %d.%m.%Y"))
         answer_w += 'Где интересует погода? : '
     return answer_w
 
@@ -88,12 +88,12 @@ def forecast(message):
         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
         # print(f)  # print(lst)
-        answer_fc = '{} (время по Гринвичу-GMT+00:00):\n'.format(message)
+        answer_fc = '{} (время по GMT+00):\n'.format(message)
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
-            answer_fc += '{}: {:4.2f} C°, {:4.2f} м/с({:3}°-{:2}), {}\n'.format(
-                date_fc.strftime("%d.%m %H:%M"),
+            answer_fc += '{}ч: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2}), {}\n'.format(
+                date_fc.strftime("%d.%m %H"),
                 w.get_temperature('celsius')["temp"],
                 w.get_wind()["speed"],
                 w.get_wind()["deg"],
