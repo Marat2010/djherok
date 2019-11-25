@@ -49,8 +49,8 @@ def answer_weather(message):
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         temp = w.get_temperature('celsius')["temp"]
-        answer = 'В городе {}, температура: {} \n'.format(w.get_detailed_status(), temp)
-        answer += 'Скорость ветра: {} м/c. \n'.format(w.get_wind()["speed"])
+        answer = 'В городе {}, темп-ра: {} C°\n'.format(w.get_detailed_status(), temp)
+        answer += 'Скорость ветра: {} м/c.\n'.format(w.get_wind()["speed"])
         answer += 'Где интересует погода? : '
     return answer
 
@@ -68,7 +68,7 @@ def forecast(message):
         # print(f)  # print(lst)
         answer_fc = '{} (время по Гринвичу-GMT+00:00):\n'.format(message)
         for w in lst:
-            answer_fc += '{}: {}, {}гр. {} м/с \n'.format(w.get_reference_time('iso')
+            answer_fc += '{}: {}, {} C°, {} м/с \n'.format(w.get_reference_time('iso')
                                                           , w.get_detailed_status()
                                                           , w.get_temperature('celsius')["temp"]
                                                           , w.get_wind()["speed"])
