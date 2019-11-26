@@ -94,7 +94,7 @@ def forecast(message, days_fc=5):
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
-            answer_fc += '{}ч.: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2})\n'.format(
+            answer_fc += '{}ч.: {:4.1f} C°, {:3.1f}м/с ({:3}°-{:2})\n'.format(
                 date_fc.strftime("%d.%m %H"),
                 w.get_temperature('celsius')["temp"],
                 w.get_wind()["speed"],
