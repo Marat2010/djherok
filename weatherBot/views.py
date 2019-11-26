@@ -119,6 +119,7 @@ def index(request):
         r = request.body.decode('utf-8')
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
+        print(chat_id, type(chat_id), message, type(message))
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
