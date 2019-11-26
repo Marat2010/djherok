@@ -139,10 +139,10 @@ def index(request):
             answer = answer_weather(message)
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
-    else:
-        d = read_json()
-        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-        return HttpResponse("Последнее сообщение:\n" + d + "Посл. город:" + previous_message, content_type="application/json")
+    # else:
+    d = read_json()
+    d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
+    return HttpResponse("Последнее сообщение:\n" + d + "Посл. город:" + previous_message, content_type="application/json")
 
 
 if __name__ == '__main__':
