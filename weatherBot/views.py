@@ -112,7 +112,10 @@ def forecast(message, days_fc=5):
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
-        previous_message = read_json()
+        d = read_json()
+        print(d)
+        previous_message = d['message']['text']
+        print(previous_message)
         r = request.body.decode('utf-8')
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
