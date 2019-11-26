@@ -1,23 +1,22 @@
 # from django.shortcuts import render
 # from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
+# from weatherBot.const import token_telegram, token_pyowm
 from django.http import HttpResponse
 import requests
 import json
 import pyowm
 import django.views.decorators.csrf
-# from weatherBot.const import token_telegram, token_pyowm
 import os
 
-days_fc = 3  #days of forecast
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
+file_answer = './weatherBot/answer.json'
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
 proxies = {'https': 'https://165.22.101.123:3128',
            'http': 'https://180.183.9.124:8213',
            'ftp': 'https://ua-139-170-1.fri-gate0.biz:443'}
-file_answer = './weatherBot/answer.json'
 
 
 def get_wind_direction(deg):
@@ -60,6 +59,7 @@ def answer_weather(message):
         answer_w = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
+        write_json(message)   # write city to file
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
@@ -73,11 +73,11 @@ def answer_weather(message):
             w.get_humidity(),
             int(w.get_pressure()["press"]/1.333224))
         answer_w += 'Время(GMT+00): {}\n'.format(date_w.strftime("%H:%M %d.%m.%Y"))
-        answer_w += 'Где интересует погода? : '
+        answer_w += 'Где интересует погода или прогноз? : '
     return answer_w
 
 
-def forecast(message):
+def forecast(message, days_fc=5):
     try:
         fc = owm.three_hours_forecast(message)
         f = fc.get_forecast()
@@ -87,33 +87,33 @@ def forecast(message):
     except pyowm.exceptions.api_call_error.APICallError:
         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
-        # print(f)  # print(lst)
         answer_fc = '{} (время по GMT+00):\n'.format(message)
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
-            answer_fc += '{}ч: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2}), {}\n'.format(
+            answer_fc += '{}ч.: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2})\n'.format(
                 date_fc.strftime("%d.%m %H"),
                 w.get_temperature('celsius')["temp"],
                 w.get_wind()["speed"],
                 w.get_wind()["deg"],
-                get_wind_direction(w.get_wind()["deg"]),
-                w.get_detailed_status())
+                get_wind_direction(w.get_wind()["deg"]))
+            if days_fc == 5:
+                answer_fc = answer_fc.rstrip('\n')
+                answer_fc += ', Вл:{:3}%, Давл:{:4} мм. {}\n'.format(
+                    w.get_humidity(),
+                    int(w.get_pressure()["press"]/1.333224),
+                    w.get_detailed_status())
             i += 1
-            if i > (days_fc*8): break
-        # print(answer_fc)
+            if i > (days_fc*8):
+                break
     return answer_fc
 
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
+        previous_message = read_json()
         r = request.body.decode('utf-8')
-        r = json.loads(r)
-        d = read_json()
-        previous_message = d['message']['text']
-        # print(previous_message)  # print(r)  # pprint(r)
-        write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
         if '/start' in message:
@@ -122,7 +122,10 @@ def index(request):
             answer = 'Введите название города, где интересует погода.\
                     \nИностранные или некоторые города вводите на английском, '\
                      'например Сочи-Sochi, Киев-Kiev.'
-        elif '/forecast' in message:
+        elif "/fs_small" or "короче" in message:
+            days_fc = 2
+            answer = forecast(previous_message, days_fc)
+        elif '/fs_full' or "полный" in message:
             answer = forecast(previous_message)
         else:
             answer = answer_weather(message)
@@ -155,6 +158,17 @@ if __name__ == '__main__':
 #     w.get_humidity(),
 #     int(w.get_pressure()["press"] / 1.333224))
 # ------------------------------------
+
+# date_fc = w.get_reference_time(timeformat='date')
+# answer_fc += '{}ч: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2}), {}\n'.format(
+#     date_fc.strftime("%d.%m %H"),
+#     w.get_temperature('celsius')["temp"],
+#     w.get_wind()["speed"],
+#     w.get_wind()["deg"],
+#     get_wind_direction(w.get_wind()["deg"]),
+#     w.get_detailed_status())
+# ----------------------------------
+
 # return HttpResponse(json.dumps(d, indent=2, ensure_ascii=False), content_type="application/json; encoding=utf-8")
 # return HttpResponse("<h1>---Скрипт бота 'Test1'---- </h1>" + str(d))
 # return JsonResponse(d, content_type="application/json; encoding=utf-8")
