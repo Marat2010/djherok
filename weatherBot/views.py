@@ -102,7 +102,7 @@ def forecast(message, days_fc=5):
                 get_wind_direction(w.get_wind()["deg"]))
             if days_fc == 5:
                 answer_fc = answer_fc.rstrip('\n')
-                answer_fc += ', Вл:{:3}%,Давл:{:4}мм. {}\n'.format(
+                answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {}\n'.format(
                     w.get_humidity(),
                     int(w.get_pressure()["press"]/1.333224),
                     w.get_detailed_status())
