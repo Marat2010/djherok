@@ -11,6 +11,7 @@ import os
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 file_answer = './weatherBot/answer.json'
+file_answer_city = './weatherBot/city.txt'
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
@@ -59,6 +60,8 @@ def answer_weather(message):
         answer_w = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
+        with open(file_answer_city, 'w') as f:   # write str city to file
+            f.write(message)
         write_json(message)   # write city to file
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
@@ -112,12 +115,12 @@ def forecast(message, days_fc=5):
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
-        d = read_json()
-        print(d)
-        previous_message = d['message']['text']
+        with open(file_answer_city, 'r') as f:
+            previous_message = f.readline()
         print(previous_message, type(previous_message))
         r = request.body.decode('utf-8')
         r = json.loads(r)
+        write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
         print(chat_id, type(chat_id), message, type(message))
@@ -139,7 +142,7 @@ def index(request):
     else:
         d = read_json()
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-        return HttpResponse("Последнее сообщение:\n" + d, content_type="application/json")
+        return HttpResponse("Последнее сообщение:\n" + d + "Посл. город:" + previous_message, content_type="application/json")
 
 
 if __name__ == '__main__':
