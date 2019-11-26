@@ -115,7 +115,7 @@ def index(request):
         d = read_json()
         print(d)
         previous_message = d['message']['text']
-        print(previous_message)
+        print(previous_message, type(previous_message))
         r = request.body.decode('utf-8')
         chat_id = r['message']['chat']['id']
         message = r['message']['text']

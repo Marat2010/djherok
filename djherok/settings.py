@@ -27,7 +27,7 @@ DEBUG = False
 # DEBUG = True
 # DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
-# DEBUG_PROPAGATE_EXCEPTIONS = True
+DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
