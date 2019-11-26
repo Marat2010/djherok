@@ -127,10 +127,10 @@ def index(request):
             answer = 'Введите название города, где интересует погода.\
                     \nИностранные или некоторые города вводите на английском, '\
                      'например Сочи-Sochi, Киев-Kiev.'
-        elif "/fs_small" or "короче" in message:
+        elif '/fs_small' in message:
             days_fc = 2
             answer = forecast(previous_message, days_fc)
-        elif '/fs_full' or "полный" in message:
+        elif '/fs_full' in message:
             answer = forecast(previous_message)
         else:
             answer = answer_weather(message)
