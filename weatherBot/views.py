@@ -132,7 +132,7 @@ def index(request):
         r = json.loads(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-        city_message = r['city_message']
+        # city_message = r['city_message']
         r['city_message'] = city_message
         write_json(r)
 
