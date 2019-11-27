@@ -133,7 +133,7 @@ def index(request):
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
         # city_message = r['city_message']
-        r['city_message'] = city_message
+        r['city_message'] = message
         write_json(r)
 
         print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
