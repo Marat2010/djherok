@@ -123,9 +123,12 @@ def index(request):
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
-            answer = 'Введите название города, где интересует погода.\
+            answer = ' Показывет погоду в городе.\
                     \nИностранные или некоторые города вводите на английском, '\
-                     'например Сочи-Sochi, Киев-Kiev.'
+                     'например Сочи-Sochi, Киев-Kiev, можно добавить код ' \
+                     'страны через запятую (New York,US).\n' \
+                     'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня) прогноза с интервалом 3 часа.\n' \
+                     'И не забываем, время по Гринвичу (GMT+00).'
         elif message in ['/fc_small', 'короче']:
             days_fc = 2
             answer = forecast(city_message, days_fc)
