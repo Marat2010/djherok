@@ -11,7 +11,7 @@ import os
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 file_answer = './weatherBot/answer.json'
-city_message = ''
+# city_message = '--'
 # city_message = 'Казань, RU'
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
@@ -55,7 +55,7 @@ def send_message(chat_id, text='--Привет, привет!-- )'):
 
 
 def answer_weather(message):
-    global city_message
+    # global city_message
     print("-Ind-1ans_weat-message:", message, "-Ind-1ans_weat-city_message:", city_message)
 
     try:
@@ -65,6 +65,9 @@ def answer_weather(message):
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
         city_message = message  # write city
+        d = read_json()
+        d['city_message'] = message
+        write_json(d)
         print("-Ind-2ans_weat-message:", message, "-Ind-2ans_weat-city_message:", city_message)
 
         observation = owm.weather_at_place(message)
@@ -85,7 +88,7 @@ def answer_weather(message):
 
 
 def forecast(message, days_fc=5):
-    global city_message
+    # global city_message
 
     try:
         fc = owm.three_hours_forecast(message)
@@ -96,7 +99,7 @@ def forecast(message, days_fc=5):
     except pyowm.exceptions.api_call_error.APICallError:
         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
-        print("-Fc-message:", message, "-Fc-city_message:", city_message)
+        # print("-Fc-message:", message, "-Fc-city_message:", city_message)
 
         answer_fc = '{} (время по GMT+00):\n'.format(message)
         i = 0
@@ -122,14 +125,17 @@ def forecast(message, days_fc=5):
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
-    global city_message
+    # global city_message
 
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
         r = json.loads(r)
-        write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
+        city_message = r['city_message']
+        r['city_message'] = city_message
+        write_json(r)
+
         print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
 
         if '/start' in message:
@@ -156,8 +162,10 @@ def index(request):
         return HttpResponse(r, content_type="application/json")
     else:
         d = read_json()
+        city_message = d['city_message']
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город: " + city_message, content_type="application/json")
+        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город: " + city_message,
+                            content_type="application/json")
 
 
 if __name__ == '__main__':
