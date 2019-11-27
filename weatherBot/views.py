@@ -134,6 +134,8 @@ def index(request):
         message = r['message']['text']
         # city_message = r['city_message']
         r['city_message'] = message
+        city_message = r['city_message']
+
         write_json(r)
 
         print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
