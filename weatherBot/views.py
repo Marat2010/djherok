@@ -56,7 +56,7 @@ def send_message(chat_id, text='--Привет, привет!-- )'):
 
 def answer_weather(message):
     # global city_message
-    print("-Ind-1ans_weat-message:", message, "-Ind-1ans_weat-city_message:", city_message)
+    # print("-Ind-1ans_weat-message:", message, "-Ind-1ans_weat-city_message:", city_message)
 
     try:
         owm.weather_at_place(message)
