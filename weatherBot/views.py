@@ -119,14 +119,16 @@ def forecast(message, days_fc=5):
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
-    if request.method == 'POST':        # if request.content_type == 'application/json':
-        print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
+    # global city_message
 
+    if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
         r = json.loads(r)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
+        print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
+
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
