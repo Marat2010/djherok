@@ -11,7 +11,8 @@ import os
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 file_answer = './weatherBot/answer.json'
-city_message = 'Казань, RU'
+city_message = ''
+# city_message = 'Казань, RU'
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
