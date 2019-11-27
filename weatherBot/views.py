@@ -55,6 +55,8 @@ def send_message(chat_id, text='--Привет, привет!-- )'):
 
 def answer_weather(message):
     global city_message
+    print("-Ind-1ans_weat-message:", message, "-Ind-1ans_weat-city_message:", city_message)
+
     try:
         owm.weather_at_place(message)
     except pyowm.exceptions.api_response_error.NotFoundError:
@@ -62,6 +64,8 @@ def answer_weather(message):
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
         city_message = message  # write city
+        print("-Ind-2ans_weat-message:", message, "-Ind-2ans_weat-city_message:", city_message)
+
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
@@ -89,6 +93,8 @@ def forecast(message, days_fc=5):
     except pyowm.exceptions.api_call_error.APICallError:
         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
+        print("-Fc-message:", message, "-Fc-city_message:", city_message)
+
         answer_fc = '{} (время по GMT+00):\n'.format(message)
         i = 0
         for w in lst:
@@ -114,7 +120,8 @@ def forecast(message, days_fc=5):
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
-        print(city_message, type(city_message))
+        print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
+
         r = request.body.decode('utf-8')
         r = json.loads(r)
         write_json(r)
@@ -130,9 +137,13 @@ def index(request):
                      'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня) прогноза с интервалом 3 часа.\n' \
                      'И не забываем, время по Гринвичу (GMT+00).'
         elif message in ['/fc_small', 'короче']:
+            print("-Ind-fc_sm-message:", message, "-Ind-fc_sm-city_message:", city_message)
+
             days_fc = 2
             answer = forecast(city_message, days_fc)
         elif message in ['/fc_full', 'полный']:
+            print("-Ind-fc_full-message:", message, "-Ind-fc_full-city_message:", city_message)
+
             answer = forecast(city_message)
         else:
             answer = answer_weather(message)
@@ -141,7 +152,7 @@ def index(request):
     else:
         d = read_json()
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-        return HttpResponse("Последнее сообщение:\n" + d + "Посл. город:" + city_message, content_type="application/json")
+        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город: " + city_message, content_type="application/json")
 
 
 if __name__ == '__main__':
