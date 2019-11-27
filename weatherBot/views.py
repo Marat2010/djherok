@@ -85,6 +85,8 @@ def answer_weather(message):
 
 
 def forecast(message, days_fc=5):
+    global city_message
+
     try:
         fc = owm.three_hours_forecast(message)
         f = fc.get_forecast()
@@ -120,7 +122,7 @@ def forecast(message, days_fc=5):
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
-    # global city_message
+    global city_message
 
     if request.method == 'POST':        # if request.content_type == 'application/json':
         r = request.body.decode('utf-8')
