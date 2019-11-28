@@ -1,6 +1,8 @@
 venv
 .idea
-weatherBot/my_temp/
+my_temp/
+#weatherBot/my_temp/
 requirements_*.txt
 __pycache__/
+*.pyc
 
