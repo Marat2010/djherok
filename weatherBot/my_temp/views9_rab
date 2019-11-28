@@ -150,6 +150,12 @@ def index(request):
 if __name__ == '__main__':
     pass
 
+# https://api.telegram.org/bot814337205:AAHB61wNXswK4UH6TTd_UA1l5TijT13nWZ0/setWebhook?url=https://djherok.herokuapp.com/weatherBot/
+
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://0ae2a05d.ngrok.io/weatherBot/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://marat2010.pythonanywhere.com/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/getWebhookInfo
+# deleteWebhook     getWebhookInfo  setWebhook
 
 # -------------------------------------------
 # answer_fc += '{}: {:4.2f} C°, {:4.2f} м/с({:3}°-{:2}), {}, Вл:{}%, Давл:{}мм.\n'.format(

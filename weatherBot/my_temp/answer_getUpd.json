@@ -1,0 +1,68 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 371917987,
+      "message": {
+        "message_id": 62,
+        "from": {
+          "id": 241462113,
+          "is_bot": false,
+          "first_name": "Marat",
+          "last_name": "S",
+          "language_code": "ru"
+        },
+        "chat": {
+          "id": 241462113,
+          "first_name": "Marat",
+          "last_name": "S",
+          "type": "private"
+        },
+        "date": 1573165565,
+        "text": "35"
+      }
+    },
+    {
+      "update_id": 371917988,
+      "message": {
+        "message_id": 63,
+        "from": {
+          "id": 241462113,
+          "is_bot": false,
+          "first_name": "Marat",
+          "last_name": "S",
+          "language_code": "ru"
+        },
+        "chat": {
+          "id": 241462113,
+          "first_name": "Marat",
+          "last_name": "S",
+          "type": "private"
+        },
+        "date": 1573165568,
+        "text": "8989"
+      }
+    },
+    {
+      "update_id": 371917989,
+      "message": {
+        "message_id": 64,
+        "from": {
+          "id": 241462113,
+          "is_bot": false,
+          "first_name": "Marat",
+          "last_name": "S",
+          "language_code": "ru"
+        },
+        "chat": {
+          "id": 241462113,
+          "first_name": "Marat",
+          "last_name": "S",
+          "type": "private"
+        },
+        "date": 1573165631,
+        "text": "Привет, Как дела? qwe"
+      }
+    }
+  ]
+}

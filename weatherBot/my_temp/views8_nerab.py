@@ -11,7 +11,8 @@ import os
 token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 file_answer = './weatherBot/answer.json'
-file_answer_city = './weatherBot/city.txt'
+# city_message = '--'
+# city_message = 'Казань, RU'
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
@@ -54,15 +55,21 @@ def send_message(chat_id, text='--Привет, привет!-- )'):
 
 
 def answer_weather(message):
+    # global city_message
+    # print("-Ind-1ans_weat-message:", message, "-Ind-1ans_weat-city_message:", city_message)
+
     try:
         owm.weather_at_place(message)
     except pyowm.exceptions.api_response_error.NotFoundError:
         answer_w = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
                     'например Сочи-Sochi, Киев-Kiev.'
     else:
-        with open(file_answer_city, 'w') as f:   # write str city to file
-            f.write(message)
-        write_json(message)   # write city to file
+        city_message = message  # write city
+        d = read_json()
+        d['city_message'] = message
+        write_json(d)
+        print("-Ind-2ans_weat-message:", message, "-Ind-2ans_weat-city_message:", city_message)
+
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
@@ -81,6 +88,8 @@ def answer_weather(message):
 
 
 def forecast(message, days_fc=5):
+    # global city_message
+
     try:
         fc = owm.three_hours_forecast(message)
         f = fc.get_forecast()
@@ -90,6 +99,8 @@ def forecast(message, days_fc=5):
     except pyowm.exceptions.api_call_error.APICallError:
         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
     else:
+        # print("-Fc-message:", message, "-Fc-city_message:", city_message)
+
         answer_fc = '{} (время по GMT+00):\n'.format(message)
         i = 0
         for w in lst:
@@ -114,42 +125,60 @@ def forecast(message, days_fc=5):
 
 @django.views.decorators.csrf.csrf_exempt
 def index(request):
+    # global city_message
+
     if request.method == 'POST':        # if request.content_type == 'application/json':
-        with open(file_answer_city, 'r') as f:
-            previous_message = f.readline()
-        print(previous_message, type(previous_message))
         r = request.body.decode('utf-8')
         r = json.loads(r)
-        write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-        print(chat_id, type(chat_id), message, type(message))
+        # city_message = r['city_message']
+        r['city_message'] = message
+        city_message = r['city_message']
+
+        write_json(r)
+
+        print("-Ind-POST-message:", message, "-Ind-POST-city_message:", city_message)
+
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
-            answer = 'Введите название города, где интересует погода.\
+            answer = ' Показывет погоду в городе.\
                     \nИностранные или некоторые города вводите на английском, '\
-                     'например Сочи-Sochi, Киев-Kiev.'
-        elif '/fc_small' in message:
+                     'например Сочи-Sochi, Киев-Kiev, можно добавить код ' \
+                     'страны через запятую (New York,US).\n' \
+                     'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня) прогноза с интервалом 3 часа.\n' \
+                     'И не забываем, время по Гринвичу (GMT+00).'
+        elif message in ['/fc_small', 'короче']:
+            print("-Ind-fc_sm-message:", message, "-Ind-fc_sm-city_message:", city_message)
+
             days_fc = 2
-            answer = forecast(previous_message, days_fc)
-        elif '/fc_full' in message:
-            answer = forecast(previous_message)
+            answer = forecast(city_message, days_fc)
+        elif message in ['/fc_full', 'полный']:
+            print("-Ind-fc_full-message:", message, "-Ind-fc_full-city_message:", city_message)
+
+            answer = forecast(city_message)
         else:
             answer = answer_weather(message)
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
-    # else:
-    d = read_json()
-    d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-    with open(file_answer_city, 'r') as f:
-        previous_message = f.readline()
-    return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город:" + previous_message, content_type="application/json")
+    else:
+        d = read_json()
+        city_message = d['city_message']
+        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
+        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город: " + city_message,
+                            content_type="application/json")
 
 
 if __name__ == '__main__':
     pass
 
+# https://api.telegram.org/bot814337205:AAHB61wNXswK4UH6TTd_UA1l5TijT13nWZ0/setWebhook?url=https://djherok.herokuapp.com/weatherBot/
+
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://0ae2a05d.ngrok.io/weatherBot/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://marat2010.pythonanywhere.com/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/getWebhookInfo
+# deleteWebhook     getWebhookInfo  setWebhook
 
 # -------------------------------------------
 # answer_fc += '{}: {:4.2f} C°, {:4.2f} м/с({:3}°-{:2}), {}, Вл:{}%, Давл:{}мм.\n'.format(
@@ -218,5 +247,6 @@ if __name__ == '__main__':
 # @bot.send_message(content_types='text')
 # def send_Message(message):
 #     bot.send_message(message.chat.id, 'Как дела?')
+#
 #
 #
