@@ -62,7 +62,6 @@ def answer_weather(message):
     else:
         with open(file_answer_city, 'w') as f:   # write str city to file
             f.write(message)
-        write_json(message)   # write city to file
         observation = owm.weather_at_place(message)
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
@@ -116,35 +115,40 @@ def forecast(message, days_fc=5):
 def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
         with open(file_answer_city, 'r') as f:
-            previous_message = f.readline()
-        print(previous_message, type(previous_message))
+            city_message = f.readline()
+        print("Пред. сообш(Город):", city_message, type(city_message))
         r = request.body.decode('utf-8')
         r = json.loads(r)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-        print(chat_id, type(chat_id), message, type(message))
+        print("Чат ID и тек сообщ :", chat_id, type(chat_id), message, type(message))
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
-            answer = 'Введите название города, где интересует погода.\
+            answer = 'Показывет погоду в городе.\
                     \nИностранные или некоторые города вводите на английском, '\
-                     'например Сочи-Sochi, Киев-Kiev.'
+                     'например Сочи-Sochi, Киев-Kiev, можно добавить код ' \
+                     'страны через запятую (New York,US).\n' \
+                     'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня)' \
+                     ' прогноза с интервалом 3 часа.\n' \
+                     'И не забываем, время по Гринвичу (GMT+00).'
         elif '/fc_small' in message:
             days_fc = 2
-            answer = forecast(previous_message, days_fc)
+            answer = forecast(city_message, days_fc)
         elif '/fc_full' in message:
-            answer = forecast(previous_message)
+            answer = forecast(city_message)
         else:
             answer = answer_weather(message)
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
-    # else:
-    d = read_json()
-    d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-    with open(file_answer_city, 'r') as f:
-        previous_message = f.readline()
-    return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город:" + previous_message, content_type="application/json")
+    else:
+        d = read_json()
+        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
+        with open(file_answer_city, 'r') as f:
+            city_message = f.readline()
+        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город:" + city_message,
+                            content_type="application/json")
 
 
 if __name__ == '__main__':

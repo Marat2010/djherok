@@ -1,6 +1,6 @@
 venv
 .idea
-my_
+my_*
 my_temp/
 weatherBot/my_temp/
 requirements_*.txt
