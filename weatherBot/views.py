@@ -52,8 +52,8 @@ def read_json(filename=file_answer):
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    print("---УРЛ в send_message перед отправкой: ", url)
-    print("---Словарь в send_message перед отправкой: ", answer)
+    # print("---УРЛ в send_message перед отправкой: ", url)
+    # print("---Словарь в send_message перед отправкой: ", answer)
     if local_launch:
         r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
     else:
@@ -121,13 +121,13 @@ def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
         with open(file_answer_city, 'r') as f:
             city_message = f.readline()
-        print("---Пред. сообш(Город):", city_message, type(city_message))
+        print("---Пред.сообш (Город):", city_message, type(city_message))
         r = request.body.decode('utf-8')
         r = json.loads(r)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-        print("---Чат ID и тек сообщ :", chat_id, type(chat_id), message, type(message))
+        print("---Чат ID и тек сообщ:", chat_id, type(chat_id), message, type(message))
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:

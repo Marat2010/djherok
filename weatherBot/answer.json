@@ -1,7 +1,7 @@
 {
-  "update_id": 371918234,
+  "update_id": 371918238,
   "message": {
-    "message_id": 494,
+    "message_id": 502,
     "from": {
       "id": 241462113,
       "is_bot": false,
@@ -17,7 +17,7 @@
       "username": "Marat2010",
       "type": "private"
     },
-    "date": 1575139574,
+    "date": 1575140694,
     "text": "КАЗАНЬ, RU"
   }
 }
