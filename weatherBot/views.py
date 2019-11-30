@@ -8,16 +8,20 @@ import pyowm
 import django.views.decorators.csrf
 import os
 
-token_telegram = os.environ['token_telegram']
+local_launch = False    # True - если локально с прокси и ngrok.
+if local_launch:
+    token_telegram = os.environ['token_telegram2']
+else:
+    token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
 file_answer = './weatherBot/answer.json'
 file_answer_city = './weatherBot/city.txt'
-
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'    # print(URL)
 owm = pyowm.OWM(token_pyowm, language='ru')
-proxies = {'https': 'https://165.22.101.123:3128',
-           'http': 'https://180.183.9.124:8213',
-           'ftp': 'https://ua-139-170-1.fri-gate0.biz:443'}
+# proxies = {'https': 'https://178.32.55.52:443/', 'http': 'https://103.101.253.18:443/'}
+# proxies = {'https': 'https://ua-139-170-1.fri-gate0.biz:443/'}
+# Искать прокси с портом 443 ( https://awmproxy.com/freeproxy.php )
+proxies = {'https': 'https://70.89.113.137:443/'}
 
 
 def get_wind_direction(deg):
@@ -48,8 +52,12 @@ def read_json(filename=file_answer):
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    # r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
-    r = requests.post(url, json=answer)  # remove proxies on hosting
+    print("---УРЛ в send_message перед отправкой: ", url)
+    print("---Словарь в send_message перед отправкой: ", answer)
+    if local_launch:
+        r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
+    else:
+        r = requests.post(url, json=answer)  # remove proxies on hosting
     return r
 
 
@@ -67,10 +75,7 @@ def answer_weather(message):
         date_w = w.get_reference_time(timeformat='date')
         temp = w.get_temperature('celsius')["temp"]
         answer_w = 'В городе {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(), temp)
-        answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(
-            w.get_wind()["speed"],
-            w.get_wind()["deg"],
-            get_wind_direction(w.get_wind()["deg"]))
+        answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(w.get_wind()["speed"], w.get_wind()["deg"], get_wind_direction(w.get_wind()["deg"]))
         answer_w += 'Влажн: {} %, Давл: {} мм.рт.ст.\n'.format(
             w.get_humidity(),
             int(w.get_pressure()["press"]/1.333224))
@@ -116,13 +121,13 @@ def index(request):
     if request.method == 'POST':        # if request.content_type == 'application/json':
         with open(file_answer_city, 'r') as f:
             city_message = f.readline()
-        print("Пред. сообш(Город):", city_message, type(city_message))
+        print("---Пред. сообш(Город):", city_message, type(city_message))
         r = request.body.decode('utf-8')
         r = json.loads(r)
         write_json(r)
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-        print("Чат ID и тек сообщ :", chat_id, type(chat_id), message, type(message))
+        print("---Чат ID и тек сообщ :", chat_id, type(chat_id), message, type(message))
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
         elif '/help' in message:
@@ -133,10 +138,10 @@ def index(request):
                      'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня)' \
                      ' прогноза с интервалом 3 часа.\n' \
                      'И не забываем, время по Гринвичу (GMT+00).'
-        elif '/fc_small' in message:
+        elif message in ['/fc_short', 'S']:
             days_fc = 2
             answer = forecast(city_message, days_fc)
-        elif '/fc_full' in message:
+        elif message in ['/fc_full', 'F']:
             answer = forecast(city_message)
         else:
             answer = answer_weather(message)
@@ -147,7 +152,7 @@ def index(request):
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
         with open(file_answer_city, 'r') as f:
             city_message = f.readline()
-        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город:" + city_message,
+        return HttpResponse("Последнее сообщение:\n" + d + "\nПосл. город: " + city_message,
                             content_type="application/json")
 
 
