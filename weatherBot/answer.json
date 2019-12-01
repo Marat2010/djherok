@@ -1,7 +1,7 @@
 {
-  "update_id": 371918270,
+  "update_id": 371918276,
   "message": {
-    "message_id": 584,
+    "message_id": 596,
     "from": {
       "id": 241462113,
       "is_bot": false,
@@ -17,7 +17,14 @@
       "username": "Marat2010",
       "type": "private"
     },
-    "date": 1575214260,
-    "text": "F"
+    "date": 1575218163,
+    "text": "/fc_full",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 8,
+        "type": "bot_command"
+      }
+    ]
   }
 }

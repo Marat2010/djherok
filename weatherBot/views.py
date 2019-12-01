@@ -63,12 +63,20 @@ def get_icon(status='Неизвестно', weather_code=''):
             status = 'Light rain'
         elif weather_code == 501:
             status = 'Moderate rain'
-
     try:
         r = dict_status[status]
     except KeyError:
         r = '-"\U00002753"-'
     return r
+
+
+def decrease_record(record=''):
+    ll = record.split()
+    ll_decr = []
+    for i in ll:
+        ll_decr.append(i[0:4])
+    rec = '.'.join(ll_decr)
+    return rec
 
 
 def send_message(chat_id, text='--Привет, привет!-- )'):
@@ -130,12 +138,12 @@ def forecast(message, days_fc=5):
                 get_wind_direction(w.get_wind()["deg"]))
             if days_fc == 5:
                 answer_fc = answer_fc.rstrip('\n')
-                answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {} - {}\n'.format(
+                answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {}\n'.format(
                     w.get_humidity(),
                     int(w.get_pressure()["press"]/1.333224),
+                    decrease_record(w.get_detailed_status()))
                     # get_icon(w.get_status(), w.get_weather_code()))
-                    w.get_status(), w.get_weather_code())
-                    # w.get_detailed_status())
+                    # w.get_status(), w.get_weather_code())
             i += 1
             if i > (days_fc*8):
                 break
