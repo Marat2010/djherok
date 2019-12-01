@@ -8,7 +8,7 @@ import pyowm
 import django.views.decorators.csrf
 import os
 
-local_launch = False    # True - если локально с прокси и ngrok.
+local_launch = True    # True - если локально с прокси и ngrok.
 if local_launch:
     token_telegram = os.environ['token_telegram2']
 else:
@@ -29,6 +29,9 @@ icon_url = 'http://openweathermap.org/img/w/04n.png'
 def get_wind_direction(deg):
     direction = ['С ', 'СВ', ' В', 'ЮВ', 'Ю ', 'ЮЗ', ' З', 'СЗ']
     for i in range(0, 8):
+        if not int(deg):
+            res = "\U00002753"
+            break
         step = 45.
         min_c = i*step - 45/2.
         max_c = i*step + 45/2.
@@ -53,8 +56,10 @@ def read_json(filename=file_answer):
 
 def get_icon(status='Неизвестно', weather_code=''):
     dict_status = {'Clear': "\U00002600", 'Snow': "\U00002744",
-        'Clouds': "\U00002601", 'Few clouds': "\U000026C5",
-        'Rain': "\U0001F327", 'Light rain': "\U00002602", 'Moderate rain': "\U00002614"}
+                   'Clouds': "\U00002601", 'Few clouds': "\U000026C5",
+                   'Rain': "\U0001F327", 'Light rain': "\U00002602", 'Moderate rain': "\U00002614",
+                   'Thunderstorm': "\U000026C8", 'Mist': "\U0001F301"}
+    # Туман Mist: мост-1F301, 1F32B, Снег:- U+1F328,  2744
     if status == 'Clouds':
         if weather_code in [801, 802]:
             status = 'Few clouds'
@@ -72,18 +77,19 @@ def get_icon(status='Неизвестно', weather_code=''):
 
 def decrease_record(record=''):
     ll = record.split()
-    ll_decr = []
-    for i in ll:
-        ll_decr.append(i[0:4])
-    rec = '.'.join(ll_decr)
+    if len(ll) > 1:
+        for i, val in enumerate(ll):
+            ll[i] = ll[i][0:5]
+        rec = '.'.join(ll)
+    else:
+        rec = record
     return rec
 
 
 def send_message(chat_id, text='--Привет, привет!-- )'):
     url = URL + 'sendMessage'
     answer = {'chat_id': chat_id, 'text': text}
-    # print("---УРЛ в send_message перед отправкой: ", url)
-    # print("---Словарь в send_message перед отправкой: ", answer)
+    # print("---УРЛ и Словарьв send_message перед отправкой: ", url, answer)
     if local_launch:
         r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
     else:
@@ -104,14 +110,20 @@ def answer_weather(message):
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
         temp = w.get_temperature('celsius')["temp"]
+        try:
+            deg_wind = w.get_wind()['deg']
+        except KeyError:
+            deg_wind = "?"
         answer_w = 'В городе {} {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(),
-                                        get_icon(w.get_status(), w.get_weather_code()), temp)
-        answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(w.get_wind()["speed"], w.get_wind()["deg"], get_wind_direction(w.get_wind()["deg"]))
+                                    get_icon(w.get_status(), w.get_weather_code()), temp)
+        answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(w.get_wind()["speed"],
+                                                           deg_wind,
+                                                           get_wind_direction(deg_wind))
         answer_w += 'Влажн: {} %, Давл: {} мм.рт.ст.\n'.format(
             w.get_humidity(),
             int(w.get_pressure()["press"]/1.333224))
         answer_w += 'Время(GMT+00): {}\n'.format(date_w.strftime("%H:%M %d.%m.%Y"))
-        answer_w += 'Где интересует погода или прогноз? : '
+        answer_w += ' Где интересует погода или прогноз?:'
     return answer_w
 
 
@@ -129,21 +141,23 @@ def forecast(message, days_fc=5):
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
-            answer_fc += '{}ч:{}{:5.1f}C°, {:3.1f}м/с({:3}°-{:2})\n'.format(
+            try:
+                deg_wind = w.get_wind()['deg']
+            except KeyError:
+                deg_wind = "?"
+            answer_fc += '{}ч:{:2}{:5.1f}C°,{:4.1f}м/с({:3}°-{:>2})\n'.format(
                 date_fc.strftime("%d.%m %H"),
                 get_icon(w.get_status(), w.get_weather_code()),
                 w.get_temperature('celsius')["temp"],
                 w.get_wind()["speed"],
-                w.get_wind()["deg"],
-                get_wind_direction(w.get_wind()["deg"]))
+                deg_wind,
+                get_wind_direction(deg_wind))
             if days_fc == 5:
                 answer_fc = answer_fc.rstrip('\n')
                 answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {}\n'.format(
                     w.get_humidity(),
                     int(w.get_pressure()["press"]/1.333224),
                     decrease_record(w.get_detailed_status()))
-                    # get_icon(w.get_status(), w.get_weather_code()))
-                    # w.get_status(), w.get_weather_code())
             i += 1
             if i > (days_fc*8):
                 break
@@ -164,13 +178,13 @@ def index(request):
         print("---Чат ID и тек сообщ:", chat_id, type(chat_id), message, type(message))
         if '/start' in message:
             answer = 'Привет, {}.\n/help для помощи'.format(r['message']['chat']['first_name'])
-        elif '/help' in message:
+        elif message in ['/help', 'H']:
             answer = 'Показывет погоду в городе.\
                     \nИностранные или некоторые города вводите на английском, '\
                      'например Сочи-Sochi, Киев-Kiev, можно добавить код ' \
                      'страны через запятую (New York,US).\n' \
-                     'По нажатию "/..." - выбор Полного(5 дней) или Короткого(2 дня)' \
-                     ' прогноза с интервалом 3 часа.\n' \
+                     'По нажатию "/..." или "F","S" - выбор Полного(5 дней)' \
+                     ' или Короткого(2 дня) прогноза с интервалом 3 часа.\n' \
                      'И не забываем, время по Гринвичу (GMT+00).'
         elif message in ['/fc_short', 'S']:
             days_fc = 2
@@ -194,72 +208,4 @@ if __name__ == '__main__':
     pass
 
 
-# -------------------------------------------
-# answer_fc += '{}: {:4.2f} C°, {:4.2f} м/с({:3}°-{:2}), {}, Вл:{}%, Давл:{}мм.\n'.format(
-#     date_fc.strftime("%d.%m %H:%M"),
-#     w.get_temperature('celsius')["temp"],
-#     w.get_wind()["speed"],
-#     w.get_wind()["deg"],
-#     get_wind_direction(w.get_wind()["deg"]),
-#     w.get_detailed_status(),
-#     w.get_humidity(),
-#     int(w.get_pressure()["press"] / 1.333224))
-# ------------------------------------
-
-# date_fc = w.get_reference_time(timeformat='date')
-# answer_fc += '{}ч: {:4.1f} C°, {:3.1f} м/с ({:3}°-{:2}), {}\n'.format(
-#     date_fc.strftime("%d.%m %H"),
-#     w.get_temperature('celsius')["temp"],
-#     w.get_wind()["speed"],
-#     w.get_wind()["deg"],
-#     get_wind_direction(w.get_wind()["deg"]),
-#     w.get_detailed_status())
-# ----------------------------------
-
-# return HttpResponse(json.dumps(d, indent=2, ensure_ascii=False), content_type="application/json; encoding=utf-8")
-# return HttpResponse("<h1>---Скрипт бота 'Test1'---- </h1>" + str(d))
-# return JsonResponse(d, content_type="application/json; encoding=utf-8")
-# d = serializers.deserialize('json', d)
-
-# r = get_updates()
-# chat_id = r['result'][-1]['message']['chat']['id']
-# send_message(chat_id)
-# -------------------------
-# https://ua-139-170-1.fri-gate0.biz:443 [UA]
-# https://fr-54-189-1.friproxy.eu:443 [FR]
-# https://uk-167-116-1.friproxy0.eu:443 [UK]
-
-# ---------------------
-# __author__ = '@begyy'
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from .models import User
-#
-# import telebot
-# bot = telebot.TeleBot('919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE')
-#
-#
-# class UpdateBot(APIView):
-#     def post(self, request):
-#         json_string = request.body.decode("UTF-8")
-#         update = telebot.types.Update.de_json(json_string)
-#         bot.process_new_updates([update])
-#
-#         return Response({'code': 200})
-#
-# def get_updates():
-#     url = URL + 'getUpdates'
-#     r = requests.get(url)
-#     # r = requests.get(url, proxies=proxies)
-#     write_json(r.json())
-#     return r.json()
-#
-# @bot.send_message(commands=['start'])
-# def start(message):
-#     bot.send_message(message.chat.id, 'Привет')
-#
-# @bot.send_message(content_types='text')
-# def send_Message(message):
-#     bot.send_message(message.chat.id, 'Как дела?')
-#
-#
+# ------------
