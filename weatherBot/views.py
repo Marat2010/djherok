@@ -29,7 +29,9 @@ icon_url = 'http://openweathermap.org/img/w/04n.png'
 def get_wind_direction(deg):
     direction = ['С ', 'СВ', ' В', 'ЮВ', 'Ю ', 'ЮЗ', ' З', 'СЗ']
     for i in range(0, 8):
-        if not int(deg):
+        try:
+            deg = int(deg)
+        except ValueError:
             res = "\U00002753"
             break
         step = 45.
