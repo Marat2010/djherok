@@ -8,7 +8,7 @@ import pyowm
 import django.views.decorators.csrf
 import os
 
-local_launch = True    # True - если локально с прокси и ngrok.
+local_launch = False    # True - если локально с прокси и ngrok.
 if local_launch:
     token_telegram = os.environ['token_telegram2']
 else:
