@@ -23,6 +23,8 @@ owm = pyowm.OWM(token_pyowm, language='ru')
 # Искать прокси с портом 443 ( https://awmproxy.com/freeproxy.php )
 proxies = {'https': 'https://70.89.113.137:443/'}
 
+icon_url = 'http://openweathermap.org/img/w/04n.png'
+
 
 def get_wind_direction(deg):
     direction = ['С ', 'СВ', ' В', 'ЮВ', 'Ю ', 'ЮЗ', ' З', 'СЗ']
@@ -46,6 +48,26 @@ def write_json(data, filename=file_answer):
 def read_json(filename=file_answer):
     with open(filename, 'r') as f:
         r = json.load(f)
+    return r
+
+
+def get_icon(status='Неизвестно', weather_code=''):
+    dict_status = {'Clear': "\U00002600", 'Snow': "\U00002744",
+        'Clouds': "\U00002601", 'Few clouds': "\U000026C5",
+        'Rain': "\U0001F327", 'Light rain': "\U00002602", 'Moderate rain': "\U00002614"}
+    if status == 'Clouds':
+        if weather_code in [801, 802]:
+            status = 'Few clouds'
+    if status == 'Rain':
+        if weather_code == 500:
+            status = 'Light rain'
+        elif weather_code == 501:
+            status = 'Moderate rain'
+
+    try:
+        r = dict_status[status]
+    except KeyError:
+        r = '-"\U00002753"-'
     return r
 
 
@@ -74,7 +96,8 @@ def answer_weather(message):
         w = observation.get_weather()
         date_w = w.get_reference_time(timeformat='date')
         temp = w.get_temperature('celsius')["temp"]
-        answer_w = 'В городе {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(), temp)
+        answer_w = 'В городе {} {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(),
+                                        get_icon(w.get_status(), w.get_weather_code()), temp)
         answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(w.get_wind()["speed"], w.get_wind()["deg"], get_wind_direction(w.get_wind()["deg"]))
         answer_w += 'Влажн: {} %, Давл: {} мм.рт.ст.\n'.format(
             w.get_humidity(),
@@ -98,18 +121,21 @@ def forecast(message, days_fc=5):
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
-            answer_fc += '{}ч.: {:4.1f} C°, {:3.1f}м/с({:3}°-{:2})\n'.format(
+            answer_fc += '{}ч:{}{:5.1f}C°, {:3.1f}м/с({:3}°-{:2})\n'.format(
                 date_fc.strftime("%d.%m %H"),
+                get_icon(w.get_status(), w.get_weather_code()),
                 w.get_temperature('celsius')["temp"],
                 w.get_wind()["speed"],
                 w.get_wind()["deg"],
                 get_wind_direction(w.get_wind()["deg"]))
             if days_fc == 5:
                 answer_fc = answer_fc.rstrip('\n')
-                answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {}\n'.format(
+                answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {} - {}\n'.format(
                     w.get_humidity(),
                     int(w.get_pressure()["press"]/1.333224),
-                    w.get_detailed_status())
+                    # get_icon(w.get_status(), w.get_weather_code()))
+                    w.get_status(), w.get_weather_code())
+                    # w.get_detailed_status())
             i += 1
             if i > (days_fc*8):
                 break
