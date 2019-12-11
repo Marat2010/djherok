@@ -197,7 +197,7 @@ def record_answer(coords, w):
     with open(file_answer_city, 'r') as f:
         city_message = f.readline()
     answer_w = '{}: {} {}, Температура: {:4.1f} C°\n'.format(
-                city_message, w.get_detailed_status(),
+                city_message, translate_answ(w.get_detailed_status()),
                 get_icon(w.get_status(), w.get_weather_code()), temp)
     answer_w += 'Ветер: {:3.1f} м/c ({}°-{}).\n'.format(
                 w.get_wind()["speed"], deg_wind, get_wind_direction(deg_wind))
@@ -207,14 +207,6 @@ def record_answer(coords, w):
     answer_w += ' Широта: {}, Долгота: {}\n'.format(coords.get_lat(), coords.get_lon())
     answer_w += ' Geonames: {}, ID:{}.'.format(coords.get_name(), coords.get_ID())
     answer_w = translate_answ(answer_w)
-    # if city_coords(message) == 'city':
-    #     lat = coords.get_lat()
-    #     lon = coords.get_lon()
-    # else:
-    #     lat = message.split(',')[0]
-    #     lon = message.split(',')[1]
-    # link = 'https://www.google.ru/maps/@{},{},15z\n'.format(lat, lon).replace(' ', '')
-    # answer_w += '\nНа карте: {}'.format(link)
     return answer_w
 
 
@@ -230,7 +222,7 @@ def see_map(message):
     else:
         lat = message.split(',')[0]
         lon = message.split(',')[1]
-    link = 'https://www.google.ru/maps/@{},{},15z\n'.format(lat, lon).replace(' ', '')
+    link = 'https://www.google.ru/maps/@{},{},14z\n'.format(lat, lon).replace(' ', '')
     answer_map = '\nНа карте: {}'.format(link)
     answer_map = translate_answ(answer_map)
     return answer_map
@@ -342,6 +334,12 @@ def forecast(message, language_code, days_fc=5):
         answer_fc = '{} (время GMT+00):'.format(message)
         answer_fc = translate_answ(answer_fc)
         answer_fc = '{}\n'.format(answer_fc)
+        h_decr_trans = decrease_record(translate_answ("ч"), 1)
+        mc_decr_trans = decrease_record(translate_answ("м/с"), 3)
+        hu_decr_trans = decrease_record(translate_answ("Влажность"), 2)
+        pr_decr_trans = decrease_record(translate_answ("Давление"), 4)
+        mm_decr_trans = decrease_record(translate_answ("мм."), 2)
+        # det_st_decr_trans = decrease_record(translate_answ(w.get_detailed_status()))
         i = 0
         for w in lst:
             date_fc = w.get_reference_time(timeformat='date')
@@ -350,21 +348,23 @@ def forecast(message, language_code, days_fc=5):
             except KeyError:
                 deg_wind = "?"
             answer_fc += '{}{}:{:2}{:5.1f}C°,{:4.1f}{}({:3}°-{:>2})\n'.format(
-                date_fc.strftime("%d.%m %H"), decrease_record(translate_answ("ч"), 1),
+                date_fc.strftime("%d.%m %H"), h_decr_trans,
                 get_icon(w.get_status(), w.get_weather_code()),
                 w.get_temperature('celsius')["temp"],
-                w.get_wind()["speed"], decrease_record(translate_answ("м/с"), 3),
+                w.get_wind()["speed"], mc_decr_trans,
                 deg_wind, get_wind_direction(deg_wind))
             if days_fc == 5:
                 answer_fc = answer_fc.rstrip('\n')
                 # answer_fc += '. Вл:{:3}%, Давл:{:3}мм. {:>6} - {:>10} :{:4}-{:4}\n'.format(
                 # answer_fc += '. Вл:{:3}%, Давл:{:3}мм. {:>10}:\n'.format(
                 answer_fc += '. {}:{:3}%. {}:{:3}{}. {:>10}\n'.format(
-                    decrease_record(translate_answ("Влажность"), 2),
-                    w.get_humidity(), decrease_record(translate_answ("Давление"), 4),
-                    int(w.get_pressure()["press"]/1.333224), decrease_record(translate_answ("мм."), 2),
+                    hu_decr_trans,
+                    w.get_humidity(), pr_decr_trans,
+                    int(w.get_pressure()["press"]/1.333224), mm_decr_trans,
                     # w.get_weather_icon_name(), w.get_status(), w.get_weather_code())
-                    decrease_record(w.get_detailed_status()))
+                    decrease_record(translate_answ(w.get_detailed_status())))
+                    # det_st_decr_trans)
+                    # translate_answ(w.get_detailed_status()))
             i += 1
             if i > (days_fc * 8):
                 break
@@ -412,10 +412,6 @@ def translate_answ(message):
         except Exception:
             answer_tr = '--Could not translate--'
     return answer_tr
-
-#         if not (language_code == 'ru'):
-#             # message = translator.translate(message, dest='ru').text
-#             message = translator.translate(message, src='ru', dest=language_code).text
 
 
 @django.views.decorators.csrf.csrf_exempt
