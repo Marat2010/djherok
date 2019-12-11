@@ -223,8 +223,8 @@ def see_map(message):
         lat = message.split(',')[0]
         lon = message.split(',')[1]
     link = 'https://www.google.ru/maps/@{},{},14z\n'.format(lat, lon).replace(' ', '')
-    answer_map = '\nНа карте: {}'.format(link)
-    answer_map = translate_answ(answer_map)
+    answer_map = '\n{}: {}'.format(translate_answ("На карте"), link)
+    # answer_map = translate_answ(answer_map)
     return answer_map
 
 
