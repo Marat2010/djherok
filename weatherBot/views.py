@@ -20,7 +20,7 @@ file_answer = './weatherBot/answer.json'
 file_answer_city = './weatherBot/city.txt'
 file_data_bot = './weatherBot/data_bot.json'
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
-key_tr_ya = 'trnsl.1.1.20190928T185613Z.4d1d79f81bf497a8.75037b63bf025f65040895814428eadc0438f8a4'
+token_trans_ya = os.environ['token_trans_ya']
 url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 # owm = pyowm.OWM(token_pyowm, language='ru')
 # proxies = {'https': 'https://178.32.55.52:443/', 'http': 'https://103.101.253.18:443/'}
@@ -243,71 +243,6 @@ def answer_weather(message, language_code):
         write_json(data_bot, file_data_bot)
         return record_answer(coords, w)  # Формирование сообщения
 
-# def answer_weather(message):
-#     try:
-#         owm.weather_at_place(message)
-#     except pyowm.exceptions.api_response_error.NotFoundError:
-#         answer_w = 'Такого города или места не знаю. Иностранные или некоторые города вводите на английском, ' \
-#                     'например Сочи-Sochi, Киев-Kiev.'
-#     else:
-#         with open(file_answer_city, 'w') as f:   # write str city to file
-#             f.write(message)
-#         observation = owm.weather_at_place(message)
-#         w = observation.get_weather()
-#         date_w = w.get_reference_time(timeformat='date')
-#         temp = w.get_temperature('celsius')["temp"]
-#         try:
-#             deg_wind = w.get_wind()['deg']
-#         except KeyError:
-#             deg_wind = "?"
-#         answer_w = 'В городе {} {}, темп-ра: {:4.1f} C°\n'.format(w.get_detailed_status(),
-#                                     get_icon(w.get_status(), w.get_weather_code()), temp)
-#         answer_w += 'Ветер: {:3.1f} м/c ({}°-{})\n'.format(w.get_wind()["speed"],
-#                                                            deg_wind,
-#                                                            get_wind_direction(deg_wind))
-#         answer_w += 'Влажн: {} %, Давл: {} мм.рт.ст.\n'.format(
-#             w.get_humidity(),
-#             int(w.get_pressure()["press"]/1.333224))
-#         answer_w += 'Время(GMT+00): {}\n'.format(date_w.strftime("%H:%M %d.%m.%Y"))
-#         answer_w += ' Где интересует погода или прогноз?:'
-#     return answer_w
-# ----------
-# def forecast(message, days_fc=5):
-#     try:
-#         fc = owm.three_hours_forecast(message)
-#         f = fc.get_forecast()
-#         lst = f.get_weathers()
-#     except pyowm.exceptions.api_response_error.NotFoundError:
-#         answer_fc = 'Введите сначала город.'
-#     except pyowm.exceptions.api_call_error.APICallError:
-#         answer_fc = '-Введите сначала город. Возможно проблема с сетью-'
-#     else:
-#         answer_fc = '{} (время по GMT+00):\n'.format(message)
-#         i = 0
-#         for w in lst:
-#             date_fc = w.get_reference_time(timeformat='date')
-#             try:
-#                 deg_wind = w.get_wind()['deg']
-#             except KeyError:
-#                 deg_wind = "?"
-#             answer_fc += '{}ч:{:2}{:5.1f}C°,{:4.1f}м/с({:3}°-{:>2})\n'.format(
-#                 date_fc.strftime("%d.%m %H"),
-#                 get_icon(w.get_status(), w.get_weather_code()),
-#                 w.get_temperature('celsius')["temp"],
-#                 w.get_wind()["speed"],
-#                 deg_wind,
-#                 get_wind_direction(deg_wind))
-#             if days_fc == 5:
-#                 answer_fc = answer_fc.rstrip('\n')
-#                 answer_fc += ', Вл:{:3}%, Давл:{:3}мм. {}\n'.format(
-#                     w.get_humidity(),
-#                     int(w.get_pressure()["press"]/1.333224),
-#                     decrease_record(w.get_detailed_status()))
-#             i += 1
-#             if i > (days_fc*8):
-#                 break
-#     return answer_fc
-
 
 def forecast(message, language_code, days_fc=5):
     owm = pyowm.OWM(token_pyowm, language=language_code)
@@ -401,7 +336,7 @@ def translate_answ(message):
         language_code = 'en'
     answer_tr = message
     if not language_code == 'ru':
-        data = {'key': key_tr_ya, 'lang': language_code, 'text': message}  # Параметры запроса
+        data = {'key': token_trans_ya, 'lang': language_code, 'text': message}  # Параметры запроса
         try:
             r = requests.post(url_trans, data=data).json()
             # message = r['text'][0] if r['code'] == 200 else message = '--Could not translate--'
