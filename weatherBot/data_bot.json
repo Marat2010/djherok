@@ -1,18 +1,18 @@
 [
   {
     "chat_id": 241462113,
-    "date_msg": "00:50:59 22-12-2019",
+    "date_msg": "01:22:22 22-12-2019",
     "first_name": "Marat",
     "lang_code": "ru",
     "location": [
-      "KAZAN, RU",
+      "Kazan",
       "Kazan",
       551487,
       55.78,
       49.12
     ],
-    "message": "R",
-    "num_req": 4,
+    "message": "Kazan",
+    "num_req": 15,
     "username": "Marat2010"
   }
 ]

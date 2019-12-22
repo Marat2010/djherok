@@ -355,6 +355,8 @@ def up_data_chat(**kwargs):  # update данных чата бота (запис
             num_req = data_l["num_req"]
             num_req += 1 if ('message' in kwargs) else 0   # если новое сообщение 'message' - увел. счетчика
             data_l["num_req"] = num_req
+            date_msg = read_ans()['date_msg']
+            data_l.update({'date_msg': date_msg})   # Обновление времени запроса
             data_l.update(kwargs)     # добавление новых данных в случаях 'message', 'location' 'lang'...
             ld[number] = data_l     # запись в список словарей чата
             print("--Измен.дан. № в списке: {}, Кол.запросов: {}, Данные: {}".format(number+1, num_req, kwargs))
