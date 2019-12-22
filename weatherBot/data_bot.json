@@ -1,7 +1,18 @@
-{
-  "chat_id": 241462113,
-  "message": "KAZAN",
-  "language_code": "ru",
-  "location": "KAZAN",
-  "language_change": "True"
-}
+[
+  {
+    "chat_id": 241462113,
+    "date_msg": "00:50:59 22-12-2019",
+    "first_name": "Marat",
+    "lang_code": "ru",
+    "location": [
+      "KAZAN, RU",
+      "Kazan",
+      551487,
+      55.78,
+      49.12
+    ],
+    "message": "R",
+    "num_req": 4,
+    "username": "Marat2010"
+  }
+]
