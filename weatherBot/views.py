@@ -1,6 +1,7 @@
 # from django.shortcuts import render
 # from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
 # from weatherBot.const import token_telegram, token_pyowm
+# from googletrans import Translator
 from django.http import HttpResponse
 import requests
 import json
@@ -8,8 +9,6 @@ import pyowm
 import django.views.decorators.csrf
 import os
 import datetime
-
-# from googletrans import Translator
 
 # local_launch = True    # True - если локально с прокси и ngrok.
 local_launch = False    # True - если локально с прокси и ngrok.
@@ -25,8 +24,6 @@ URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 token_trans_ya = os.environ['token_trans_ya']
 url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 # owm = pyowm.OWM(token_pyowm, language='ru')
-# proxies = {'https': 'https://178.32.55.52:443/', 'http': 'https://103.101.253.18:443/'}
-# proxies = {'https': 'https://ua-139-170-1.fri-gate0.biz:443/'}
 # Искать прокси с портом 443 ( https://awmproxy.com/freeproxy.php )
 # proxies = {'https': 'https://70.89.113.137:443/'} .138 USA
 proxies = {'https': 'https://70.89.113.137:443/'}
@@ -318,7 +315,10 @@ def read_ans():    # Чтение данных чата бота из файла
         except KeyError:
             lang = 'en'
         f_name = data_answer['message']['chat']['first_name']
-        username = data_answer['message']['chat']['username']
+        try:
+            username = data_answer['message']['chat']['username']
+        except Exception:
+            username = data_answer['message']['chat']['first_name']
         msg = data_answer['message']['text']
         data.update({"chat_id": ch_id, "lang_code": lang, "message": msg,
                      "date_msg": date_msg, "first_name": f_name, "username": username})
@@ -372,6 +372,7 @@ def index(request):
         write_json(r)   # Запсиь данных чата в файла answer.json.
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
+
         up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
 
         if '/start' in message:
@@ -385,8 +386,8 @@ def index(request):
                      '/fc_full или "F":- Полный прогноз (5 дней) с интервалом в 3 часа. Для удобства' \
                      ' просмотра лучше повернуть экран в книжный режим\n' \
                      '/map или "M": - Посмотреть место на карте, если неуверенны, что задали нужное вам место\n' \
-                     '/l ** - Поменять язык (ru, en, de, fr, zh,... подставить вместо **). ' \
-                     'Перевод осуществлен Yandex переводчиком.\n' \
+                     '/l ** - Поменять язык (ru, en, de, fr, zh,... подставить вместо **, через пробел ' \
+                     'или запятую). Перевод осуществлен Yandex переводчиком.\n' \
                      'И не забываем, время по Гринвичу (GMT+00).'
             answer = transl_ans(answer)
         elif message in ['/fc_short', 'S']:
@@ -428,38 +429,12 @@ def index(request):
         # data_bot = json.dumps(data_bot, ensure_ascii=False, sort_keys=True)
         ans_d_bot = ""
         for i in data_bot:
-            ans_d_bot += 'Чат: {:>9}. Время: {}. Польз: {:>10}. Запросов: {:>4}. Посл.запрос: {} - ({}).\n'.\
-                format(i['chat_id'], i['date_msg'], i['username'], i['num_req'], i['location'][0], i['location'][1])
+            ans_d_bot += 'Чат: {:>9}. Время: {}. Польз: {:>10}. Запросов: {:>4}. Посл.запрос: {} - ({}). Язык:{}\n'.\
+                format(i['chat_id'], i['date_msg'], i['username'], i['num_req'],
+                       i['location'][0], i['location'][1], i['lang_code'])
 
         return HttpResponse("Последнее сообщение:\n {}\n\n Данные чата:\n{}".format
                             (d, ans_d_bot), content_type="application/json")
-
-
-# res = [x for x in lst if x % 3 == 0]
-# fdfdffd---
-# if __name__ == '__main__':
-#     pass
-# ------------
-# "zh-CN" -китайский упрощенный в гугл переводчике, "zh" - в OWM
-
-# def translate_answ(message):
-#     translator = Translator()
-#     data_bot = read_json(file_data_bot)
-#     lang_code = data_bot["lang_code"]
-#     try:
-#         lang_code = 'zh-CN' if lang_code == 'zh' else lang_code
-#         # if lang_code == 'zh':
-#         #     lang_code = 'zh-CN'
-#         if not (lang_code == 'ru'):
-#             # message = translator.translate(message, dest='ru').text
-#             message = translator.translate(message, src='ru', dest=lang_code).text
-#     except Exception:
-#         # message = translator.translate(message, dest='en').text
-#         message = message
-#         # print("--- Не могу перевести----")
-#     return message
-
-
 
 
 
