@@ -18,11 +18,10 @@ if local_launch:
 else:
     token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
-# file_answ = './weatherBot/answer.json'
-file_answ = './recruits/weatherBot/answer.json'
-# file_answer_city = './weatherBot/city.txt'
-# file_data_bot = './weatherBot/data_bot.json'
-file_data_bot = './recruits/weatherBot/data_bot.json'
+file_answ = './weatherBot/answer.json'              # Для heroku
+# file_answ = './recruits/weatherBot/answer.json'   # Для pythonanywhere
+file_data_bot = './weatherBot/data_bot.json'             # Для heroku
+# file_data_bot = './recruits/weatherBot/data_bot.json'  # Для pythonanywhere
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 token_trans_ya = os.environ['token_trans_ya']
 url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
