@@ -1,7 +1,6 @@
 # from django.shortcuts import render
 # from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
 # from weatherBot.const import token_telegram, token_pyowm
-# from googletrans import Translator
 from django.http import HttpResponse
 import requests
 import json
@@ -10,6 +9,8 @@ import django.views.decorators.csrf
 import os
 import datetime
 
+# from googletrans import Translator
+
 # local_launch = True    # True - если локально с прокси и ngrok.
 local_launch = False    # True - если локально с прокси и ngrok.
 if local_launch:
@@ -17,13 +18,17 @@ if local_launch:
 else:
     token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
-file_answ = './weatherBot/answer.json'
-file_answer_city = './weatherBot/city.txt'
-file_data_bot = './weatherBot/data_bot.json'
+# file_answ = './weatherBot/answer.json'
+file_answ = './recruits/weatherBot/answer.json'
+# file_answer_city = './weatherBot/city.txt'
+# file_data_bot = './weatherBot/data_bot.json'
+file_data_bot = './recruits/weatherBot/data_bot.json'
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 token_trans_ya = os.environ['token_trans_ya']
 url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 # owm = pyowm.OWM(token_pyowm, language='ru')
+# proxies = {'https': 'https://178.32.55.52:443/', 'http': 'https://103.101.253.18:443/'}
+# proxies = {'https': 'https://ua-139-170-1.fri-gate0.biz:443/'}
 # Искать прокси с портом 443 ( https://awmproxy.com/freeproxy.php )
 # proxies = {'https': 'https://70.89.113.137:443/'} .138 USA
 proxies = {'https': 'https://70.89.113.137:443/'}
@@ -319,6 +324,7 @@ def read_ans():    # Чтение данных чата бота из файла
             username = data_answer['message']['chat']['username']
         except Exception:
             username = data_answer['message']['chat']['first_name']
+        # username = data_answer['message']['chat']['username']
         msg = data_answer['message']['text']
         data.update({"chat_id": ch_id, "lang_code": lang, "message": msg,
                      "date_msg": date_msg, "first_name": f_name, "username": username})
@@ -348,6 +354,8 @@ def up_data_chat(**kwargs):  # update данных чата бота (запис
             data_l = read_ans()  # вытаскиваем из answer.json
             num_req = 1             # счетчик обращений к записи
             data_l["num_req"] = num_req
+            if 'message' in kwargs:     # создаем список запросов
+                data_l['requests'] = [kwargs['message']]
             data_l.update(kwargs)
             ld.append(data_l)   # добавляем запись в лог
             print("--Добав.нов.данн, № в списке: {}, Кол.запросов: {}, Данные: {}".format(len(ld), num_req, kwargs))
@@ -357,11 +365,44 @@ def up_data_chat(**kwargs):  # update данных чата бота (запис
             data_l["num_req"] = num_req
             date_msg = read_ans()['date_msg']
             data_l.update({'date_msg': date_msg})   # Обновление времени запроса
+            if 'message' in kwargs:
+                try:
+                    req = data_l['requests']
+                except (AttributeError, KeyError):
+                    req = []
+                msg = kwargs['message']
+                if len(req) >= 7:
+                    req.pop(0)              # удаляем старые запросы
+                req.append(msg)             # дополняем список запросов
+                data_l['requests'] = req
             data_l.update(kwargs)     # добавление новых данных в случаях 'message', 'location' 'lang'...
             ld[number] = data_l     # запись в список словарей чата
             print("--Измен.дан. № в списке: {}, Кол.запросов: {}, Данные: {}".format(number+1, num_req, kwargs))
         write_json(ld, file_data_bot)  # запись в файл
     return data_l
+
+
+def ans_logs(msg):
+    data_bot = read_json(file_data_bot)
+    ans_d_bot = ""
+    try:
+        l_msg = msg.split()
+        chat_id = l_msg[1]     # по какому ID нужна инф.
+    except Exception:          # если не указан ID чата, то вывод общей инф.
+        for ich in data_bot:
+            ans_d_bot += 'ID: {:>9}. Вр: {}. Польз: {:>10}. Запросов: {:>4}. Посл: {} - ({}). Яз' \
+                         ': {}\n'.format(ich['chat_id'], ich['date_msg'], ich['username'], ich['num_req'],
+                                        ich['message'], ich['location'][1], ich['lang_code'])
+        answer_l = "\n Данные чата:\n{}".format(ans_d_bot)
+    else:
+        ans_req = ""
+        for ich in data_bot:
+            if str(ich['chat_id']) == chat_id:
+                ans_req += '{} '.format(ich['requests'])
+        # print(ans_req, type(ans_req))
+        # print(l_msg[1], type(l_msg[1]))
+        answer_l = "\n Запросы :\n{}".format(ans_req)
+    return answer_l
 
 
 @django.views.decorators.csrf.csrf_exempt
@@ -372,7 +413,6 @@ def index(request):
         write_json(r)   # Запсиь данных чата в файла answer.json.
         chat_id = r['message']['chat']['id']
         message = r['message']['text']
-
         up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
 
         if '/start' in message:
@@ -386,8 +426,8 @@ def index(request):
                      '/fc_full или "F":- Полный прогноз (5 дней) с интервалом в 3 часа. Для удобства' \
                      ' просмотра лучше повернуть экран в книжный режим\n' \
                      '/map или "M": - Посмотреть место на карте, если неуверенны, что задали нужное вам место\n' \
-                     '/l ** - Поменять язык (ru, en, de, fr, zh,... подставить вместо **, через пробел ' \
-                     'или запятую). Перевод осуществлен Yandex переводчиком.\n' \
+                     '/l  ** - Поменять язык (ru, en, de, fr, zh,... подставить вместо **, через пробел или запятую). ' \
+                     'Перевод осуществлен Yandex переводчиком.\n' \
                      'И не забываем, время по Гринвичу (GMT+00).'
             answer = transl_ans(answer)
         elif message in ['/fc_short', 'S']:
@@ -417,6 +457,8 @@ def index(request):
             up_data_chat(lang_code=lang_code)
         elif message in ['R']:
             answer = answer_weather(message)
+        elif '/Logs' in message:
+            answer = ans_logs(message)
         else:
             answer = answer_weather(message)
         r = send_message(chat_id, text=answer)
@@ -429,12 +471,12 @@ def index(request):
         # data_bot = json.dumps(data_bot, ensure_ascii=False, sort_keys=True)
         ans_d_bot = ""
         for i in data_bot:
-            ans_d_bot += 'Чат: {:>9}. Время: {}. Польз: {:>10}. Запросов: {:>4}. Посл.запрос: {} - ({}). Язык:{}\n'.\
+            ans_d_bot += 'ID: {:>9}. Вр: {}. Польз: {:>10}. Запросов: {:>4}. Посл: {} - ({}). Яз:{}\n' \
+                         '  Запросы: {}\n'.\
                 format(i['chat_id'], i['date_msg'], i['username'], i['num_req'],
-                       i['location'][0], i['location'][1], i['lang_code'])
+                       i['location'][0], i['location'][1], i['lang_code'], i['requests'])
 
         return HttpResponse("Последнее сообщение:\n {}\n\n Данные чата:\n{}".format
                             (d, ans_d_bot), content_type="application/json")
-
 
 
