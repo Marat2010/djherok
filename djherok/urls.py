@@ -20,4 +20,5 @@ urlpatterns = [
     path('si/', include('si.urls')),
     path('weatherBot/', include('weatherBot.urls')),
     path('admin/', admin.site.urls),
+    path('bitrix24/', include('bitrix24.urls')),
 ]

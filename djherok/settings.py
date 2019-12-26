@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'si.apps.SiConfig',
     'weatherBot.apps.WeatherBotConfig',
+    'bitrix24.apps.Bitrix24Config',
     # 'weatherBot.const',
 ]
 

@@ -1,0 +1,84 @@
+[
+  {
+    "chat_id": 241462113,
+    "date_msg": "17:53:15 24-12-2019",
+    "first_name": "Marat",
+    "lang_change": true,
+    "lang_code": "ru",
+    "location": [
+      "Киров",
+      "Kirov",
+      548408,
+      58.6,
+      49.66
+    ],
+    "message": "F",
+    "num_req": 90,
+    "requests": [
+      "Мамадыш",
+      "Киров",
+      "F"
+    ],
+    "username": "Marat2010"
+  },
+  {
+    "chat_id": 981074927,
+    "date_msg": "18:36:27 23-12-2019",
+    "first_name": "Marat",
+    "lang_change": true,
+    "lang_code": "ru",
+    "location": [
+      "Gagri",
+      "Gagri",
+      3194828,
+      43.26,
+      17.67
+    ],
+    "message": "F",
+    "num_req": 34,
+    "requests": [
+      "1",
+      "Киров",
+      "2"
+    ],
+    "username": "Mara73saf"
+  },
+  {
+    "chat_id": 456111076,
+    "date_msg": "17:25:17 23-12-2019",
+    "first_name": "Irshat",
+    "lang_code": "ru",
+    "location": [
+      "Prague",
+      "Prague",
+      3067696,
+      50.09,
+      14.42
+    ],
+    "message": "/start",
+    "num_req": 18,
+    "requests": [
+      "Prague"
+    ],
+    "username": "Irshat"
+  },
+  {
+    "chat_id": 355842455,
+    "date_msg": "19:58:55 23-12-2019",
+    "first_name": "Дина",
+    "lang_code": "ru",
+    "location": [
+      "Санкт-Петербург",
+      "Saint Petersburg",
+      498817,
+      59.94,
+      30.32
+    ],
+    "message": "Санкт-Петербург",
+    "num_req": 4,
+    "requests": [
+      "Санкт-Петербург"
+    ],
+    "username": "lomaigolovy"
+  }
+]

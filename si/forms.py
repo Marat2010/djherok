@@ -5,5 +5,5 @@ from .models import Recruits
 
 class RecruitsForm(ModelForm):
     class Meta:
-        model=Recruits
+        model = Recruits
         fields = ('name', 'planet', 'age', 'email')
