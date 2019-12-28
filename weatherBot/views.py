@@ -1,8 +1,4 @@
 # from django.shortcuts import render
-# from django.core.files import File # from pprint import pprint # from proxy_requests import ProxyRequests
-# from weatherBot.const import token_telegram, token_pyowm
-# from googletrans import Translator
-
 from django.http import HttpResponse
 import requests
 import json
@@ -11,7 +7,6 @@ import django.views.decorators.csrf
 import os
 import datetime
 
-# local_launch = True    # True - если локально с прокси и ngrok.
 local_launch = False    # True - если локально с прокси и ngrok.
 if local_launch:
     token_telegram = os.environ['token_telegram2']
@@ -20,19 +15,11 @@ else:
 token_pyowm = os.environ['token_pyowm']
 file_answ = './weatherBot/answer.json'              # Для heroku и pythonanywhere
 file_data_bot = './weatherBot/data_bot.json'             # Для heroku и pythonanywhere
-# file_data_bot = './recruits/weatherBot/data_bot.json'  # Для pythonanywhere было
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 token_trans_ya = os.environ['token_trans_ya']
 url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 proxies = {'https': 'https://70.89.113.137:443/'}
-
-# owm = pyowm.OWM(token_pyowm, language='ru')
-# proxies = {'https': 'https://178.32.55.52:443/', 'http': 'https://103.101.253.18:443/'}
-# proxies = {'https': 'https://ua-139-170-1.fri-gate0.biz:443/'}
 # Искать прокси с портом 443 ( https://awmproxy.com/freeproxy.php )
-# proxies = {'https': 'https://70.89.113.137:443/'} .138 USA
-# proxies = {'https': 'https://46.151.83.231:443/'}
-# proxies = {'https': 'https://203.162.21.216:8080/'}
 
 
 def send_message(chat_id, text='--Привет, привет!-- )'):
