@@ -1,19 +1,11 @@
 {
-  "result": {
-    "ADMIN": true,
-    "ID": "1",
-    "LAST_NAME": "S",
-    "NAME": "Marat",
-    "PERSONAL_GENDER": "",
-    "TIME_ZONE": "",
-    "TIME_ZONE_OFFSET": 10800
-  },
+  "result": 19,
   "time": {
-    "date_finish": "2019-12-29T00:08:32+03:00",
-    "date_start": "2019-12-29T00:08:32+03:00",
-    "duration": 0.05024600028991699,
-    "finish": 1577567312.470334,
-    "processing": 0.007035017013549805,
-    "start": 1577567312.420088
+    "date_finish": "2019-12-29T04:22:18+03:00",
+    "date_start": "2019-12-29T04:22:18+03:00",
+    "duration": 0.25514888763427734,
+    "finish": 1577582538.329728,
+    "processing": 0.21387910842895508,
+    "start": 1577582538.074579
   }
 }

@@ -7,7 +7,14 @@
       "type": "private",
       "username": "Marat2010"
     },
-    "date": 1577567311,
+    "date": 1577582537,
+    "entities": [
+      {
+        "length": 2,
+        "offset": 0,
+        "type": "bot_command"
+      }
+    ],
     "from": {
       "first_name": "Marat",
       "id": 241462113,
@@ -16,8 +23,8 @@
       "last_name": "S",
       "username": "Marat2010"
     },
-    "message_id": 2130,
-    "text": "кккк"
+    "message_id": 2171,
+    "text": "/L Завтра в 9-00 планерка!"
   },
-  "update_id": 371919008
+  "update_id": 371919029
 }

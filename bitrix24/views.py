@@ -7,19 +7,22 @@ import django.views.decorators.csrf
 import os
 import datetime
 
-local_launch = True    # True - если локально с прокси и ngrok.
-# local_launch = False    # True - если локально с прокси и ngrok.
+# local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
+local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
 if local_launch:
     token_telegram = os.environ['token_telegram2']
 else:
     token_telegram = os.environ['token_telegram2']
 
-Code_app_b24 = 'local.5e04004ad5e626.19578281'
-Key_app_b24 = '0mIMVUBB7hfhWwQBLD8cIIEiVPzKjS7Mlkww7VCAyTnlyU3kne'
-
+# Используем пока веб хук(входящий). Код и ключ (Серверное локальное приложение
+# без интерфейса в Битрикс24) будем использовать позже (REST по протоколу авторизации OAuth 2.0)
+# Code_app_b24 = 'local.5e04004ad5e626.19578281'
+# Key_app_b24 = '0mIMVUBB7hfhWwQBLD8cIIEiVPzKjS7Mlkww7VCAyTnlyU3kne'
+# Используем пока веб хук(входящий) - всё от одного пользователя admin (используем token_in_b24)
 token_in_b24 = 'jwi2dohttz51o1pk'
-url_b24 = 'https://telebot.bitrix24.ru/rest/1/' + token_in_b24 + '/profile/'
+URL_b24 = 'https://telebot.bitrix24.ru/rest/1/' + token_in_b24 + '/'
 file_b24 = './bitrix24/b24.json'
+
 file_answ = './bitrix24/answer.json'
 file_data_bot = './bitrix24/data_bot.json'
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
@@ -35,11 +38,6 @@ def send_message(chat_id, text='--Привет, привет!-- )'):
         r = requests.post(url, json=answer, proxies=proxies)  # add proxies on local
     else:
         r = requests.post(url, json=answer)  # remove proxies on hosting
-    return r
-
-
-def send_b24():     # отправка запроса в битрикс24
-    r = requests.post(url_b24)
     return r
 
 
@@ -128,8 +126,26 @@ def up_data_chat(**kwargs):  # update данных чата бота (запис
     return data_l
 
 
-def answ_b24():     # обработчик запроса от битрих24
+def callMethod(method):
     pass
+#     'tasks.task.list',
+#     {filter:{'>STATUS':2, REPLICATE:'N', '::SUBFILTER-PARAMS':{FAVORITE:'Y'}}},
+#     function(res){console.log(res.answer.result);}
+# );
+
+
+def send_b24(method='', **kwargs):     # отправка запроса в битрикс24
+    url = URL_b24 + method
+    print(url)
+    r = requests.post(url, json=kwargs)
+    r = r.json()  # преобразование ответа в json
+    return r
+
+
+def answ_b24(msg):     # обработчик запроса от битрих24
+    msg = ''
+    answer = read_json(file_b24)
+    return answer
 
 
 @django.views.decorators.csrf.csrf_exempt
@@ -142,17 +158,27 @@ def index(request):
         message = r['message']['text']
         up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
 
-        # answer = 'Привет, твое сообщение: {}'.format(message)
+        if message == 'профиль':
+            r_b24 = send_b24('profile')  # отправка запроса в битрикс24, получение словаря
+            answer = 'Вы: {} {}'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'])
+        elif message == 'задачи':
+            r_b24 = send_b24('tasks.task.list')
+            tasks = r_b24['result']['tasks']
+            answer = ''
+            for i in tasks:
+                answer = answer + i['title'] + '\n'
+            answer = 'Кол-во задач: {}\n {}'.format(r_b24['total'], answer)
+        elif '/L ' in message:
+            # params = {'POST_TITLE': '-*** От БОССА ***-', 'POST_MESSAGE': message}
+            r_b24 = send_b24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=message)
+            answer = 'Сообщение размещено'
+        else:
+            r_b24 = send_b24('profile')
+            answer = 'Что именно хотели, {} {}?'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'])
+        write_json(r_b24, file_b24)  # запись в свой файл - b24.json для дальнейшего анализа
 
-        r_b24 = send_b24()      # отправка запроса в битрикс24
-        print(r_b24, type(r_b24))
-        r_b24 = r_b24.json()        # преобразование RESPONSE в json
-        write_json(r_b24, file_b24)     # запись в свой файл b24.json для дальнейшего анализа
-
-        # answer = answ_b24()
-
-        answer = read_json(file_b24)
-        print(answer, type(answer))
+        # answer = answ_b24(message)
+        print(answer)
         r = send_message(chat_id, text=answer)
         return HttpResponse(r, content_type="application/json")
     else:
@@ -160,7 +186,6 @@ def index(request):
         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
 
         data_bot = read_json(file_data_bot)
-        # data_bot = json.dumps(data_bot, ensure_ascii=False, sort_keys=True)
         ans_d_bot = ""
         for i in data_bot:
             ans_d_bot += 'ID: {:>9}. Вр: {}. Польз: {:>10}. Запросов: {:>4}. Посл: {} - ({}). Яз:{}\n' \
@@ -172,6 +197,14 @@ def index(request):
                             (d, ans_d_bot), content_type="application/json")
 
 
+# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add
+# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=-** Заголовок **-&POST_MESSAGE=---Тело ообщения ---
+# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=%22---11%D0%B7%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BE%D0%BA2%22&POST_MESSAGE=%22--fdf---%22
+# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/tasks.task.list
+# https: // telebot.bitrix24.ru / rest / 1 / jwi2dohttz51o1pk / tasks.task.list
+
+        # data_bot = json.dumps(data_bot, ensure_ascii=False, sort_keys=True)
+
 # https://djherok.herokuapp.com/bitrix24/
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://djherok.herokuapp.com/bitrix24/
 
@@ -180,3 +213,13 @@ def index(request):
 #  https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/getWebhookInfo
 # deleteWebhook     getWebhookInfo  setWebhook
 
+# Вместе с кодом будет представлен образец URL, который нужно использовать при отправке данных из сторонней системы
+#  в Битрикс24:
+# https://********.bitrix24.ru/rest/1/83te1pjdphsa9u15/profile/
+# где:
+# ******** - имя вашего портала;
+# /rest/ - указание системе на то, что данный адрес относится в вебхукам;
+# /1/ - идентификатор пользователя, создавшего вебхук. Под правами этого пользователя будет работать этот вебхук.
+# /83te1pjdphsa9u15/ - секретный код;
+# /profile/ - метод REST, который вы хотите выполнить, обращаясь к вебхуку. Разработчик должен сам подобрать метод
+#  из REST API в зависимости от целей создания вебхука.
