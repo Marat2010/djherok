@@ -11,30 +11,25 @@ import datetime
 # local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
 local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
 if local_launch:
-    token_telegram = os.environ['token_telegram2']
+    token_telegram = os.environ['token_telegram3']
 else:
     token_telegram = os.environ['token_telegram2']
 
-# Используем пока веб хук(входящий). Код и ключ (Серверное локальное приложение
+# Используем пока веб хук(входящий). Код(bx24_code_app) и ключ(bx24_key_app) (Серверное локальное приложение
 # без интерфейса в Битрикс24) будем использовать позже (REST по протоколу авторизации OAuth 2.0)
-# Code_app_b24 = 'local.5e04004ad5e626.19578281'
-# Key_app_b24 = '0mIMVUBB7hfhWwQBLD8cIIEiVPzKjS7Mlkww7VCAyTnlyU3kne'
-# Используем пока веб хук(входящий) - всё от одного пользователя admin (используем token_in_b24)
-token_in_b24 = 'jwi2dohttz51o1pk'
-# token_in_b24 = '70a32986f1bf204dec4567147ca6a2af'
-
-URL_b24 = 'https://telebot.bitrix24.ru/rest/1/' + token_in_b24 + '/'
+# Используем пока веб хук(входящий) - всё от одного пользователя admin (используем bx24_webhook_in)
+# Input webhook in Bitrix24
+bx24_webhook_in = os.environ['bx24_webhook_in']
+# Bitrix24 server app without UI
+# bx24_code_app = os.environ['bx24_code_app']
+# bx24_key_app = os.environ['bx2_key_app']
+URL_b24 = 'https://telebot.bitrix24.ru/rest/1/' + bx24_webhook_in + '/'
 file_b24 = './bitrix24/b24.json'
 
 file_answ = './bitrix24/answer.json'
 file_data_bot = './bitrix24/data_bot.json'
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
-# token_trans_ya = os.environ['token_trans_ya']
-# url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 proxies = {'https': 'https://70.89.113.137:443/'}
-
-# bx24 = Bitrix24('https://e340ea95.ngrok.io/bitrix24/', token_in_b24)
-# bx24 = Bitrix24('', token_in_b24)
 
 
 def send_message(chat_id, text='--Привет, привет!-- )'):
@@ -182,29 +177,27 @@ def index(request):
             tasks = r_b24['result']['tasks']
             answer = ''
             for i in tasks:
-                answer = answer + i['title'] + '\n'
+                answer = answer + '*' + i['title'] + '\n'
                 try:
                     date = str(i['deadline'])
                     date = date.replace('T', ' ')[:16]
-                except Exception:
+                except Exception as ex:
+                    print("---Исключение: {}".format(ex))
                     date = "не установлен"
-                print("---Время: {}, тип: {} ---".format(date, type(date)))
-                answer = answer + "-Дата Дедлайна:" + str(date) + '\n'
-            answer = '-** Кол-во задач: {} **-\n {}'.format(r_b24['total'], answer)
-        elif '/L ' in message:
-            # params = {'POST_TITLE': '-*** От БОССА ***-', 'POST_MESSAGE': message}
-            msg = message[3:]
-            send_b24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=msg)
+                answer = answer + " --> Дедлайн: {}\n".format(str(date))
+            answer = '*** Кол-во задач: {} ***\n{}'.format(r_b24['total'], answer)
+        elif '/L' in message:
+            ll = message.split()
+            if len(ll) > 1:
+                msg = message[3:]
+                send_b24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=msg)
             r_b24 = send_b24('log.blogpost.get')
+            r_b24['result'] = r_b24['result'][:7]  # уменьшение кол-ва сообщ до 7
             msgs = ''
-            for i, val in enumerate(r_b24['result']):
-                if i > 7:
-                    print('-Номер: {}, Знач: {}'.format(i, val))
-                    break
-                # msgs = msgs + i + val['DETAIL_TEXT'] + '\n'
-                msgs = msgs + "Сообщ.{}: {}\n".format(i, val['DETAIL_TEXT'])
+            for i in r_b24['result']:
+                msgs += "{}: {}\n".format(i['DATE_PUBLISH'][11:16], i['DETAIL_TEXT'])
             print(msgs)
-            answer = '-** Последние сообщения: **-\n-' + msgs
+            answer = '-** Последние сообщения: **-\n*' + msgs
         else:
             r_b24 = send_b24('profile')
             answer = 'Что именно хотели, {} {}?'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'])
@@ -230,7 +223,8 @@ def index(request):
                             (d, ans_d_bot), content_type="application/json")
 
 
-
+# https://301ae880.ngrok.io/bitrix24/
+# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://301ae880.ngrok.io/bitrix24/
 
 # Елочка нарядная,
 # Красавица стоит,
@@ -248,15 +242,12 @@ def index(request):
 # Очень, очень ждут!
 # © http://pozdravok.ru/pozdravleniya/prazdniki/noviy-god/detskie/2.htm
 
-
-
 # help - Описание
 # task - просмотр задач
 # profile - просмотр своего профиля
 
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=-** Заголовок **-&POST_MESSAGE=---Тело ообщения ---
-# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=%22---11%D0%B7%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BE%D0%BA2%22&POST_MESSAGE=%22--fdf---%22
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/tasks.task.list
 # https: // telebot.bitrix24.ru / rest / 1 / jwi2dohttz51o1pk / tasks.task.list
 
@@ -264,7 +255,6 @@ def index(request):
 
 # https://djherok.herokuapp.com/bitrix24/
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://djherok.herokuapp.com/bitrix24/
-
 
 # https://3f63a3f1.ngrok.io/bitrix24/
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://3f63a3f1.ngrok.io/bitrix24/

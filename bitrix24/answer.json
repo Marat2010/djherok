@@ -7,14 +7,7 @@
       "type": "private",
       "username": "Marat2010"
     },
-    "date": 1577799302,
-    "entities": [
-      {
-        "length": 5,
-        "offset": 0,
-        "type": "bot_command"
-      }
-    ],
+    "date": 1577812414,
     "from": {
       "first_name": "Marat",
       "id": 241462113,
@@ -23,8 +16,8 @@
       "last_name": "S",
       "username": "Marat2010"
     },
-    "message_id": 2290,
-    "text": "/help"
+    "message_id": 26,
+    "text": "T"
   },
-  "update_id": 371919088
+  "update_id": 555290609
 }
