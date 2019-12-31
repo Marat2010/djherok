@@ -6,6 +6,7 @@ import json
 import django.views.decorators.csrf
 import os
 import datetime
+# from bitrix24 import Bitrix24
 
 # local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
 local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
@@ -20,6 +21,8 @@ else:
 # Key_app_b24 = '0mIMVUBB7hfhWwQBLD8cIIEiVPzKjS7Mlkww7VCAyTnlyU3kne'
 # Используем пока веб хук(входящий) - всё от одного пользователя admin (используем token_in_b24)
 token_in_b24 = 'jwi2dohttz51o1pk'
+# token_in_b24 = '70a32986f1bf204dec4567147ca6a2af'
+
 URL_b24 = 'https://telebot.bitrix24.ru/rest/1/' + token_in_b24 + '/'
 file_b24 = './bitrix24/b24.json'
 
@@ -29,6 +32,9 @@ URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 # token_trans_ya = os.environ['token_trans_ya']
 # url_trans = 'https://translate.yandex.net/api/v1.5/tr.json/translate'
 proxies = {'https': 'https://70.89.113.137:443/'}
+
+# bx24 = Bitrix24('https://e340ea95.ngrok.io/bitrix24/', token_in_b24)
+# bx24 = Bitrix24('', token_in_b24)
 
 
 def send_message(chat_id, text='--Привет, привет!-- )'):
@@ -158,20 +164,47 @@ def index(request):
         message = r['message']['text']
         up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
 
-        if message == 'профиль':
+        if message in ['/profile', 'P']:
             r_b24 = send_b24('profile')  # отправка запроса в битрикс24, получение словаря
-            answer = 'Вы: {} {}'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'])
-        elif message == 'задачи':
+            answer = 'Вы: {} {}, Админ: {}'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'],
+                                                   r_b24['result']['ADMIN'])
+        elif message in ['/help', '/start', 'H']:
+            r_b24 = send_b24('profile')
+            answer = 'Добро пожаловать в Bitrix24, {}.\n Команды:\n/task или "T" - просмотр задач и их дедлайн\n' \
+                     '/profile или "P" - просмотр своего профиля\n' \
+                     '/L "текст" - сообщение которое разместиться в живой ленте'.format(r_b24['result']['NAME'])
+        elif message == 'Лиды':
+            r_b24 = send_b24('crm.lead.get', id=1)
+            # tasks = r_b24['result']['tasks']
+            answer = 'Лиды получены'
+        elif message in ['/task', 'T']:
             r_b24 = send_b24('tasks.task.list')
             tasks = r_b24['result']['tasks']
             answer = ''
             for i in tasks:
                 answer = answer + i['title'] + '\n'
-            answer = 'Кол-во задач: {}\n {}'.format(r_b24['total'], answer)
+                try:
+                    date = str(i['deadline'])
+                    date = date.replace('T', ' ')[:16]
+                except Exception:
+                    date = "не установлен"
+                print("---Время: {}, тип: {} ---".format(date, type(date)))
+                answer = answer + "-Дата Дедлайна:" + str(date) + '\n'
+            answer = '-** Кол-во задач: {} **-\n {}'.format(r_b24['total'], answer)
         elif '/L ' in message:
             # params = {'POST_TITLE': '-*** От БОССА ***-', 'POST_MESSAGE': message}
-            r_b24 = send_b24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=message)
-            answer = 'Сообщение размещено'
+            msg = message[3:]
+            send_b24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=msg)
+            r_b24 = send_b24('log.blogpost.get')
+            msgs = ''
+            for i, val in enumerate(r_b24['result']):
+                if i > 7:
+                    print('-Номер: {}, Знач: {}'.format(i, val))
+                    break
+                # msgs = msgs + i + val['DETAIL_TEXT'] + '\n'
+                msgs = msgs + "Сообщ.{}: {}\n".format(i, val['DETAIL_TEXT'])
+            print(msgs)
+            answer = '-** Последние сообщения: **-\n-' + msgs
         else:
             r_b24 = send_b24('profile')
             answer = 'Что именно хотели, {} {}?'.format(r_b24['result']['NAME'], r_b24['result']['LAST_NAME'])
@@ -197,6 +230,30 @@ def index(request):
                             (d, ans_d_bot), content_type="application/json")
 
 
+
+
+# Елочка нарядная,
+# Красавица стоит,
+# Огоньки сияют,
+# Новый год спешит!
+# #
+# Будет много счастья,
+# Радости, добра,
+# Будет год волшебным,
+# Будут чудеса!
+#
+# Будут и подарки,
+# Праздничный салют,
+# Дед Мороза дети,
+# Очень, очень ждут!
+# © http://pozdravok.ru/pozdravleniya/prazdniki/noviy-god/detskie/2.htm
+
+
+
+# help - Описание
+# task - просмотр задач
+# profile - просмотр своего профиля
+
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=-** Заголовок **-&POST_MESSAGE=---Тело ообщения ---
 # https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=%22---11%D0%B7%D0%B0%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BE%D0%BA2%22&POST_MESSAGE=%22--fdf---%22
@@ -208,8 +265,9 @@ def index(request):
 # https://djherok.herokuapp.com/bitrix24/
 # https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://djherok.herokuapp.com/bitrix24/
 
-# https://4721dee3.ngrok.io/bitrix24/
-# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://4721dee3.ngrok.io/bitrix24/
+
+# https://3f63a3f1.ngrok.io/bitrix24/
+# https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/setWebhook?url=https://3f63a3f1.ngrok.io/bitrix24/
 #  https://api.telegram.org/bot919974881:AAHwfCsrATbNx9fxjhbSxzacw5Ip-G-aTKE/getWebhookInfo
 # deleteWebhook     getWebhookInfo  setWebhook
 
