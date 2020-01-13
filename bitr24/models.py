@@ -34,7 +34,9 @@ class Bitr(models.Model):
         return reverse('bitr_detail_url', kwargs={'slug': self.slug})
 
     def __str__(self):
-        return '{}'.format(self.bx24_id)
+        # return '{}'.format(self.bx24_id)
+        return '{}-{}'.format(self.bx24_id, self.bx24_name)
+        # return self.bx24_id
 
     class Meta:
         verbose_name_plural = 'Данные Б24'

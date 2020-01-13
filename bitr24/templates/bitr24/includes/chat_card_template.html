@@ -10,9 +10,9 @@
 {#        <a href="{% chat.get_absolute_url %}" class="btn btn-light">Посмотреть</a>#}
     </div>
     <div class="card-footer text-muted">
-        Битриксы:
+        Пользователь Битрикс24:
         {% for birt in chat.bitrs.all %}
-            <a href="{{ birt.get_absolute_url }}">{{ birt.bx24_id}}</a>
+            <a href="{{ birt.get_absolute_url }}">{{ birt.bx24_id}}-{{ birt.bx24_name }},</a>
         {% endfor %}
 
     </div>
