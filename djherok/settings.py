@@ -23,8 +23,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECRET_KEY = '^+2a(li9%n!!g2x^yp%sr(jw*#^fh!3^66hek@3d!f3uug4bly'
 SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-# DEBUG = True
+# DEBUG = False
+DEBUG = True
 # DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
@@ -46,8 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'si.apps.SiConfig',
     'weatherBot.apps.WeatherBotConfig',
-    'bitrix24.apps.Bitrix24Config',
-    # 'weatherBot.const',
+    'bitr24.apps.Bitr24Config',
 ]
 
 MIDDLEWARE = [
@@ -66,7 +65,9 @@ ROOT_URLCONF = 'djherok.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,12 +132,15 @@ USE_TZ = True
 
 # STATIC_ROOT = "/home/marat/PycharmProjects/djherok/static/"
 STATIC_URL = '/static/'
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-# MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'some_new_static_folder'),]
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'bitr24/static'),
+    # os.path.join(BASE_DIR, 'bitr24/media'),
+)
+

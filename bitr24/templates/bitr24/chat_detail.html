@@ -1,0 +1,27 @@
+{% extends 'bitr24/base_bitr24.html' %}
+
+{% block title %}
+    {{ chat.first_name }} {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <h1 class="class mt-5">
+        Имя телеграм пользователя: {{ chat.first_name }}
+    </h1>
+    <p>
+        Чат ID: {{ chat.chat_id }}<br><br>
+        Username: {{ chat.username }}<br><br>
+        Язык: {{ chat.lang_code }}<br><br>
+        Слаг: {{ chat.slug }}<br><br>
+{#        Польз.Bx24: {{ chat.bitrs }}#}
+    </p>
+
+{#    <h1 class="mb-5">Вход под пользователем Битрикс24: "{{ ch }}-{{ bitr.bx24_name|title }}" с бот-чата телеграм:</h1>#}
+{#    {% for chat in bitr.chats.all %}#}
+{#        {% include 'bitr24/includes/chat_card_template.html' %}#}
+{#    {% endfor %}#}
+
+
+
+{% endblock %}

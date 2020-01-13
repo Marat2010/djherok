@@ -1,0 +1,15 @@
+{% extends 'bitr24/base_bitr24.html' %}
+
+{% block title %}
+    Список Битрикс24 - {{ bitrs.super }}
+{% endblock %}
+
+{% block content %}
+    <h1 class="mb-5">Пользователи Битрикс24:</h1>
+
+    {% for bitr in bitrs %}
+        <h3><a href="{{  bitr.get_absolute_url }}">{{ bitr.bx24_id }}-{{ bitr.bx24_name }} </a></h3>
+    {% endfor %}
+    
+    
+{% endblock %}

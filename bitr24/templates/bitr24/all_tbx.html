@@ -1,0 +1,25 @@
+{#<!DOCTYPE html>#}
+{#<html>#}
+{#<head>#}
+{#    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">#}
+{#    <title>Все чаты бота</title>#}
+{#</head>#}
+{#<body>#}
+{##}
+{#</body>#}
+{#</html>#}
+
+{% extends 'bitr24/base.html' %}
+
+{% block content %}
+    {% for tbx in tbx %}
+        &nbsp;&nbsp;
+        <a href="{% url 'tbx_detail' tbx_slug=tbx.slug %}">{{ tbx.first_name }}</a>
+    {% endfor %}
+    
+{#        {{ tbx }}#}
+{#    all_tbx.html#}
+
+{% endblock content %}
+
+

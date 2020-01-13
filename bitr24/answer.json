@@ -1,0 +1,23 @@
+{
+  "message": {
+    "chat": {
+      "first_name": "Marat",
+      "id": 241462113,
+      "last_name": "S",
+      "type": "private",
+      "username": "Marat2010"
+    },
+    "date": 1578273039,
+    "from": {
+      "first_name": "Marat",
+      "id": 241462113,
+      "is_bot": false,
+      "language_code": "ru",
+      "last_name": "S",
+      "username": "Marat2010"
+    },
+    "message_id": 104,
+    "text": "P"
+  },
+  "update_id": 555290648
+}

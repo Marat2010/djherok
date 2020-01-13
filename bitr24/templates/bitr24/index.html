@@ -1,0 +1,15 @@
+{% extends 'bitr24/base_bitr24.html' %}
+
+
+{% block title %}
+    *Telebot Bitrix24*
+{% endblock %}
+
+{% block content %}
+    <h1 class="mb-5">Список ползователей бот-чата телеграм:</h1>
+    {% for chat in chats %}
+        {% include 'bitr24/includes/chat_card_template.html' %}
+    {% endfor %}
+{% endblock %}
+
+
