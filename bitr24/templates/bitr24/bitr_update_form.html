@@ -1,0 +1,32 @@
+{% extends 'bitr24/base_bitr24.html' %}
+
+{% block title %}
+    Редактирование пользов. Bx24 "{{ bitr.bx24_name|title }}" - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+
+
+    <form action="{{ bitr.get_update_url }}" method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+                {{ field.label }}
+                {{ field }}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Сохранить изменения польз. Bx24</button>
+    </form>
+
+
+
+{% endblock %}
+

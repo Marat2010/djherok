@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 import django.views.decorators.csrf
@@ -9,8 +11,10 @@ from bitrix24.bitrix24 import Bitrix24
 # from django.views.generic import DetailView
 
 
-from .models import Chat, Bitr
-from .utils import ObjectDetailMixin
+# from .models import Chat, Bitr
+from .models import *
+from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
+from .forms import BitrForm, ChatForm
 
 
 # Используем пока веб хук(входящий). Код(bx24_code_app) и ключ(bx24_key_app) (Серверное локальное приложение
@@ -154,6 +158,23 @@ class ChatDetail(ObjectDetailMixin, View):
     template = 'bitr24/chat_detail.html'
 
 
+class ChatCreate(ObjectCreateMixin, View):
+    model_form = ChatForm
+    template = 'bitr24/chat_create_form.html'
+
+
+class ChatUpdate(ObjectUpdateMixin, View):
+    model = Chat
+    model_form = ChatForm
+    template = 'bitr24/chat_update_form.html'
+
+
+class ChatDelete(ObjectDeleteMixin, View):
+    model = Chat
+    template = 'bitr24/chat_delete_form.html'
+    redirect_url = 'chats_list_url'
+
+
 class BitrDetail(ObjectDetailMixin, View):
     model = Bitr
     template = 'bitr24/bitr_detail.html'
@@ -164,21 +185,21 @@ def bitrs_list(request):
     return render(request, 'bitr24/bitrs_list.html', context={'bitrs': bitrs})
 
 
-    # def get(self, request, slug):
-    #     chat = get_object_or_404(Chats, slug__iexact=slug)
-    #     return render(request, 'bitr24/chat_detail.html', context={'chat': chat})
+class BitrCreate(ObjectCreateMixin, View):
+    model_form = BitrForm
+    template = 'bitr24/bitr_create.html'
 
-    # def get(self, request, slug):
-    #     bitr = get_object_or_404(Bitr, slug__iexact=slug)
-    #     return render(request, 'bitr24/bitr_detail.html', context={'bitr': bitr})
 
-# def bitr_detail(request, slug):
-#     bitr = Bitr.objects.get(slug__iexact=slug)
-#     return render(request, 'bitr24/bitr_detail.html', context={'bitr': bitr})
-# def chat_detail(request, slug):
-#     chat = Chats.objects.get(slug__iexact=slug)
-#     return render(request, 'bitr24/chat_detail.html', context={'chat': chat})
+class BitrUpdate(ObjectUpdateMixin, View):
+    model = Bitr
+    model_form = BitrForm
+    template = 'bitr24/bitr_update_form.html'
 
+
+class BitrDelete(ObjectDeleteMixin, View):
+    model = Bitr
+    template = 'bitr24/bitr_delete_form.html'
+    redirect_url = 'bitrs_list_url'
 
 
 def auth(request):
@@ -222,6 +243,71 @@ def auth(request):
 
     return HttpResponse("Ответ Bitrix24:\n{}".format(r_bx24))
 
+
+
+    # def get(self, request, slug):
+    #     bitr = Bitr.objects.get(slug__iexact=slug)
+    #     bound_form = BitrForm(instance=bitr)
+    #     return render(request, 'bitr24/bitr_update_form.html', context={'form': bound_form, 'bitr': bitr})
+    #
+    # def post(self, request, slug):
+    #     bitr = Bitr.objects.get(slug__iexact=slug)
+    #     bound_form = BitrForm(request.POST, instance=bitr)
+    #
+    #     if bound_form.is_valid():
+    #         new_tag = bound_form.save()
+    #         return redirect(new_tag)
+    #     return render(request, 'bitr24/bitr_update_form.html', context={'form': bound_form, 'bitr': bitr})
+
+
+
+    # def get(self, request, slug):
+    #     chat = get_object_or_404(Chats, slug__iexact=slug)
+    #     return render(request, 'bitr24/chat_detail.html', context={'chat': chat})
+
+    # def get(self, request, slug):
+    #     bitr = get_object_or_404(Bitr, slug__iexact=slug)
+    #     return render(request, 'bitr24/bitr_detail.html', context={'bitr': bitr})
+
+    # def bitr_detail(request, slug):
+    #     bitr = Bitr.objects.get(slug__iexact=slug)
+    #     return render(request, 'bitr24/bitr_detail.html', context={'bitr': bitr})
+    # def chat_detail(request, slug):
+    #     chat = Chats.objects.get(slug__iexact=slug)
+    #     return render(request, 'bitr24/chat_detail.html', context={'chat': chat})
+
+    # def get(self, request):
+    #     form = BitrForm()
+    #     return render(request, 'bitr24/bitr_create.html', context={'form': form})
+    #
+    # def post(self, request):
+    #     bound_form = BitrForm(request.POST)
+    #     if bound_form.is_valid():
+    #         new_bitr = bound_form.save()
+    #         return redirect(new_bitr)
+    #     return render(request, 'bitr24/bitr_create.html', context={'form': bound_form})
+
+    # def get(self, request):
+    #     form = ChatForm()
+    #     return render(request, 'bitr24/chat_create_form.html', context={'form': form})
+    #
+    # def post(self, request):
+    #     bound_form = ChatForm(request.POST)
+    #     if bound_form.is_valid():
+    #         new_chat = bound_form.save()
+    #         return redirect(new_chat)
+    #     return render(request, 'bitr24/chat_create_form.html', context={'form': bound_form})
+
+
+# class BitrDelete(ObjectDeleteMixin, View):
+#     def get(self, request, slug):
+#         bitr = Bitr.objects.get(slug__iexact=slug)
+#         return render(request, 'bitr24/bitr_delete_form.html', context={'bitr': bitr})
+#
+#     def post(self, request, slug):
+#         bitr = Bitr.objects.get(slug__iexact=slug)
+#         bitr.delete()
+#         return redirect(reverse('bitrs_list_url'))
 
 # class TbxView(View):
 #     template_name = 'bitr24/base.html'

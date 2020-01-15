@@ -1,0 +1,23 @@
+{% extends 'bitr24/base_bitr24.html' %}
+
+{% block title %}
+    Удаление пользов. телеграм "{{ chat.first_name|title }}" - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+
+    <form action="{{ chat.get_delete_url }}" method="post">
+        {% csrf_token %}
+
+        <h3>Вы точно хотите <b>"{{ chat.first_name|title }}"</b> удалить?</h3>
+        <a href="{{ chat.get_absolute_url }}"> Нет </a>
+        <button type="submit" name="button" class="btn btn-danger">Удалить</button>
+
+    </form>
+
+{% endblock %}
+
+
+{#    <form action="{% url 'chat_delete_url' slug=chat.slug %}" method="post">#}
+{#        <a href="{% url 'chat_detail_url' slug=chat.slug %}">Отменить</a>#}

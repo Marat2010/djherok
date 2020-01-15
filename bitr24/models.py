@@ -1,18 +1,36 @@
 from django.db import models
 # from django.urls import reverse
 from django.shortcuts import reverse
+from django.utils.text import slugify
+from time import time
+
+
+def gen_slug(s):
+    new_slug = slugify(s, allow_unicode=True)
+    return new_slug + '-' + str(int(time()))
 
 
 class Chat(models.Model):
     chat_id = models.IntegerField(default=1, verbose_name='Чат ID', unique=True)
     first_name = models.CharField(max_length=100, verbose_name='Имя пользователя', db_index=True)
-    slug = models.SlugField(max_length=100, unique=True, verbose_name='Slug')
+    slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Slug')
     username = models.CharField(max_length=100, null=True, blank=True, verbose_name='Пользователь')
     lang_code = models.CharField(max_length=2, verbose_name='Язык')
     bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats')
 
     def get_absolute_url(self):
         return reverse('chat_detail_url', kwargs={'slug': self.slug})
+
+    def get_update_url(self):
+        return reverse('chat_update_url', kwargs={'slug': self.slug})
+
+    def get_delete_url(self):
+        return reverse('chat_delete_url', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = gen_slug(self.first_name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{}, {}'.format(self.chat_id, self.first_name)
@@ -33,10 +51,17 @@ class Bitr(models.Model):
     def get_absolute_url(self):
         return reverse('bitr_detail_url', kwargs={'slug': self.slug})
 
+    def get_update_url(self):
+        return reverse('bitr_update_url', kwargs={'slug': self.slug})
+
+    def get_delete_url(self):
+        return reverse('bitr_delete_url', kwargs={'slug': self.slug})
+
     def __str__(self):
         # return '{}'.format(self.bx24_id)
         return '{}-{}'.format(self.bx24_id, self.bx24_name)
         # return self.bx24_id
+
 
     class Meta:
         verbose_name_plural = 'Данные Б24'

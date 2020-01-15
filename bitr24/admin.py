@@ -10,9 +10,9 @@ class ChatsAdmin(admin.ModelAdmin):
 
 
 class BitrAdmin(admin.ModelAdmin):
-    list_display = ('bx24_id', 'bx24_name', 'access_token', 'refresh_token', 'chats')
-    list_display_links = ('bx24_id', 'bx24_name', 'access_token', 'refresh_token', 'chats')
-    search_fields = ('bx24_id', 'bx24_name', 'access_token', 'refresh_token', 'chats', )
+    list_display = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats')
+    list_display_links = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats')
+    search_fields = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats', )
 
 
 class MessagesAdmin(admin.ModelAdmin):
