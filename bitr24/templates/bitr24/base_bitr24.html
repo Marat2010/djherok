@@ -1,1 +1,18 @@
 {% extends 'base.html' %}
+
+{% block admin-panel %}
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Create
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'chat_create_url' %}">Телеграм</a>
+            <a class="dropdown-item" href="{% url 'bitr_create_url' %}">Битрикс24</a>
+        </div>
+    </div>
+
+    <a href="{{ admin_object.get_update_url }}" class="btn btn-light edit" style="{% if detail %}display: block;{% endif %}">Edit</a>
+    <a href="{{ admin_object.get_delete_url }}" class="btn btn-danger delete" style="{% if detail %}display: block;{% endif %}">Delete</a>
+{% endblock %}
+
