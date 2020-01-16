@@ -18,6 +18,7 @@ from .utils import *
 from .forms import BitrForm, ChatForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 # Используем пока веб хук(входящий). Код(bx24_code_app) и ключ(bx24_key_app) (Серверное локальное приложение
@@ -152,8 +153,14 @@ def index(request):
 
 
 def chats_list(request):
-    chats = Chat.objects.all()
-    paginator = Paginator(chats, 2)
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        chats = Chat.objects.filter(Q(first_name__contains=search_query) | Q(username__contains=search_query))
+    else:
+        chats = Chat.objects.all()
+
+    paginator = Paginator(chats, 3)
 
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
