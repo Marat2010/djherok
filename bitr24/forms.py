@@ -11,7 +11,7 @@ class BitrForm(forms.ModelForm):
         widgets = {
             'bx24_id': forms.TextInput(attrs={'class': 'form-control'}),
             'bx24_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'bx24_slug': forms.TextInput(attrs={'class': 'form-control'}),
+            'slug': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_slug(self):
@@ -26,7 +26,7 @@ class BitrForm(forms.ModelForm):
 class ChatForm(forms.ModelForm):
     class Meta:
         model = Chat
-        fields = ['chat_id', 'first_name', 'slug', 'username', 'lang_code', 'bitrs']
+        fields = ['chat_id', 'first_name', 'slug', 'username', 'bitrs', 'lang_code']
 
         widgets ={
             'chat_id': forms.TextInput(attrs={'class': 'form-control'}),

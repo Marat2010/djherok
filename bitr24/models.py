@@ -13,10 +13,11 @@ def gen_slug(s):
 class Chat(models.Model):
     chat_id = models.IntegerField(default=1, verbose_name='Чат ID', unique=True)
     first_name = models.CharField(max_length=100, verbose_name='Имя пользователя', db_index=True)
-    slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Slug')
+    slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
     username = models.CharField(max_length=100, null=True, blank=True, verbose_name='Пользователь')
     lang_code = models.CharField(max_length=2, verbose_name='Язык')
     bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats')
+    date_chat = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл.к боту')
 
     def get_absolute_url(self):
         return reverse('chat_detail_url', kwargs={'slug': self.slug})
@@ -28,7 +29,8 @@ class Chat(models.Model):
         return reverse('chat_delete_url', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
-        if not self.id:
+        # if not self.id:
+        if not self.id or not self.slug:
             self.slug = gen_slug(self.first_name)
         super().save(*args, **kwargs)
 
@@ -38,15 +40,17 @@ class Chat(models.Model):
     class Meta:
         verbose_name_plural = 'Чаты телеграм бота'
         verbose_name = 'Чат'
-        ordering = ['chat_id']
+        # ordering = ['chat_id']
+        ordering = ['-date_chat']
 
 
 class Bitr(models.Model):
     bx24_id = models.IntegerField(default=0, verbose_name='ID пользователя Б24', unique=True)
     bx24_name = models.CharField(default='', max_length=100, verbose_name='Имя в Битрикс24', db_index=True)
-    slug = models.SlugField(max_length=100, unique=True, verbose_name='Slug')
+    slug = models.SlugField(max_length=100, unique=True, verbose_name='Слаг(Slug)')
     access_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен доступа Б24')
     refresh_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен обновления Б24')
+    date_bx24 = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл. к Б24')
 
     def get_absolute_url(self):
         return reverse('bitr_detail_url', kwargs={'slug': self.slug})
@@ -62,11 +66,10 @@ class Bitr(models.Model):
         return '{}-{}'.format(self.bx24_id, self.bx24_name)
         # return self.bx24_id
 
-
     class Meta:
         verbose_name_plural = 'Данные Б24'
         verbose_name = 'Данные Б24'
-        ordering = ['bx24_id']
+        ordering = ['-date_bx24']
 
 
 class Messages(models.Model):
@@ -80,7 +83,8 @@ class Messages(models.Model):
     class Meta:
         verbose_name_plural = 'Сообщения'
         verbose_name = 'Сообщение'
-        ordering = ['pk']
+        # ordering = ['pk']
+        ordering = ['-date_msg']
 
 
     # chatB = models.ForeignKey(Chats, on_delete=models.CASCADE, verbose_name='Чат ID, Пользователь')

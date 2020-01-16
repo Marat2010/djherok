@@ -4,9 +4,7 @@
     Редактирование пользов. телеграм "{{ chat.first_name|title }}" - {{ block.super }}
 {% endblock %}
 
-
 {% block content %}
-
 
     <form action="{{ chat.get_update_url }}" method="post">
         {% csrf_token %}
@@ -22,11 +20,7 @@
                 {{ field }}
             </div>
         {% endfor %}
-
         <button type="submit" class="btn btn-primary">Сохранить изменения польз. телеграм</button>
     </form>
 
-
-
 {% endblock %}
-

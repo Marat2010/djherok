@@ -4,11 +4,9 @@
     Создание пользов. Bx24 - {{ block.super }}
 {% endblock %}
 
-
 {% block content %}
 
-
-    <form action="{% url 'bitr_create_url' %}" method="post">
+    <form class="" action="{% url 'bitr_create_url' %}" method="post">
         {% csrf_token %}
 
         {% for field in form %}
@@ -22,11 +20,7 @@
                 {{ field }}
             </div>
         {% endfor %}
-
-        <button type="submit" class="btn btn-primary">Создать польз. Bx24</button>
+        <button type="submit" name="button" class="btn btn-primary">Создать польз. Bx24</button>
     </form>
-    
-    
-    
-{% endblock %}
 
+{% endblock %}

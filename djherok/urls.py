@@ -17,8 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import redirect_bitr24
+
 
 urlpatterns = [
+    path('', redirect_bitr24),
     path('si/', include('si.urls')),
     path('weatherBot/', include('weatherBot.urls')),
     path('admin/', admin.site.urls),

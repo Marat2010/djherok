@@ -5,15 +5,14 @@
     <div class="card-body">
         <h5 class="card-title">Чат ID: {{ chat.chat_id }},   Язык:{{ chat.lang_code }}</h5>
         <p class="card-text">Username: {{ chat.username|truncatewords:8 }}</p>
+        <p class="card-text">Дата подкл: {{ chat.date_chat}}</p>
 {#        <a href="{% url 'chat_detail_url' slug=chat.slug %}" class="btn btn-light">Посмотреть</a>#}
         <a href="{{ chat.get_absolute_url }}" class="btn btn-light">Посмотреть</a>
-{#        <a href="{% chat.get_absolute_url %}" class="btn btn-light">Посмотреть</a>#}
     </div>
     <div class="card-footer text-muted">
         Пользователь Битрикс24:
         {% for birt in chat.bitrs.all %}
             <a href="{{ birt.get_absolute_url }}">{{ birt.bx24_id}}-{{ birt.bx24_name }},</a>
         {% endfor %}
-
     </div>
 </div>

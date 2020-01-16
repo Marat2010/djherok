@@ -4,9 +4,7 @@
     Редактирование пользов. Bx24 "{{ bitr.bx24_name|title }}" - {{ block.super }}
 {% endblock %}
 
-
 {% block content %}
-
 
     <form action="{{ bitr.get_update_url }}" method="post">
         {% csrf_token %}
@@ -22,11 +20,7 @@
                 {{ field }}
             </div>
         {% endfor %}
-
         <button type="submit" class="btn btn-primary">Сохранить изменения польз. Bx24</button>
     </form>
 
-
-
 {% endblock %}
-

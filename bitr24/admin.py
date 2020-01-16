@@ -4,15 +4,15 @@ from .models import Messages, Chat, Bitr
 
 
 class ChatsAdmin(admin.ModelAdmin):
-    list_display = ('chat_id', 'first_name', 'slug', 'username', 'lang_code')
+    list_display = ('chat_id', 'first_name', 'slug', 'date_chat', 'username', 'lang_code')
     list_display_links = ('chat_id', 'first_name', 'slug', 'username', 'lang_code')
-    search_fields = ('chat_id', 'first_name', 'slug', 'username', 'lang_code', 'bitrs', )
+    search_fields = ('chat_id', 'first_name', 'slug', 'date_chat', 'username', 'lang_code', 'bitrs', )
 
 
 class BitrAdmin(admin.ModelAdmin):
-    list_display = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats')
+    list_display = ('bx24_id', 'bx24_name', 'slug', 'date_bx24', 'access_token', 'refresh_token', 'chats')
     list_display_links = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats')
-    search_fields = ('bx24_id', 'bx24_name', 'slug', 'access_token', 'refresh_token', 'chats', )
+    search_fields = ('bx24_id', 'bx24_name', 'slug', 'date_bx24', 'access_token', 'refresh_token', 'chats', )
 
 
 class MessagesAdmin(admin.ModelAdmin):

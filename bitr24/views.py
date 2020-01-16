@@ -13,8 +13,11 @@ from bitrix24.bitrix24 import Bitrix24
 
 # from .models import Chat, Bitr
 from .models import *
-from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
+# from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
+from .utils import *
 from .forms import BitrForm, ChatForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 
 
 # Используем пока веб хук(входящий). Код(bx24_code_app) и ключ(bx24_key_app) (Серверное локальное приложение
@@ -150,7 +153,31 @@ def index(request):
 
 def chats_list(request):
     chats = Chat.objects.all()
-    return render(request, 'bitr24/index.html', context={'chats': chats})
+    paginator = Paginator(chats, 2)
+
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+
+    is_paginated = page.has_other_pages()
+
+    if page.has_previous():
+        prev_url = '?page={}'.format(page.previous_page_number())
+    else:
+        prev_url = ''
+
+    if page.has_next():
+        next_url = '?page={}'.format(page.next_page_number())
+    else:
+        next_url = ''
+
+    context = {
+        'page_object': page,
+        'is_paginated': is_paginated,
+        'prev_url': prev_url,
+        'next_url': next_url
+    }
+
+    return render(request, 'bitr24/index.html', context=context)
 
 
 class ChatDetail(ObjectDetailMixin, View):
@@ -158,26 +185,24 @@ class ChatDetail(ObjectDetailMixin, View):
     template = 'bitr24/chat_detail.html'
 
 
-class ChatCreate(ObjectCreateMixin, View):
+class ChatCreate(LoginRequiredMixin, ObjectCreateMixin, View):
     model_form = ChatForm
     template = 'bitr24/chat_create_form.html'
+    raise_exception = True
 
 
-class ChatUpdate(ObjectUpdateMixin, View):
+class ChatUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
     model = Chat
     model_form = ChatForm
     template = 'bitr24/chat_update_form.html'
+    raise_exception = True
 
 
-class ChatDelete(ObjectDeleteMixin, View):
+class ChatDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
     model = Chat
     template = 'bitr24/chat_delete_form.html'
     redirect_url = 'chats_list_url'
-
-
-class BitrDetail(ObjectDetailMixin, View):
-    model = Bitr
-    template = 'bitr24/bitr_detail.html'
+    raise_exception = True
 
 
 def bitrs_list(request):
@@ -185,21 +210,29 @@ def bitrs_list(request):
     return render(request, 'bitr24/bitrs_list.html', context={'bitrs': bitrs})
 
 
-class BitrCreate(ObjectCreateMixin, View):
+class BitrDetail(ObjectDetailMixin, View):
+    model = Bitr
+    template = 'bitr24/bitr_detail.html'
+
+
+class BitrCreate(LoginRequiredMixin, ObjectCreateMixin, View):
     model_form = BitrForm
     template = 'bitr24/bitr_create.html'
+    raise_exception = True
 
 
-class BitrUpdate(ObjectUpdateMixin, View):
+class BitrUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
     model = Bitr
     model_form = BitrForm
     template = 'bitr24/bitr_update_form.html'
+    raise_exception = True
 
 
-class BitrDelete(ObjectDeleteMixin, View):
+class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
     model = Bitr
     template = 'bitr24/bitr_delete_form.html'
     redirect_url = 'bitrs_list_url'
+    raise_exception = True
 
 
 def auth(request):
