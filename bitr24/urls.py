@@ -5,7 +5,12 @@ from .views import *
 
 urlpatterns = [
     # path('', index),
+    # path('', redirect_to),
     path('auth/', auth, name='auth'),
+    # path('tg/', tg, name='tg_url'),
+    # path('tg/', Tg.as_view(), name='tg_url'),
+
+    # path('chat/', chats_list, name='chats_list_url'),
     path('', chats_list, name='chats_list_url'),
     path('chat/create/', ChatCreate.as_view(), name='chat_create_url'),
     path('chat/<str:slug>/', ChatDetail.as_view(), name='chat_detail_url'),

@@ -15,7 +15,7 @@ from bitrix24.bitrix24 import Bitrix24
 from .models import *
 # from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
 from .utils import *
-from .forms import BitrForm, ChatForm
+from .forms import BitrForm, ChatForm, MessageForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -58,98 +58,179 @@ def answ_bx24(msg):     # обработчик запроса от битрих2
     return answer
 
 
-@django.views.decorators.csrf.csrf_exempt
-def index(request):
-    if request.method == 'POST':        # if request.content_type == 'application/json':
-        r = request.body.decode('utf-8')
-        r = json.loads(r)
-        write_json(r)   # Запсиь данных чата в файла answer.json.
-        chat_id = r['message']['chat']['id']
-        message = r['message']['text']
-        up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
+# @django.views.decorators.csrf.csrf_exempt
+# def index(request):
+#     if request.method == 'POST':        # if request.content_type == 'application/json':
+#         r = request.body.decode('utf-8')
+#         r = json.loads(r)
+#         write_json(r)   # Запсиь данных чата в файла answer.json.
+#         chat_id = r['message']['chat']['id']
+#         message = r['message']['text']
+#         up_data_chat(chat_id=chat_id, message=message)  # обновление данных в списке словарей чата.
+#
+#         if message in ['/profile', 'P']:
+#             bx24 = Bitrix24('telebot.bitrix24.ru', bx24_code_app, bx24_key_app)
+#             bx24.access_token = read_json(file_bx24_tok)['access_token']
+#             print(bx24.call_method('user.get'))
+#             try:
+#                 r_bx24 = bx24.call_method('user.get')
+#                 # r_bx24 = bx24.call_method('user.get')['error']
+#             except Exception:
+#                 refresh_token = read_json(file_bx24_tok)['refresh_token']
+#                 # bx24.refresh_token = refresh_token
+#                 bx24.refresh_tokens(refresh_token=refresh_token)  # Обновить текущие токены (время жизни 'access_token'-1 час)
+#                 r_bx24 = bx24.call_method('user.get')
+#
+#             print("--Тест в Телеграмм Битрикс24: {}".format(r_bx24))
+#             answer = 'Инфо:\n'
+#             for i in r_bx24['result']:
+#                 answer = answer + '* {}: {} {}\n'.format(i['NAME'], i['PERSONAL_MOBILE'], i['EMAIL'])
+#
+#         elif message in ['/help', '/start', 'H']:
+#             r_bx24 = send_bx24('profile')
+#             answer = 'Добро пожаловать в Bitrix24, {}.\n Команды:\n/task или "T" - просмотр задач и их дедлайн\n' \
+#                      '/profile или "P" - просмотр своего профиля\n' \
+#                      '/L "текст" - сообщение которое разместиться в живой ленте'.format(r_bx24['result']['NAME'])
+#         elif message == 'Лиды':
+#             # r_bx24 = send_bx24('crm.lead.get', id=1)
+#             r_bx24 = send_bx24('crm.lead.list')
+#             leads = r_bx24['result']
+#             answer = ''
+#             for i in leads:
+#                 date = str(i['BIRTHDATE'])
+#                 date = date.replace('T', ' ')[:16]
+#                 answer = answer + '* {}\n ->ДР: {}\n'.format(i['TITLE'], date)
+#             answer = 'Лиды получены:\n {}'.format(answer)
+#         elif message in ['/task', 'T']:
+#             r_bx24 = send_bx24('tasks.task.list')
+#             tasks = r_bx24['result']['tasks']
+#             answer = ''
+#             for i in tasks:
+#                 answer = answer + '*' + i['title'] + '\n'
+#                 try:
+#                     date = str(i['deadline'])
+#                     date = date.replace('T', ' ')[:16]
+#                 except Exception as ex:
+#                     print("---Исключение: {}".format(ex))
+#                     date = "не установлен"
+#                 answer = answer + " --> Дедлайн: {}\n".format(str(date))
+#             answer = '*** Кол-во задач: {} ***\n{}'.format(r_bx24['total'], answer)
+#         elif '/L' in message:
+#             ll = message.split()
+#             if len(ll) > 1:
+#                 msg = message[3:]
+#                 send_bx24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=msg)
+#             r_bx24 = send_bx24('log.blogpost.get')
+#             r_bx24['result'] = r_bx24['result'][:7]  # уменьшение кол-ва сообщ до 7
+#             msgs = ''
+#             for i in r_bx24['result']:
+#                 msgs += "{}: {}\n".format(i['DATE_PUBLISH'][11:16], i['DETAIL_TEXT'])
+#             print(msgs)
+#             answer = '-** Последние сообщения: **-\n*' + msgs
+#         else:
+#             r_bx24 = send_bx24('profile')
+#             answer = 'Что именно хотели, {} {}?'.format(r_bx24['result']['NAME'], r_bx24['result']['LAST_NAME'])
+#         write_json(r_bx24, file_b24)  # запись в свой файл - b24.json для дальнейшего анализа
+#
+#         # answer = answ_bx24(message)
+#         print(answer)
+#         r = send_message(chat_id, text=answer)
+#         return HttpResponse(r, content_type="application/json")
+#     else:
+#         d = read_json(file_b24)
+#         d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
+#
+#         data_bot = read_json(file_data_bot)
+#         ans_d_bot = ""
+#         for i in data_bot:
+#             ans_d_bot += 'ID: {:>9}. Вр: {}. Польз: {:>10}. Запросов: {:>4}. Посл: {} - ({}). Яз:{}\n' \
+#                          ' ---/ Запросы: {} \---\n'.\
+#                 format(i['chat_id'], i['date_msg'], i['username'], i['num_req'],
+#                        i['location'][0], i['location'][1], i['lang_code'], i['requests'])
+#
+#         return HttpResponse("Ответ Bitrix24:\n{}\n Данные чата:\n{}".format
+#                             (d, ans_d_bot), content_type="application/json")
 
-        if message in ['/profile', 'P']:
-            bx24 = Bitrix24('telebot.bitrix24.ru', bx24_code_app, bx24_key_app)
-            bx24.access_token = read_json(file_bx24_tok)['access_token']
-            print(bx24.call_method('user.get'))
-            try:
-                r_bx24 = bx24.call_method('user.get')
-                # r_bx24 = bx24.call_method('user.get')['error']
-            except Exception:
-                refresh_token = read_json(file_bx24_tok)['refresh_token']
-                # bx24.refresh_token = refresh_token
-                bx24.refresh_tokens(refresh_token=refresh_token)  # Обновить текущие токены (время жизни 'access_token'-1 час)
-                r_bx24 = bx24.call_method('user.get')
 
-            print("--Тест в Телеграмм Битрикс24: {}".format(r_bx24))
-            answer = 'Инфо:\n'
-            for i in r_bx24['result']:
-                answer = answer + '* {}: {} {}\n'.format(i['NAME'], i['PERSONAL_MOBILE'], i['EMAIL'])
+# @django.views.decorators.csrf.csrf_exempt
+# def tg(request):
+#     if request.method == 'POST':        # if request.content_type == 'application/json':
+#         r = request.body.decode('utf-8')
+#         r = json.loads(r)
+#         print('---r---:{}'.format(r))
+#         write_json(r)   # Запсиь данных чата в файла answer.json.
+#         chat_id = r['message']['chat']['id']
+#         first_name = r['message']['chat']['first_name']
+#         username = r['message']['chat']['username']
+#         message = r['message']['text']
+#         chat_tg = {'chat_id': chat_id, 'first_name': first_name, 'username': username}
+#         print('--chat_tg--{}:'.format(chat_tg))
+#         print('--chat_id--:{}'.format(chat_id))
+#         try:
+#             chat = Chat.objects.get(chat_id=chat_id)
+#
+#         #     chat = Chat.objects.get(chat_id=100)
+#         #     chat = Chat.objects.get('chat_id' = int(chat_id))
+#         #     print('----chat---:'.format(chat))
+#         except Exception:
+#
+#             chat.chat_id = chat_id
+#         chat.mmessage.message=message
+#         chat.first_name = first_name
+#         chat.username = username
+#         # chat.objects['messages'] = message
+#         chat.message = message
+#         # message.message = message
+#         # chat.messages = message
+#         chat.save()
+#
+#
+#         # print('---chat---{}--msg----{}'.format(chat, message))
+#         answer = '-Все хорошо!!!-'
+#         r = send_message(chat_id, text=answer)
+#         return HttpResponse(r, content_type="application/json")
+#     # def get(self, request, slug):
+#     #     bitr = Bitr.objects.get(slug__iexact=slug)
+#     #     bound_form = BitrForm(instance=bitr)
+#     #     return render(request, 'bitr24/bitr_update_form.html', context={'form': bound_form, 'bitr': bitr})
+#     #
+#     # def post(self, request, slug):
+#     #     bitr = Bitr.objects.get(slug__iexact=slug)
+#     #     bound_form = BitrForm(request.POST, instance=bitr)
+#     #
+#     #     if bound_form.is_valid():
+#     #         new_tag = bound_form.save()
+#     #         return redirect(new_tag)
+#     #     return render(request, 'bitr24/bitr_update_form.html', context={'form': bound_form, 'bitr': bitr})
+#     else:
+#         return HttpResponse('<h1>qwe QWE Редирект</h1>')
+#
+#     # bitrs = Bitr.objects.all()
+#     # return render(request, 'bitr24/bitrs_list.html', context={'bitrs': bitrs})
 
-        elif message in ['/help', '/start', 'H']:
-            r_bx24 = send_bx24('profile')
-            answer = 'Добро пожаловать в Bitrix24, {}.\n Команды:\n/task или "T" - просмотр задач и их дедлайн\n' \
-                     '/profile или "P" - просмотр своего профиля\n' \
-                     '/L "текст" - сообщение которое разместиться в живой ленте'.format(r_bx24['result']['NAME'])
-        elif message == 'Лиды':
-            # r_bx24 = send_bx24('crm.lead.get', id=1)
-            r_bx24 = send_bx24('crm.lead.list')
-            leads = r_bx24['result']
-            answer = ''
-            for i in leads:
-                date = str(i['BIRTHDATE'])
-                date = date.replace('T', ' ')[:16]
-                answer = answer + '* {}\n ->ДР: {}\n'.format(i['TITLE'], date)
-            answer = 'Лиды получены:\n {}'.format(answer)
-        elif message in ['/task', 'T']:
-            r_bx24 = send_bx24('tasks.task.list')
-            tasks = r_bx24['result']['tasks']
-            answer = ''
-            for i in tasks:
-                answer = answer + '*' + i['title'] + '\n'
-                try:
-                    date = str(i['deadline'])
-                    date = date.replace('T', ' ')[:16]
-                except Exception as ex:
-                    print("---Исключение: {}".format(ex))
-                    date = "не установлен"
-                answer = answer + " --> Дедлайн: {}\n".format(str(date))
-            answer = '*** Кол-во задач: {} ***\n{}'.format(r_bx24['total'], answer)
-        elif '/L' in message:
-            ll = message.split()
-            if len(ll) > 1:
-                msg = message[3:]
-                send_bx24('log.blogpost.add', POST_TITLE='-*** От БОССА ***-', POST_MESSAGE=msg)
-            r_bx24 = send_bx24('log.blogpost.get')
-            r_bx24['result'] = r_bx24['result'][:7]  # уменьшение кол-ва сообщ до 7
-            msgs = ''
-            for i in r_bx24['result']:
-                msgs += "{}: {}\n".format(i['DATE_PUBLISH'][11:16], i['DETAIL_TEXT'])
-            print(msgs)
-            answer = '-** Последние сообщения: **-\n*' + msgs
-        else:
-            r_bx24 = send_bx24('profile')
-            answer = 'Что именно хотели, {} {}?'.format(r_bx24['result']['NAME'], r_bx24['result']['LAST_NAME'])
-        write_json(r_bx24, file_b24)  # запись в свой файл - b24.json для дальнейшего анализа
 
-        # answer = answ_bx24(message)
-        print(answer)
-        r = send_message(chat_id, text=answer)
-        return HttpResponse(r, content_type="application/json")
-    else:
-        d = read_json(file_b24)
-        d = json.dumps(d, indent=2, ensure_ascii=False, sort_keys=True)  # print("Вывод:\n" + d)
-
-        data_bot = read_json(file_data_bot)
-        ans_d_bot = ""
-        for i in data_bot:
-            ans_d_bot += 'ID: {:>9}. Вр: {}. Польз: {:>10}. Запросов: {:>4}. Посл: {} - ({}). Яз:{}\n' \
-                         ' ---/ Запросы: {} \---\n'.\
-                format(i['chat_id'], i['date_msg'], i['username'], i['num_req'],
-                       i['location'][0], i['location'][1], i['lang_code'], i['requests'])
-
-        return HttpResponse("Ответ Bitrix24:\n{}\n Данные чата:\n{}".format
-                            (d, ans_d_bot), content_type="application/json")
+# class Tg(View):
+#     model = Chat
+#     model_form = ChatForm
+#     template = 'bitr24/chat_update_form.html'
+#     # raise_exception = True
+#     chat_id = 300
+#     slug = model.objects.get(chat_id=chat_id)
+#     slug = slug.slug
+#
+#     def get(self, request, slug='vasya-1579115331'):
+#         obj = self.model.objects.get(slug__iexact=slug)
+#         bound_form = self.model_form(instance=obj)
+#         return render(request, self.template, context={'form': bound_form, self.model.__name__.lower(): obj})
+#
+#     def post(self, request, slug):
+#         obj = self.model.objects.get(slug__iexact=slug)
+#         bound_form = self.model_form(request.POST, instance=obj)
+#
+#         if bound_form.is_valid():
+#             new_obj = bound_form.save()
+#             return redirect(new_obj)
+#         return render(request, self.template, context={'form': bound_form, self.model.__name__.lower(): obj})
 
 
 def chats_list(request):
@@ -160,7 +241,7 @@ def chats_list(request):
     else:
         chats = Chat.objects.all()
 
-    paginator = Paginator(chats, 3)
+    paginator = Paginator(chats, 5)
 
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
@@ -284,6 +365,19 @@ def auth(request):
     return HttpResponse("Ответ Bitrix24:\n{}".format(r_bx24))
 
 
+# https://dd31cddc.ngrok.io
+# https://7d55509d.ngrok.io
+# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://dd31cddc.ngrok.io/bitr24/tg/
+# deleteWebhook     getWebhookInfo  setWebhook
+
+
+    # def redirect_to(request):
+    # return redirect('chats_list_url', permanent=True)
+    # return redirect('tg_url', permanent=True)
+    # return redirect('/bitr24/chat/')
+    # return redirect('http://127.0.0.1:8000/bitr24/chat/', permanent=True)
+    #     # return redirect('chats_list_url', permanent=True)
+    #     return redirect('bitr24/tg/tg')
 
     # def get(self, request, slug):
     #     bitr = Bitr.objects.get(slug__iexact=slug)
@@ -298,8 +392,6 @@ def auth(request):
     #         new_tag = bound_form.save()
     #         return redirect(new_tag)
     #     return render(request, 'bitr24/bitr_update_form.html', context={'form': bound_form, 'bitr': bitr})
-
-
 
     # def get(self, request, slug):
     #     chat = get_object_or_404(Chats, slug__iexact=slug)
@@ -337,8 +429,6 @@ def auth(request):
     #         new_chat = bound_form.save()
     #         return redirect(new_chat)
     #     return render(request, 'bitr24/chat_create_form.html', context={'form': bound_form})
-
-
 # class BitrDelete(ObjectDeleteMixin, View):
 #     def get(self, request, slug):
 #         bitr = Bitr.objects.get(slug__iexact=slug)
@@ -445,7 +535,8 @@ def auth(request):
 #   response_type%253Dcode%26mode%3Dpage
 
 # https://f99e84fd.ngrok.io/bitr24/
-# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://12cea2ed.ngrok.io/bitr24/
+# https://80e2fbd3.ngrok.io
+# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://80e2fbd3.ngrok.io/
 
 # bx24 = Bitrix24('your-domain.bitr24.com' ,  'your.client.id' ,  'your_client_secret' )
 # bx24  =  Bitrix24 ( 'your-domain.bitr24.com' ,  'your.client.id' ,  'your_client_secret' )

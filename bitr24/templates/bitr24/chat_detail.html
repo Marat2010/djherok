@@ -6,18 +6,31 @@
 
 
 {% block content %}
-    <h1 class="class mt-5">
-        Имя телеграм пользователя: {{ chat.first_name }}
-    </h1>
+    <h5 class="class mt-5">
+        Имя, Фамилия пользователя:<br> <b>{{ chat.first_name }} {{ chat.last_name }}</b>
+    </h5>
     <p>
-        Чат ID: {{ chat.chat_id }}<br><br>
-        Username: {{ chat.username }}<br><br>
-        Язык: {{ chat.lang_code }}<br><br>
-        Слаг: {{ chat.slug }}<br><br>
-        Дата подкл: {{ chat.date_chat}}<br><br>
+        Чат ID: {{ chat.chat_id }}<br>
+        Username: {{ chat.username }}<br>
+        Язык: {{ chat.lang_code }}<br>
+        Слаг: {{ chat.slug }}<br>
+        <div class="card-footer text-muted">
+            <b><u>Сообщения:</u></b><br>
+            {% for message in chat.messages.all %}
+{#                <a href="{{ message.get_absolute_url }}">{{ message.date_msg}}:- {{ message.message }},</a>#}
+{#                <a href="{{ message.get_absolute_url }}"><b>{{ message.date_msg}}:</b></a>  {{ message.message|truncatewords:10 }}<br>#}
+                <a href="{{ message.get_absolute_url }}"><b>{{ message.date_msg}}:</b></a>  {{ message.message|truncatewords:10 }}<br>
+            {% endfor %}
+        </div>
 
-{#        Польз.Bx24: {{ chat.bitrs }}#}
+
+         <br>Дата подкл: {{ chat.date_chat}}<br>
+
     </p>
+
+
+        {% comment %}for{% endcomment %}
+{#        Польз.Bx24: {{ chat.bitrs }}#}
 
 {#    <h1 class="mb-5">Вход под пользователем Битрикс24: "{{ ch }}-{{ bitr.bx24_name|title }}" с бот-чата телеграм:</h1>#}
 {#    {% for chat in bitr.chats.all %}#}

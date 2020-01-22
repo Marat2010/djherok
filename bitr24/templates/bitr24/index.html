@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="mb-5">Список ползователей бот-чата телеграм:</h1>
+    <h3 class="mb-5">Пользователи телеграм бота:</h3>
 
     {% for chat in page_object.object_list %}
         {% include 'bitr24/includes/chat_card_template.html' %}

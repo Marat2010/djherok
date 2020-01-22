@@ -17,8 +17,6 @@ class Chat(models.Model):
     slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
     username = models.CharField(max_length=100, null=True, blank=True, verbose_name='Username')
     lang_code = models.CharField(max_length=2, verbose_name='Язык')
-    # messages = models.ForeignKey('Message', blank=True, on_delete=models.CASCADE, related_name='chats',
-    #                              verbose_name='Сообщения')
     bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats', verbose_name='Имя в Битрикс24')
     date_chat = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл.к боту')
 

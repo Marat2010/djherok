@@ -1,9 +1,9 @@
 <div class="card mb-4">
     <div class="card-header">
-        Имя: {{ chat.first_name }}
+        <b>Имя, Фамилия: {{ chat.first_name }} {{ chat.last_name }}</b>
     </div>
     <div class="card-body">
-        <h5 class="card-title">Чат ID: {{ chat.chat_id }},   Язык:{{ chat.lang_code }}</h5>
+        <b><h5 class="card-title">Чат ID: {{ chat.chat_id }},   Язык:{{ chat.lang_code }}</h5></b>
         <p class="card-text">Username: {{ chat.username|truncatewords:8 }}</p>
         <p class="card-text">Дата подкл: {{ chat.date_chat}}</p>
 {#        <a href="{% url 'chat_detail_url' slug=chat.slug %}" class="btn btn-light">Посмотреть</a>#}

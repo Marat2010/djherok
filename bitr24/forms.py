@@ -1,5 +1,5 @@
 from django import forms
-from .models import Chat, Bitr
+from .models import Chat, Bitr, Messages
 from django.core.exceptions import ValidationError
 
 
@@ -23,18 +23,33 @@ class BitrForm(forms.ModelForm):
         return new_slug
 
 
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Messages
+        fields = ['message']
+
+        widgets = {
+            'message': forms.Textarea(attrs={'class': 'form-control'}),
+            # 'date_msg': forms.DateTimeField(attrs={'class': 'form-control'}),
+        }
+
+
 class ChatForm(forms.ModelForm):
     class Meta:
         model = Chat
-        fields = ['chat_id', 'first_name', 'slug', 'username', 'bitrs', 'lang_code']
+        fields = ['chat_id', 'first_name', 'last_name', 'slug', 'username', 'bitrs', 'lang_code']
 
-        widgets ={
+        widgets = {
             'chat_id': forms.TextInput(attrs={'class': 'form-control'}),
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'slug': forms.TextInput(attrs={'class': 'form-control'}),
-            'username': forms.Textarea(attrs={'class': 'form-control'}),
-            'lang_code': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'username': forms.Textarea(attrs={'class': 'form-control'}),
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'messages': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            # 'chat': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'bitrs': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'lang_code': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_slug(self):
