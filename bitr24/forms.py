@@ -31,6 +31,7 @@ class MessageForm(forms.ModelForm):
         widgets = {
             'message': forms.Textarea(attrs={'class': 'form-control'}),
             # 'date_msg': forms.DateTimeField(attrs={'class': 'form-control'}),
+            # 'date_msg': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 
@@ -38,6 +39,7 @@ class ChatForm(forms.ModelForm):
     class Meta:
         model = Chat
         fields = ['chat_id', 'first_name', 'last_name', 'slug', 'username', 'bitrs', 'lang_code']
+        # fields = ['chat_id', 'first_name', 'last_name', 'slug', 'username', 'messages', 'bitrs', 'lang_code']
 
         widgets = {
             'chat_id': forms.TextInput(attrs={'class': 'form-control'}),
@@ -46,7 +48,7 @@ class ChatForm(forms.ModelForm):
             'slug': forms.TextInput(attrs={'class': 'form-control'}),
             # 'username': forms.Textarea(attrs={'class': 'form-control'}),
             'username': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'messages': forms.SelectMultiple(attrs={'class': 'form-control'}),
+            'messages': forms.SelectMultiple(attrs={'class': 'form-control'}),
             # 'chat': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'bitrs': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'lang_code': forms.TextInput(attrs={'class': 'form-control'}),

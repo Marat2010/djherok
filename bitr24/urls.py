@@ -8,7 +8,10 @@ urlpatterns = [
     # path('', redirect_to),
     path('auth/', auth, name='auth'),
     # path('tg/', tg, name='tg_url'),
+
     # path('tg/', Tg.as_view(), name='tg_url'),
+    path('tg/',  csrf_exempt(Tg.as_view()), name='tg_url'),
+    # path('tg/', Tg, name='tg_url'),
 
     # path('chat/', chats_list, name='chats_list_url'),
     path('', chats_list, name='chats_list_url'),

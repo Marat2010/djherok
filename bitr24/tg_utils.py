@@ -50,6 +50,7 @@ def read_ans():    # Чтение данных чата бота из файла
         except KeyError:
             lang = 'en'
         f_name = data_answer['message']['chat']['first_name']
+        last_name = data_answer['message']['chat']['last_name']
         try:
             username = data_answer['message']['chat']['username']
         except Exception:
@@ -57,7 +58,7 @@ def read_ans():    # Чтение данных чата бота из файла
         # username = data_answer['message']['chat']['username']
         msg = data_answer['message']['text']
         data.update({"chat_id": ch_id, "lang_code": lang, "message": msg,
-                     "date_msg": date_msg, "first_name": f_name, "username": username})
+                     "date_msg": date_msg, "first_name": f_name, "last_name": last_name, "username": username})
     except KeyError:
         print("---*** KeyError в 'read_ans()' , не считались данные из 'answer.json' ***---")
     return data

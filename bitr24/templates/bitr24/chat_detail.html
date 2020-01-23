@@ -9,11 +9,11 @@
     <h5 class="class mt-5">
         Имя, Фамилия пользователя:<br> <b>{{ chat.first_name }} {{ chat.last_name }}</b>
     </h5>
-    <p>
         Чат ID: {{ chat.chat_id }}<br>
         Username: {{ chat.username }}<br>
         Язык: {{ chat.lang_code }}<br>
         Слаг: {{ chat.slug }}<br>
+
         <div class="card-footer text-muted">
             <b><u>Сообщения:</u></b><br>
             {% for message in chat.messages.all %}
@@ -23,10 +23,7 @@
             {% endfor %}
         </div>
 
-
          <br>Дата подкл: {{ chat.date_chat}}<br>
-
-    </p>
 
 
         {% comment %}for{% endcomment %}
@@ -36,7 +33,5 @@
 {#    {% for chat in bitr.chats.all %}#}
 {#        {% include 'bitr24/includes/chat_card_template.html' %}#}
 {#    {% endfor %}#}
-
-
 
 {% endblock %}

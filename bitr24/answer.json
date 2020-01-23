@@ -1,23 +1,23 @@
 {
   "message": {
     "chat": {
-      "first_name": "Marat",
-      "id": 241462113,
-      "last_name": "S",
+      "first_name": "TEST7",
+      "id": 105,
+      "last_name": "I33etrov6",
       "type": "private",
-      "username": "Marat2010"
+      "username": "pes65"
     },
     "date": 1579486249,
     "from": {
       "first_name": "Marat",
       "id": 241462113,
       "is_bot": false,
-      "language_code": "ru",
-      "last_name": "S",
+      "language_code": "en",
+      "last_name": "S4",
       "username": "Marat2010"
     },
     "message_id": 116,
-    "text": "kak dil"
+    "text": "-8888 --"
   },
   "update_id": 555290658
 }
