@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-    <h3 class="mb-5">Пользов. Битрикс24: <br> <b>"{{ bitr.bx24_id }}-{{ bitr.bx24_name|title }}"</b>
-        <br> Подкл:{{ bitr.date_bx24 }}.<br> Вход с телеграм:</h3>
+    <h3 class="mb-2">Пользов. Битрикс24: <b>"{{ bitr.bx24_id }}:{{ bitr.bx24_name|title }}"</b></h3>
+        <h4 class="mb-3">Подкл: {{ bitr.date_bx24 }}.<br><br> Входил с телеграм под:</h4>
     {% for chat in bitr.chats.all %}
         {% include 'bitr24/includes/chat_card_template.html' %}
     {% endfor %}

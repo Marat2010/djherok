@@ -31,11 +31,16 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 # # DEBUG_PROPAGATE_EXCEPTIONS = True
 # TASTYPIE_FULL_DEBUG = True
 
+# SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
                  '.ngrok.io',
                  '.localhost.run',
+                 'g62.dlinkddns.com',
+                 # '178.204.133.11',
+                 # '192.168.1.3',
+                 # '0.0.0.0',
                  ]
 
 # Application definition
@@ -121,13 +126,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
+USE_TZ = True
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

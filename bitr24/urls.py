@@ -1,18 +1,8 @@
 from django.urls import path
 from .views import *
-# , TbxView, TbxListViev, TbxDetailView
-# from .views import chats_list, chat_detail, bitrs_list, bitr_detail
 
 urlpatterns = [
-    # path('', index),
-    # path('', redirect_to),
-    path('auth/', auth, name='auth'),
-    # path('tg/', tg, name='tg_url'),
-
-    # path('tg/', Tg.as_view(), name='tg_url'),
     path('tg/',  csrf_exempt(Tg.as_view()), name='tg_url'),
-    # path('tg/', Tg, name='tg_url'),
-
     # path('chat/', chats_list, name='chats_list_url'),
     path('', chats_list, name='chats_list_url'),
     path('chat/create/', ChatCreate.as_view(), name='chat_create_url'),
@@ -23,8 +13,18 @@ urlpatterns = [
     path('bitr/create/', BitrCreate.as_view(), name='bitr_create_url'),
     path('bitr/<str:slug>/', BitrDetail.as_view(), name='bitr_detail_url'),
     path('bitr/<str:slug>/update/', BitrUpdate.as_view(), name='bitr_update_url'),
-    path('bitr/<str:slug>/delete/', BitrDelete.as_view(), name='bitr_delete_url')
+    path('bitr/<str:slug>/delete/', BitrDelete.as_view(), name='bitr_delete_url'),
 ]
+
+# from .tg_utils import auth
+# , TbxView, TbxListViev, TbxDetailView
+# from .views import chats_list, chat_detail, bitrs_list, bitr_detail
+
+# path('', index),    # path('', redirect_to),
+# path('auth/', auth, name='auth'),
+# path('auth/', Auth.as_view(), name='auth_url'),
+# path('tg/', tg, name='tg_url'),    # path('tg/', Tg.as_view(), name='tg_url'),
+
 
 # path('tbx/', TbxView.as_view(), name='tbx'),
 # path('tbx_all/', TbxListViev.as_view(), name='tbx_all'),

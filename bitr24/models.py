@@ -5,20 +5,33 @@ from django.utils.text import slugify
 from time import time
 
 
+class Bind(models.Model):
+    chat_id = models.IntegerField(default=0, verbose_name='Чат ID', unique=True)
+    bx24_id = models.IntegerField(default=0, verbose_name='ID поль. Б24', db_index=True)
+    message = models.TextField(null=True, blank=True, verbose_name='Посл.сообщение')
+    date_bind = models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата привязки')
+
+    def __str__(self):
+        return 'Чат:{}, Б24:{}'.format(self.chat_id, self.bx24_id)
+
+    class Meta:
+        verbose_name_plural = 'Привязки'
+        verbose_name = 'Привязка'
+        ordering = ['-date_bind']
+
+
 def gen_slug(s):
     new_slug = slugify(s, allow_unicode=True)
     return new_slug + '-' + str(int(time()))
 
 
 class Chat(models.Model):
-    chat_id = models.IntegerField(default=1, verbose_name='Чат ID', unique=True)
+    chat_id = models.IntegerField(default=0, verbose_name='Чат ID', unique=True)
     first_name = models.CharField(max_length=100, verbose_name='Имя', db_index=True)
     last_name = models.CharField(max_length=100, verbose_name='Фамилия', db_index=True)
     slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
     username = models.CharField(max_length=100, null=True, blank=True, verbose_name='Username')
     lang_code = models.CharField(max_length=2, verbose_name='Язык')
-    # messages = models.ForeignKey('Message', blank=True, on_delete=models.CASCADE, related_name='chats',
-    #                              verbose_name='Сообщения')
     bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats', verbose_name='Имя в Битрикс24')
     date_chat = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл.к боту')
 
@@ -48,9 +61,13 @@ class Chat(models.Model):
 
 
 class Bitr(models.Model):
-    bx24_id = models.IntegerField(default=0, verbose_name='ID пользователя Б24', unique=True)
-    bx24_name = models.CharField(default='', max_length=100, verbose_name='Имя в Битрикс24', db_index=True)
-    slug = models.SlugField(max_length=100, unique=True, verbose_name='Слаг(Slug)')
+    bx24_id = models.IntegerField(default=0, verbose_name='ID поль. Б24', unique=True)
+    bx24_name = models.CharField(default='', max_length=100, verbose_name='Имя в Б24', db_index=True)
+    slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
+    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время acc токена', unique=True)
+    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время Acc токена')
+    expires = models.CharField(default='', max_length=30, blank=True, null=True, verbose_name='Время Acc токена',
+                               db_index=True)
     access_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен доступа Б24')
     refresh_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен обновления Б24')
     date_bx24 = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл. к Б24')
@@ -64,9 +81,14 @@ class Bitr(models.Model):
     def get_delete_url(self):
         return reverse('bitr_delete_url', kwargs={'slug': self.slug})
 
+    def save(self, *args, **kwargs):
+        # if not self.id:
+        if not self.id or not self.slug:
+            self.slug = gen_slug(self.bx24_name)
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        # return '{}'.format(self.bx24_id)
-        return '{}-{}'.format(self.bx24_id, self.bx24_name)
+        return '{:>3}:{}'.format(self.bx24_id, self.bx24_name)
         # return self.bx24_id
 
     class Meta:

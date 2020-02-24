@@ -12,7 +12,7 @@
     <div class="card-footer text-muted">
         Пользователь Битрикс24:
         {% for birt in chat.bitrs.all %}
-            <a href="{{ birt.get_absolute_url }}">{{ birt.bx24_id}}-{{ birt.bx24_name }},</a>
+            <a href="{{ birt.get_absolute_url }}">{{ birt.bx24_id}}:{{ birt.bx24_name }},</a>
         {% endfor %}
     </div>
 </div>
