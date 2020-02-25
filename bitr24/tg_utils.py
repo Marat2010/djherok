@@ -11,8 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 file_answ = './bitr24/answer.json'  # Файл для временного хранения словаря от Телеграмм
 # file_data_bot = './bitr24/data_bot.json'  # Файл для хранения данных всех чатов (без БД)
 
-local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
-# local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
+# local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
+local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
 if local_launch:
     token_telegram = os.environ['token_telegram3']
 else:
