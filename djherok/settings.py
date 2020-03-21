@@ -37,9 +37,10 @@ ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
                  '.ngrok.io',
                  '.localhost.run',
-                 'g62.dlinkddns.com',
+                 '192.168.0.3',
+                 'localhost',
+                 # 'g62.dlinkddns.com',
                  # '178.204.133.11',
-                 # '192.168.1.3',
                  # '0.0.0.0',
                  ]
 
@@ -98,6 +99,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TIME_ZONE': 'Europe/Moscow',
     }
 }
 

@@ -1,26 +1,26 @@
 {
   "result": {
     "ACTIVE": true,
-    "EMAIL": "marat.s.2017@mail.ru",
-    "ID": "9",
-    "LAST_NAME": "",
-    "NAME": "Mara2017",
+    "EMAIL": "marat.s.73@mail.ru",
+    "ID": "15",
+    "LAST_NAME": "Bi_Mint",
+    "NAME": "Bi_Linux",
     "PERSONAL_BIRTHDAY": "",
-    "PERSONAL_CITY": "",
+    "PERSONAL_CITY": null,
     "PERSONAL_COUNTRY": null,
     "PERSONAL_FAX": null,
     "PERSONAL_GENDER": "",
     "PERSONAL_ICQ": null,
-    "PERSONAL_MOBILE": "",
+    "PERSONAL_MOBILE": null,
     "PERSONAL_PAGER": null,
     "PERSONAL_PHONE": null,
     "PERSONAL_PHOTO": null,
     "PERSONAL_PROFESSION": null,
     "PERSONAL_STATE": null,
     "PERSONAL_STREET": null,
-    "PERSONAL_WWW": "",
+    "PERSONAL_WWW": null,
     "PERSONAL_ZIP": null,
-    "SECOND_NAME": "",
+    "SECOND_NAME": null,
     "UF_DEPARTMENT": [
       3
     ],
@@ -36,15 +36,15 @@
     "UF_XING": null,
     "USER_TYPE": null,
     "WORK_COMPANY": null,
-    "WORK_PHONE": "",
-    "WORK_POSITION": ""
+    "WORK_PHONE": null,
+    "WORK_POSITION": "инж"
   },
   "time": {
-    "date_finish": "2020-02-24T12:02:28+03:00",
-    "date_start": "2020-02-24T12:02:28+03:00",
-    "duration": 0.03540921211242676,
-    "finish": 1582534948.12788,
-    "processing": 0.0018620491027832031,
-    "start": 1582534948.092471
+    "date_finish": "2020-03-22T02:07:41+03:00",
+    "date_start": "2020-03-22T02:07:41+03:00",
+    "duration": 0.1270759105682373,
+    "finish": 1584832061.457136,
+    "processing": 0.0016100406646728516,
+    "start": 1584832061.33006
   }
 }

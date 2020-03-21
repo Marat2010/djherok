@@ -3,21 +3,7 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils.text import slugify
 from time import time
-
-
-class Bind(models.Model):
-    chat_id = models.IntegerField(default=0, verbose_name='Чат ID', unique=True)
-    bx24_id = models.IntegerField(default=0, verbose_name='ID поль. Б24', db_index=True)
-    message = models.TextField(null=True, blank=True, verbose_name='Посл.сообщение')
-    date_bind = models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата привязки')
-
-    def __str__(self):
-        return 'Чат:{}, Б24:{}'.format(self.chat_id, self.bx24_id)
-
-    class Meta:
-        verbose_name_plural = 'Привязки'
-        verbose_name = 'Привязка'
-        ordering = ['-date_bind']
+from django.utils import timezone
 
 
 def gen_slug(s):
@@ -34,6 +20,12 @@ class Chat(models.Model):
     lang_code = models.CharField(max_length=2, verbose_name='Язык')
     bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats', verbose_name='Имя в Битрикс24')
     date_chat = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл.к боту')
+
+    def get_bitrs(self):
+        return ', '.join(['{}-{}'.format(str(bi.bx24_id), bi.bx24_name) for bi in self.bitrs.all()])
+
+    def __unicode__(self):
+        return "{0}".format(self.first_name)
 
     def get_absolute_url(self):
         return reverse('chat_detail_url', kwargs={'slug': self.slug})
@@ -66,11 +58,16 @@ class Bitr(models.Model):
     slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
     # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время acc токена', unique=True)
     # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время Acc токена')
-    expires = models.CharField(default='', max_length=30, blank=True, null=True, verbose_name='Время Acc токена',
-                               db_index=True)
+    # expires = models.CharField(default='', max_length=30, blank=True, null=True, verbose_name='Время Acc токена',
+    #                            db_index=True)
+    expires = models.DateTimeField(blank=True, null=True, db_index=True, verbose_name='Время Acc токена')
+
     access_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен доступа Б24')
     refresh_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен обновления Б24')
     date_bx24 = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата подкл. к Б24')
+
+    def get_chats(self):
+        return ', \n'.join(['{}-{}'.format(str(ch.chat_id), ch.first_name) for ch in self.chats.all()])
 
     def get_absolute_url(self):
         return reverse('bitr_detail_url', kwargs={'slug': self.slug})
@@ -94,13 +91,13 @@ class Bitr(models.Model):
     class Meta:
         verbose_name_plural = 'Данные Б24'
         verbose_name = 'Данные Б24'
-        ordering = ['-date_bx24']
+        ordering = ['-expires']
 
 
 class Messages(models.Model):
     message = models.TextField(null=True, blank=True, verbose_name='Сообщение')
     date_msg = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Дата сообщения')
-    chat = models.ForeignKey('Chat', on_delete=models.CASCADE, related_name='messages', verbose_name='ID, Имя')
+    chat = models.ForeignKey('Chat', on_delete=models.CASCADE, related_name='messages', verbose_name='Chat: ID, Имя')
     # bitrs = models.ManyToManyField('Bitr', blank=True, related_name='chats')
 
     def __str__(self):
@@ -112,6 +109,19 @@ class Messages(models.Model):
         # ordering = ['pk']
         ordering = ['-date_msg']
 
+    # class Bind(models.Model):
+    #     chat_id = models.IntegerField(default=0, verbose_name='Чат ID', unique=True)
+    #     bx24_id = models.IntegerField(default=0, verbose_name='ID поль. Б24', db_index=True)
+    #     message = models.TextField(null=True, blank=True, verbose_name='Посл.сообщение')
+    #     date_bind = models.DateTimeField(auto_now=True, db_index=True, verbose_name='Дата привязки')
+    #
+    #     def __str__(self):
+    #         return 'Чат:{}, Б24:{}'.format(self.chat_id, self.bx24_id)
+    #
+    #     class Meta:
+    #         verbose_name_plural = 'Привязки'
+    #         verbose_name = 'Привязка'
+    #         ordering = ['-date_bind']
 
     # chatB = models.ForeignKey(Chats, on_delete=models.CASCADE, verbose_name='Чат ID, Пользователь')
     # chats = models.ManyToManyField('Chats', blank=True, related_name='bitrs')

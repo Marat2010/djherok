@@ -1,13 +1,13 @@
 {
-  "access_token": "fbe83f5e00433686004336560000000100000347c6ce0874fbd8c69a9fb1c2852b01f8",
+  "access_token": "1b9c765e00433686004336560000000f0000032018e8ff0d6326f6d99c09a83602177d",
   "client_endpoint": "https://telebot.bitrix24.ru/rest/",
   "domain": "telebot.bitrix24.ru",
-  "expires": 1581246715,
+  "expires": 1584831515,
   "expires_in": 3600,
   "member_id": "9c3d69f3a517c02b62fe8efa97972add",
-  "refresh_token": "eb67675e00433686004336560000000100000335228e75b7e76a29b9bbdf327cb78c61",
+  "refresh_token": "0b1b9e5e00433686004336560000000f000003ff6fc826fec7972fdd3b5bc7d1c7355e",
   "scope": "app",
   "server_endpoint": "https://oauth.bitrix.info/rest/",
   "status": "L",
-  "user_id": 1
+  "user_id": 15
 }

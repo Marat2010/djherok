@@ -12,6 +12,8 @@ from django.contrib import messages
 
 # import datetime, timedelta
 from datetime import datetime, timedelta
+# from django.utils import timezone
+from pytz import timezone
 from django.http import HttpResponse
 from django.views.generic import View
 import json
@@ -20,9 +22,10 @@ from .forms import BitrForm, ChatForm, MessageForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-from bitr24.tg_utils import send_message, rw_chat, write_json, Bx24, portal
+from bitr24.tg_utils import send_message, rw_chat, write_json, Bx24, portal2, convert_time
 
 # bx24 = Bx24()
+file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
 
 
 class Tg(View):
@@ -32,44 +35,33 @@ class Tg(View):
     def get(self, request):
         try:
             code_id = request.GET['code']   # получение 'code'-первый автор.код, для второго шага OAuth-авторизации
-        except Exception as code:
-            print('== Get запрос, просмотра страницы. Exception={}, as code={}'.format(Exception, code))
+        except KeyError:                    # except Exception as code:
             chat = rw_chat()  # Просмотр Кто последний входил
-            print('== GET:', chat.chat_id, chat.first_name)
+            print('== GET без (code): ', chat.chat_id, chat.first_name)
             return render(request, self.template, context={self.model.__name__.lower(): chat})
         else:
             bx24 = Bx24()  # Здесь обявить или в начале ???
-            bx24.request_tokens(code_id)  # Запрос токенов для взаимодействия с API Б24 (=полный словарь)
+            bx24_dict = bx24.request_tokens(code_id)  # Запрос токенов для взаимодействия с API Б24 (=полный словарь)
+            write_json(bx24_dict, file_bx24_tok)  # запись в файл для врем.хранения словаря токенов от Битрикс24
+            print('==** Из словаря EXPIRES: bx24_dict[expires]: {}'.format(bx24_dict['expires']))
             bx24_name = bx24.call_method('user.current')['result']['NAME']  # Вытаскиваем имя
-            expires = (datetime.now() + timedelta(seconds=3600)).strftime('%H:%M:%S %d-%m-%Y')
-
-            # Заносим в базу:
-            bitr = Bitr.objects.update_or_create(bx24_id=bx24.user_id,
-                                                 defaults={'bx24_name': bx24_name,
-                                                           'access_token': bx24.access_token,
-                                                           'refresh_token': bx24.refresh_token})[0]
-            if isinstance(bitr.expires, int):
-                expires = [bitr.expires, expires]
-            bitr.expires = expires
-            bitr.save()
-
-            # defaults={'bx24_name': '/code/', 'access_token': bx24.access_token,
-            # Поиск чата по последнему сообщению (не совсем правильно, в будущем надо продумать, как сделать)
-            # chat = Messages.objects.first().chat
-            # print('=== Какой chat: {}, == Какой bitr: {}'.format(chat, bitr))
-            # bitr.chats.add(chat)         # Привязываем записи в двух таблицах. Или так: chat.bitrs.add(bitr)
-            # send_message(chat.chat_id, 'Успешно!')    # Отправка сообщения
-        return HttpResponse("Ответ Bitrix24: Успешно<br>\n{}".format('Вернитесь в телеграм: '
-                                                                     '<a href="tg://t.me/Bitr24_bot">К Боту</a>'))
+            expires = convert_time(bx24_dict['expires'])  # преобразует время из 1584146509 в datetime.datetime(2020, ..
+            print('==Время после преобразования: {}'.format(expires))
+            bitr = Bitr.objects.update_or_create(bx24_id=bx24.user_id,      # Заносим в базу
+                                                 defaults={'bx24_name': bx24_name, 'access_token': bx24.access_token,
+                                                           'refresh_token': bx24.refresh_token, 'expires': expires})[0]
+            bind_code = '/AUTH-' + bitr.access_token[:3] + str(bitr.bx24_id)  # формируем код привязки
+            print('== Код привязки : ', bind_code)
+            ss = 'Вернитесь в телеграм: <a href="tg://t.me/Bitr24_bot">К Боту</a>'
+        return HttpResponse('Ответ Bitrix24: Успешно<br>\nСкопируйте код "{}" и отправьте его в боте<br>\n{}\n'.
+                            format(bind_code, ss))
 
     def post(self, request):
         r = json.loads(request.body.decode('utf-8'))
-        write_json(r)   # Запсиь данных чата в файла answer.json.
-        chat = rw_chat(True)
-        # print('=== chat в Tg.POST ===', chat)
-        msg = portal(chat)
+        write_json(r)           # Запсиь данных чата в файла answer.json.
+        chat = rw_chat(True)    # Запсиь данных чата в БД.
+        msg = portal2(chat)      # Получение ответа от портала и отправка в чат
         send_message(chat.chat_id, msg, 'html')
-
         return render(request, self.template, context={self.model.__name__.lower(): chat})
 
 
@@ -162,6 +154,32 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
     redirect_url = 'bitrs_list_url'
     raise_exception = True
 
+
+# expires = bx24.expires[:19]
+# fmt = '%Y-%m-%d %H:%M:%S'
+# expires = datetime.strptime(expires, fmt)
+
+# expires = (datetime.now() + timedelta(seconds=3600)).strftime('%H:%M:%S %d-%m-%Y')  # из тек.момента
+# expires = datetime.fromtimestamp(bx24_dict['expires']).strftime('%H:%M:%S %d-%m-%Y')  # из словаря
+# expires = datetime.fromtimestamp(bx24_dict['expires']).\
+#     astimezone(timezone('Europe/Moscow')).strftime('%Y-%m-%d %H:%M:%S')  # из словаря
+
+# fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+# expires_no_tz = datetime.fromtimestamp(bx24_dict['expires'])  # datetime.datetime(2020, 3, 14, 1, 48, 29)
+# current_tz = timezone.get_current_timezone()  # <DstTzInfo 'Europe/Moscow' LMT+2:30:00 STD>
+# expires = current_tz.localize(expires_no_tz)  # datetime.datetime(2020, 3, 14, 1, 48, 29, tzinfo=<DstTzInfo 'Europe/Moscow' MSK+3:00:00 STD>)
+# # expires = expires.strftime(fmt)  # '2020-03-14 01:48:29'
+
+# print('== Bitr.ACC: {}\n ==bx24.DICT: {}'.format(bitr.access_token, bx24.__dict__))
+
+# request.session['OAuth'] = 'GET code'
+# defaults={'bx24_name': '/code/', 'access_token': bx24.access_token,
+# Поиск чата по последнему сообщению (не совсем правильно, в будущем надо продумать, как сделать)
+# chat = Messages.objects.first().chat
+# print('=== Какой chat: {}, == Какой bitr: {}'.format(chat, bitr))
+# bitr.chats.add(chat)         # Привязываем записи в двух таблицах. Или так: chat.bitrs.add(bitr)
+# send_message(chat.chat_id, 'Успешно!')    # Отправка сообщения
+
 # bound_form = self.model_form(request.POST, instance=obj)
 # if bound_form.is_valid():
 #     new_obj = bound_form.save()
@@ -175,9 +193,9 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 # messages.add_message(request, messages.SUCCESS, 'УРААА=========')
 # return redirect('https://telebot.bitrix24.ru/oauth/authorize/?client_id=local.5e04004ad5e626.19578281&response_type=code')
 
-# http://g62.dlinkddns.com/bitr24/
+# https://552208f0.ngrok.io/bitr24/
 # https://0c374e2c.ngrok.io
-# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://0c374e2c.ngrok.io/bitr24/tg/
+# https://api.telegram.org/bot1016865412:AAECUp6v6T6tNdSLxbfR0M2BuU90Yy4R-gQ/setWebhook?url=https://552208f0.ngrok.io/bitr24/tg/
 # deleteWebhook     getWebhookInfo  setWebhook
 # -----------------------------------------------------------------
 # def get_chat():
