@@ -56,10 +56,6 @@ class Bitr(models.Model):
     bx24_id = models.IntegerField(default=0, verbose_name='ID поль. Б24', unique=True)
     bx24_name = models.CharField(default='', max_length=100, verbose_name='Имя в Б24', db_index=True)
     slug = models.SlugField(max_length=100, blank=True, unique=True, verbose_name='Слаг(Slug)')
-    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время acc токена', unique=True)
-    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время Acc токена')
-    # expires = models.CharField(default='', max_length=30, blank=True, null=True, verbose_name='Время Acc токена',
-    #                            db_index=True)
     expires = models.DateTimeField(blank=True, null=True, db_index=True, verbose_name='Время Acc токена')
 
     access_token = models.CharField(max_length=150, null=True, blank=True, verbose_name='Токен доступа Б24')
@@ -108,6 +104,12 @@ class Messages(models.Model):
         verbose_name = 'Сообщение'
         # ordering = ['pk']
         ordering = ['-date_msg']
+
+
+    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время acc токена', unique=True)
+    # expires = models.IntegerField(default=0, blank=True, null=True, verbose_name='Время Acc токена')
+    # expires = models.CharField(default='', max_length=30, blank=True, null=True, verbose_name='Время Acc токена',
+    #                            db_index=True)
 
     # class Bind(models.Model):
     #     chat_id = models.IntegerField(default=0, verbose_name='Чат ID', unique=True)

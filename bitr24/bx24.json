@@ -1,26 +1,26 @@
 {
   "result": {
     "ACTIVE": true,
-    "EMAIL": "marat.s.73@mail.ru",
-    "ID": "15",
-    "LAST_NAME": "Bi_Mint",
-    "NAME": "Bi_Linux",
-    "PERSONAL_BIRTHDAY": "",
-    "PERSONAL_CITY": null,
+    "EMAIL": "smg_2006@list.ru",
+    "ID": "1",
+    "LAST_NAME": "S",
+    "NAME": "Marat",
+    "PERSONAL_BIRTHDAY": "1973-09-16T03:00:00+03:00",
+    "PERSONAL_CITY": "Казань",
     "PERSONAL_COUNTRY": null,
     "PERSONAL_FAX": null,
-    "PERSONAL_GENDER": "",
+    "PERSONAL_GENDER": "M",
     "PERSONAL_ICQ": null,
-    "PERSONAL_MOBILE": null,
+    "PERSONAL_MOBILE": "+79530010101",
     "PERSONAL_PAGER": null,
     "PERSONAL_PHONE": null,
     "PERSONAL_PHOTO": null,
     "PERSONAL_PROFESSION": null,
     "PERSONAL_STATE": null,
     "PERSONAL_STREET": null,
-    "PERSONAL_WWW": null,
+    "PERSONAL_WWW": "",
     "PERSONAL_ZIP": null,
-    "SECOND_NAME": null,
+    "SECOND_NAME": "",
     "UF_DEPARTMENT": [
       3
     ],
@@ -36,15 +36,15 @@
     "UF_XING": null,
     "USER_TYPE": null,
     "WORK_COMPANY": null,
-    "WORK_PHONE": null,
-    "WORK_POSITION": "инж"
+    "WORK_PHONE": "",
+    "WORK_POSITION": "Ген.директор"
   },
   "time": {
-    "date_finish": "2020-03-22T02:07:41+03:00",
-    "date_start": "2020-03-22T02:07:41+03:00",
-    "duration": 0.1270759105682373,
-    "finish": 1584832061.457136,
-    "processing": 0.0016100406646728516,
-    "start": 1584832061.33006
+    "date_finish": "2020-03-22T02:58:58+03:00",
+    "date_start": "2020-03-22T02:58:58+03:00",
+    "duration": 0.03429102897644043,
+    "finish": 1584835138.126249,
+    "processing": 0.0013799667358398438,
+    "start": 1584835138.091958
   }
 }
