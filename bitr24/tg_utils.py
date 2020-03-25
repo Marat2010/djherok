@@ -1,13 +1,16 @@
-from django.http import HttpResponse
+# from django.http import HttpResponse
+# from .views import *
+# from django.views.decorators.csrf import csrf_exempt
+# import time
+# from pytz import timezone
+
 import json
 from datetime import datetime, timedelta
+from django.utils import timezone
 import requests
 import os
 from bitrix24.bitrix24 import Bitrix24
 from .models import Bitr, Chat, Messages
-from .views import *
-from django.views.decorators.csrf import csrf_exempt
-import time
 from django.core.exceptions import ObjectDoesNotExist
 
 file_answ = './bitr24/answer.json'  # Файл для временного хранения словаря от Телеграмм
@@ -247,10 +250,10 @@ def bitrix_command_handler(bx24):  # Обработчик команд Битр�
             msgs += "{}: {}\n".format(i['DATE_PUBLISH'][11:16], i['DETAIL_TEXT'])
         print(msgs)
         answer = '-** Последние сообщения: **-\n*' + msgs
-    elif '/AUTH' in message:
-        answer = check_msg_auth_code(bx24)  # проверка кода
-        r_bx24 = {"result": message}
-        print('-------------- Точка 5(bitrix_command_handler). Смена авторизации')
+    # elif '/AUTH' in message:      # Убрать, условие проверяется в portal2 с last_bindings
+    #     answer = check_msg_auth_code(bx24)  # проверка кода
+    #     r_bx24 = {"result": message}
+    #     print('-------------- Точка 5(bitrix_command_handler). Смена авторизации')
     else:
         r_bx24 = bx24.call_method('user.current')  # r_bx24 = send_bx24_webhook('profile') # через webhook, убрать
         answer = 'Что именно хотели, {} {}?'.format(r_bx24['result']['NAME'], r_bx24['result']['LAST_NAME'])
@@ -307,6 +310,7 @@ def send_bx24_webhook(method='', **kwargs):     # отправка запрос�
     #     self.refresh_token = self.refresh_token
     #     self.bx24_name = bx24_name
 
+# https://djherok.herokuapp.com/bitr24/tg/
 
 # def portal_old(chat):
 #     # message = chat.messages.first().message  # находим посл.сообщение польз. телеграмм

@@ -33,5 +33,10 @@ def index(request):
     return render(request, 'si/index.html', context)
 
 
+def choice(request):
+    recrs = Recruits.objects.all()
+    planets = Planets.objects.all()
+    context = {'recrs': recrs, 'planets': planets}
+    return render(request, 'si/choice.html', context)
 
 

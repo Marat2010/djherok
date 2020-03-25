@@ -1,30 +1,30 @@
 # from django.views.generic import ListView
 # from django.views.generic import DetailView
 # from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
-
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.urls import reverse
-from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from .models import *
-from django.contrib import messages
-
+# from .utils import *
 # import datetime, timedelta
-from datetime import datetime, timedelta
+# from datetime import datetime, timedelta
 # from django.utils import timezone
-from pytz import timezone
+# from pytz import timezone
+# from django.contrib import messages
+
+# from django.shortcuts import redirect
+# from django.urls import reverse
+# from django.shortcuts import get_object_or_404
+# from django.views.decorators.csrf import csrf_exempt
+
 from django.http import HttpResponse
+from django.shortcuts import render
+from .models import *
 from django.views.generic import View
 import json
-from .utils import *
+from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin, ObjectDeleteMixin
 from .forms import BitrForm, ChatForm, MessageForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
 from bitr24.tg_utils import send_message, rw_chat, write_json, Bx24, portal2, convert_time
 
-# bx24 = Bx24()
 file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
 
 
@@ -40,7 +40,7 @@ class Tg(View):
             print('== GET без (code): ', chat.chat_id, chat.first_name)
             return render(request, self.template, context={self.model.__name__.lower(): chat})
         else:
-            bx24 = Bx24()  # Здесь обявить или в начале ???
+            bx24 = Bx24()  # создаем экз.
             bx24_dict = bx24.request_tokens(code_id)  # Запрос токенов для взаимодействия с API Б24 (=полный словарь)
             write_json(bx24_dict, file_bx24_tok)  # запись в файл для врем.хранения словаря токенов от Битрикс24
             print('==** Из словаря EXPIRES: bx24_dict[expires]: {}'.format(bx24_dict['expires']))

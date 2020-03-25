@@ -1,0 +1,16 @@
+{% extends "layout/basic.html" %}
+
+
+{% block content %}
+{#    <a href="{% url 'add' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Для Рекрутов</a>#}
+{#    <a href="{% url 'add' %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Для Ситхов</a>#}
+{#    <a href="{% url 'add' %}" class="btn btn-secondary btn-lg active" role="button" aria-pressed="true">Для Ситхов</a>#}
+<div class="btn-toolbar">
+    <div class="b">
+        <a class="btn btn-primary" href="{% url 'add' %}" role="button" aria-pressed="true" >Для Рекрутов</a>
+        <a class="btn btn-primary " href="{% url 'add' %}" aria-disabled="true" role="button">Для Ситхов</a>
+    </div>
+</div>
+
+{% endblock %}
+

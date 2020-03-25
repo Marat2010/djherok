@@ -11,46 +11,20 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>
         {% block title %}
-            -Telebot Bitrix24-
+            *Telebot Bitrix24*
         {% endblock %}
     </title>
 </head>
 <body>
-
-{#    <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #c0ccfd;">#}
-    <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #c0ccfd;">
-        <a class="navbar-brand" href="{% url 'chats_list_url' %}">Начало</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-{#                    <a class="nav-link" href="{% url 'chats_list_url' %}">Чаты <span class="sr-only">(current)</span></a>#}
-                    <a class="nav-link" href="{% url 'chats_list_url' %}">Чаты</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'bitrs_list_url' %}">Битрикс24</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-                </li>
-            </ul>
-
-            <form class="form-inline my-2 my-lg-0" action="{% url 'chats_list_url' %}">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-
-        </div>
-    </nav>
+    {% block navbar %}
+    {% endblock %}
 
     <div class="container mt-5">
         <div class="row">
             <div class="col-6 offset-md-2">
-                {% block content %}
-                    Contetnt Telebot Bitrix24
+
+                {% block content_all %}
+                    Contetnt App: Telebot-Bitrix24, Si, ..
                 {% endblock %}
 
                 {% if is_paginated %}

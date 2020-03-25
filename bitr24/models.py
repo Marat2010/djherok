@@ -1,9 +1,10 @@
-from django.db import models
 # from django.urls import reverse
+# from django.utils import timezone
+
+from django.db import models
 from django.shortcuts import reverse
 from django.utils.text import slugify
 from time import time
-from django.utils import timezone
 
 
 def gen_slug(s):
@@ -127,6 +128,7 @@ class Messages(models.Model):
 
     # chatB = models.ForeignKey(Chats, on_delete=models.CASCADE, verbose_name='Чат ID, Пользователь')
     # chats = models.ManyToManyField('Chats', blank=True, related_name='bitrs')
+
 # def upload_tbx_images_folder(instance, filename):
 #     filename = instance.slug + '.' + filename.split('.')[-1]    #.png .ipg
 #     return "{}/{}".format(instance.slug, filename)

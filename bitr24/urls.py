@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from django.views.decorators.csrf import csrf_exempt
+
 
 urlpatterns = [
     path('tg/',  csrf_exempt(Tg.as_view()), name='tg_url'),
