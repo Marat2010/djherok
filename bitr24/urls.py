@@ -5,8 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
     path('tg/',  csrf_exempt(Tg.as_view()), name='tg_url'),
-    # path('chat/', chats_list, name='chats_list_url'),
-    path('', chats_list, name='chats_list_url'),
+    path('chat/', chats_list, name='chats_list_url'),
     path('chat/create/', ChatCreate.as_view(), name='chat_create_url'),
     path('chat/<str:slug>/', ChatDetail.as_view(), name='chat_detail_url'),
     path('chat/<str:slug>/update/', ChatUpdate.as_view(), name='chat_update_url'),
@@ -18,18 +17,3 @@ urlpatterns = [
     path('bitr/<str:slug>/delete/', BitrDelete.as_view(), name='bitr_delete_url'),
 ]
 
-# from .tg_utils import auth
-# , TbxView, TbxListViev, TbxDetailView
-# from .views import chats_list, chat_detail, bitrs_list, bitr_detail
-
-# path('', index),    # path('', redirect_to),
-# path('auth/', auth, name='auth'),
-# path('auth/', Auth.as_view(), name='auth_url'),
-# path('tg/', tg, name='tg_url'),    # path('tg/', Tg.as_view(), name='tg_url'),
-
-
-# path('tbx/', TbxView.as_view(), name='tbx'),
-# path('tbx_all/', TbxListViev.as_view(), name='tbx_all'),
-# path('tbx_all/<slug:tbx_slug>', TbxDetailView.as_view(), name='tbx_detail'),
-# path('add/', RecruitsCreateView.as_view(), name='add'),
-# path('<int:planet_id>/', by_planet, name='by_planet'),

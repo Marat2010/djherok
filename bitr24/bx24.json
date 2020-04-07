@@ -1,17 +1,17 @@
 {
   "result": {
     "ACTIVE": true,
-    "EMAIL": "smg_2006@list.ru",
-    "ID": "1",
-    "LAST_NAME": "S",
-    "NAME": "Marat",
-    "PERSONAL_BIRTHDAY": "1973-09-16T03:00:00+03:00",
-    "PERSONAL_CITY": "Казань",
+    "EMAIL": "marat.s.2017@mail.ru",
+    "ID": "9",
+    "LAST_NAME": "",
+    "NAME": "Mara2017",
+    "PERSONAL_BIRTHDAY": "",
+    "PERSONAL_CITY": "",
     "PERSONAL_COUNTRY": null,
     "PERSONAL_FAX": null,
-    "PERSONAL_GENDER": "M",
+    "PERSONAL_GENDER": "",
     "PERSONAL_ICQ": null,
-    "PERSONAL_MOBILE": "+79530010101",
+    "PERSONAL_MOBILE": "",
     "PERSONAL_PAGER": null,
     "PERSONAL_PHONE": null,
     "PERSONAL_PHOTO": null,
@@ -37,14 +37,14 @@
     "USER_TYPE": null,
     "WORK_COMPANY": null,
     "WORK_PHONE": "",
-    "WORK_POSITION": "Ген.директор"
+    "WORK_POSITION": ""
   },
   "time": {
-    "date_finish": "2020-03-25T19:45:00+03:00",
-    "date_start": "2020-03-25T19:45:00+03:00",
-    "duration": 0.02827906608581543,
-    "finish": 1585154700.831902,
-    "processing": 0.0009868144989013672,
-    "start": 1585154700.803623
+    "date_finish": "2020-03-25T21:21:11+03:00",
+    "date_start": "2020-03-25T21:21:11+03:00",
+    "duration": 0.026525020599365234,
+    "finish": 1585160471.9096,
+    "processing": 0.0013170242309570312,
+    "start": 1585160471.883075
   }
 }

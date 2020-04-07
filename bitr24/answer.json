@@ -1,23 +1,21 @@
 {
   "message": {
     "chat": {
-      "first_name": "Marat",
-      "id": 241462113,
-      "last_name": "S",
-      "type": "private",
-      "username": "Marat2010"
+      "first_name": "Linux",
+      "id": 1080498053,
+      "last_name": "Mint",
+      "type": "private"
     },
-    "date": 1585154700,
+    "date": 1585160471,
     "from": {
-      "first_name": "Marat",
-      "id": 241462113,
+      "first_name": "Linux",
+      "id": 1080498053,
       "is_bot": false,
       "language_code": "ru",
-      "last_name": "S",
-      "username": "Marat2010"
+      "last_name": "Mint"
     },
-    "message_id": 1753,
-    "text": "P"
+    "message_id": 1767,
+    "text": "sdsds"
   },
-  "update_id": 555291445
+  "update_id": 555291452
 }

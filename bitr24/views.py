@@ -23,7 +23,7 @@ from .forms import BitrForm, ChatForm, MessageForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Q
-from bitr24.tg_utils import send_message, rw_chat, write_json, Bx24, portal2, convert_time
+from bitr24.tg_utils import send_message, rw_chat, write_json, Bx24, portal, convert_time
 
 file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
 
@@ -60,7 +60,7 @@ class Tg(View):
         r = json.loads(request.body.decode('utf-8'))
         write_json(r)           # Запсиь данных чата в файла answer.json.
         chat = rw_chat(True)    # Запсиь данных чата в БД.
-        msg = portal2(chat)      # Получение ответа от портала и отправка в чат
+        msg = portal(chat)      # Получение ответа от портала и отправка в чат
         send_message(chat.chat_id, msg, 'html')
         return render(request, self.template, context={self.model.__name__.lower(): chat})
 
