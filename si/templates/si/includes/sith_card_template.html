@@ -1,0 +1,19 @@
+<div class="card mt-2">
+    <div class="card-body">
+        <h5 class="card-title"><b>{{ sith.name }}</b></h5>
+        <p class="card-text"> <i>Его Руки Тени (кол-во: <b>{{ sith.get_count_hands }}</b> ):</i>
+            <b>{{ sith.get_recruits|truncatewords:6 }}</b>
+        </p>
+        <a href="{{ sith.get_absolute_url }}" class="btn btn-primary">Посмотреть</a>
+        {# <a href="{%  url 'sith_detail_url' slug=sith.slug %}" class="btn btn-primary">Посмотреть</a>#}
+    </div>
+    <div class="card-footer">
+        <i>Планета:</i>
+        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.planet }}</a>
+        <i>Орден:</i>
+        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.order.name }}</a>
+    </div>
+</div>
+
+{# <i>Планета:</i> <b>{{ sith.planet }}</b>.  <i>Орден: </i><b>{{ sith.order.name }}</b>#}
+

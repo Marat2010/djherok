@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
 
+{% block title %}
+    *Telebot Bitrix24*
+{% endblock %}
+
 
 {% block navbar %}
     {#    <nav class="navbar fixed-top navbar-expand-lg navbar-light" style="background-color: #c0ccfd;">#}
     <nav class="navbar sticky-top navbar-expand-lg navbar-light" style="background-color: #c0ccfd;">
-        <a class="navbar-brand" href="{% url 'chats_list_url' %}">Начало</a>
+        <a class="navbar-brand" href="{% url 'chats_list_url' %}">Главная</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -45,11 +49,10 @@
 
     <a href="{{ admin_object.get_update_url }}" class="btn btn-light edit" style="{% if detail %}display: block;{% endif %}">Edit</a>
     <a href="{{ admin_object.get_delete_url }}" class="btn btn-danger delete" style="{% if detail %}display: block;{% endif %}">Delete</a>
-{% endblock %}
-
-{% block content_all %}
-
-    {% block content %}
-    {% endblock %}
 
 {% endblock %}
+
+
+{% block content %}
+{% endblock %}
+

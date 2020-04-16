@@ -1,0 +1,12 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    {{ recruit.name }} - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <h3 class="mt-5"> Рекрут: {{ recruit.name }} </h3>
+    <hr>
+    {% include 'si/includes/recruit_card_template.html' %}
+{% endblock %}

@@ -1,14 +1,15 @@
-{% extends "layout/basic.html" %}
+{% extends 'si/base_si.html' %}
 
 {% block title %}Добавление рекрута{% endblock %}
-{% block header %}{{ 'Введите свои данные:' }}{% endblock %}
 
 {% block content %}
     <h2>Добавление рекрута</h2>
-    <form method="post">
+    <form action="{% url 'recruit_create_url' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Добавить">
+{#        <input type="submit" value="Добавить" formaction="{% url 'recruit_questions_url' %}">#}
     </form>
 {% endblock %}
+
 

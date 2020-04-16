@@ -1,0 +1,17 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Список рекрутов: - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h4 class="mb-4">Рекруты:</h4>
+
+    {% for recruit in recruits %}
+        {% include 'si/includes/recruit_card_template.html' %}
+    {% endfor %}
+
+{% endblock %}
+
+{#    {% for sith in page_object.object_list %}#}
+

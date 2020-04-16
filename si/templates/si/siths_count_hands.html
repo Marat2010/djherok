@@ -1,0 +1,31 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Список ситхов: - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+    <h4 class="mb-4">Ситхи:</h4>
+    <b><i>Кол-во рук Тени : </i></b>
+
+    <a href="{%  url 'siths_count_hands_url' count=1 %}" {%if '/1/' in request.path %}aria-pressed="true"{%endif%}
+       class="btn btn-outline-secondary" data-toggle="button">1</a>
+    <a href="{%  url 'siths_count_hands_url' count=2 %}" {%if '/2/' in request.path %}aria-pressed="true"{%endif%}
+       class="btn btn-outline-secondary" data-toggle="button">2</a>
+    <a href="{%  url 'siths_count_hands_url' count=3 %}" {%if '/3/' in request.path %}aria-pressed="true"{%endif%}
+       class="btn btn-outline-secondary" data-toggle="button">3</a>
+    <a href="{%  url 'siths_count_hands_url' count=4 %}" {%if '/4/' in request.path %}aria-pressed="true"{%endif%}
+       class="btn btn-outline-secondary" data-toggle="button">4</a>
+    <b><i> и более. </i></b>
+    <a href="{%  url 'siths_count_hands_url' count=0 %}" {%if '/0/' in request.path %}aria-pressed="true"{%endif%}
+       class="btn btn-outline-primary" data-toggle="button">Все</a>
+
+    {#    {% for sith in page_object.object_list %}#}
+    {% for sith in siths %}
+        {% include 'si/includes/sith_card_template.html' %}
+    {% endfor %}
+
+{% endblock %}
+
+

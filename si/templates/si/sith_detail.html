@@ -1,0 +1,22 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    {{ sith.name }} - {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+    <h3 class="mt-3">
+         <b>{{ sith.name }}</b>
+    </h3>
+    <p><i>Планета:</i> <b>{{ sith.planet }}</b></p>
+    <p><i>Орден:</i>  <b>{{ sith.order.name }}</b></p>
+    <p><i><u>Руки Тени:</u></i></p>
+
+    {% for recruit in sith.recruits.all %}
+        {% include 'si/includes/recruit_card_template.html' %}
+    {% endfor %}
+
+{% endblock %}
+
+

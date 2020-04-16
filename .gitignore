@@ -6,4 +6,5 @@ weatherBot/my_temp/
 requirements_*.txt
 __pycache__/
 *.pyc
+si_old/
 

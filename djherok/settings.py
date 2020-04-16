@@ -41,7 +41,7 @@ ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  'localhost',
                  # 'g62.dlinkddns.com',
                  # '178.204.133.11',
-                 # '0.0.0.0',
+                 '0.0.0.0',
                  ]
 
 # Application definition
@@ -154,6 +154,6 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = [
     # os.path.join(BASE_DIR, 'bitr24/static'),
     os.path.join(BASE_DIR, 'static'),
-    # os.path.join(BASE_DIR, 'bitr24/media'),
+    os.path.join(BASE_DIR, 'si/static'),
 ]
 

@@ -1,0 +1,50 @@
+{#{% extends 'si/base.html' %}#}
+{% extends 'base.html' %}
+{#{% load static %}#}
+
+{% block title %}
+    *Служба рекрутинга для ордена Ситхов*
+{% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+{#        <img src="/static/si/Yoda.png" class="img-fluid">#}
+        <a class="navbar-brand" href="{% url 'index' %}">Главная</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                    <li {%if  'recruits' in request.path %}class="nav-item active"{%endif%} class="nav-item">
+                        <a class="nav-link" href="{% url 'recruits_list_url' %}">Рекруты </a>
+                    </li>
+{#                    <li class="nav-item">#}
+                    <li {%if 'siths' in request.path %}class="nav-item active"{%endif%} class="nav-item">
+{#                        <a class="nav-link" href="{% url 'siths_list_url' %}">Ситхи</a>#}
+                        <a class="nav-link" href="{% url 'siths_count_hands_url' count=0 %}">Ситхи</a>
+                    </li>
+                {% endif %}
+
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>#}
+{#                </li>#}
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+{% endblock %}
+
+
+{% block admin-panel %}
+    <a href="{% url 'task_view_url' %}" class="btn btn-outline-info">Task</a>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+

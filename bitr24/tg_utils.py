@@ -94,7 +94,7 @@ class Bx24(Bitrix24):
         last_bindings = read_json(file_last_bindings)
     except json.decoder.JSONDecodeError:
         last_bindings = {}
-    print('== Загруженные привязки: {}'.format(last_bindings))
+    # print('== Загруженные привязки: {}'.format(last_bindings))
 
     def __init__(self, chat_id=None, message=None):
         super().__init__(domain='telebot.bitrix24.ru', client_id=client_id, client_secret=client_secret)
