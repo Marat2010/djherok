@@ -6,7 +6,23 @@
 
 
 {% block content %}
-    <h3 class="mt-5"> Рекрут: {{ recruit.name }} </h3>
-    <hr>
-    {% include 'si/includes/recruit_card_template.html' %}
+    <h3 class="mt-5"> Рекрут: <b>{{ recruit.name }}</b></h3>
+{#    <hr>#}
+
+    <div class="card mb-2">
+        <div class="card-body">
+            <h6 class="card-title">Возраст: <b>{{ recruit.age }}</b></h6>
+            <h6 class="card-title">Емаил: <b>{{ recruit.email }}</b></h6>
+            <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>
+            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>
+
+        </div>
+        <div class="card-footer">
+            <i>Планета:</i>
+            <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
+            <i>Орден:</i>
+            <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
+        </div>
+    </div>
+
 {% endblock %}

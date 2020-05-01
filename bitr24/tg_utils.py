@@ -114,6 +114,7 @@ class Bx24(Bitrix24):
         __class__.last_bindings.update({str(self.chat_id): {'bx24_id': self.bx24_id, 'expires': self.expires,
                                                             'access_token': self.access_token,
                                                             'refresh_token': self.refresh_token}})
+        print('===== update_last_bindings: ', __class__.last_bindings,)
         write_json(__class__.last_bindings, file_last_bindings)   # Запись в  файл и в базу:
         Bitr.objects.update_or_create(bx24_id=self.user_id, defaults={'access_token': self.access_token,
                                                                       'refresh_token': self.refresh_token,

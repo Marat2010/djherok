@@ -1,0 +1,27 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Редактирование ситха "{{ sith.name }}"- {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <h5><b>Измените данные Ситха:</b></h5>
+    <hr>
+    <form action="{{ sith.get_update_url }}" method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+                {{ field.label }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Изменить</button>
+    </form>
+
+{% endblock %}

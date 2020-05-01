@@ -1,41 +1,173 @@
 # from django.http import HttpResponse
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.views.generic import View, CreateView
 from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Sith, Recruit, Planet, Test
-from .forms import RecruitForm, QForm
+from .forms import RecruitForm, SithForm, RecruitQuestionsForm, QuestionForm
+# RecruitQuestionsForm
 import random
 from django.forms import formset_factory
 from django.shortcuts import redirect
+from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin
 
 
 def index(request):
     return render(request, 'si/index.html')
-    # return HttpResponse('<h1>Hi Ok!</h1>')
 
 
-class RecruitCreateView(CreateView):
-    template_name = 'si/recruit_create.html'
-    form_class = RecruitForm
-    success_url = reverse_lazy('index')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['planet'] = Planet.objects.all()
-        return context
-        # return render(request, 'si/recruit_questions.html', context=context)
-
-    def post(self, request, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['planet'] = Planet.objects.all()
-        return redirect(reverse('recruit_questions_url'))
-    # redirect_url = 'recruit_questions_url'
+def recruits_list(request):
+    recruits = Recruit.objects.all()
+    return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
+def siths_list(request):
+    siths = Sith.objects.all()
+    return render(request, 'si/siths_list.html', context={'siths': siths})
+
+
+def siths_count_hands(request, count_hands):
+    # siths = Sith.objects.all()
+    queryset = []
+    for si in Sith.objects.all():
+        if si.get_count_hands() >= count_hands:
+            queryset.append(si)
+    print(queryset)
+    print(request.path)
+    return render(request, 'si/siths_count_hands.html', context={'siths': queryset})
+
+
+class RecruitDetail(ObjectDetailMixin, View):
+    model = Recruit
+    template = 'si/recruit_detail.html'
+
+
+class SithDetail(ObjectDetailMixin, View):
+    model = Sith
+    template = 'si/sith_detail.html'
+
+
+class RecruitCreate(ObjectCreateMixin, View):
+    model_form = RecruitForm
+    template = 'si/recruit_create.html'
+
+
+class SithCreate(ObjectCreateMixin, View):
+    model_form = SithForm
+    template = 'si/sith_create.html'
+
+
+class RecruitUpdate(ObjectUpdateMixin, View):
+    model = Recruit
+    model_form = RecruitForm
+    template = 'si/recruit_update.html'
+
+
+class SithUpdate(ObjectUpdateMixin, View):
+    model = Sith
+    model_form = SithForm
+    template = 'si/sith_update.html'
+
+
+# -----------------------------------------------------
+
+
+class RecruitQuestions_1(View):
+    def get(self, request, slug):
+        recruit = get_object_or_404(Recruit, slug__iexact=slug)
+        question = random.sample(list(Test.objects.all()), 1)[0].question
+        print('====question: ', question)
+        form = RecruitQuestionsForm(question)
+        form.label_suffix = question
+        return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
+
+    def post(self, request, slug):
+        recruit = get_object_or_404(Recruit, slug__iexact=slug)
+        bound_form = RecruitQuestionsForm('', request.POST)
+        print('===2=bound_form:', bound_form.fields['q'].label, '==data:', bound_form.data['q'])
+        bound_form.save()
+        # print('===BOUND_FOR: ', bound_form)
+        return render(request, 'si/recruit_questions.html', context={'form': bound_form, 'recruit': recruit})
+
+
+# -----------------------------------
 class RecruitQuestions(View):
-    pass
+    @staticmethod
+    def get_count_question_form_set():  # Получение кол-ва вопросов и formset
+        count = random.randint(2, 5)    # Указать свой диапазон кол-ва вопросов
+        question_form_set = formset_factory(QuestionForm, extra=count)
+        return (count, question_form_set)
+
+    # @staticmethod
+    def get(self, request, slug):
+    # def get(request, slug):
+        count, question_form_set = RecruitQuestions.get_count_question_form_set()
+        recruit = get_object_or_404(Recruit, slug__iexact=slug)
+        questions = random.sample(list(Test.objects.all()), count)  # Список вопросов
+        formset = question_form_set()
+        formset = question_form_set()
+        list_questions = []                         # Создаем список вопросов который выпал рекруту
+        list_questions_text = []
+        for i, form in enumerate(formset):
+            # form.label_suffix = questions[i].question  # Список вопросов для (в) "label"
+            # print('=== form.label_suffix: ', form.label_suffix)
+            # form_label_suffix.append(form.label_suffix)
+
+            # form.queryset = questions[i].answers.all()  # вытаскиваем все связанные(M2M) ответы
+            # form = QuestionForm(instance=questions[i].answers.all())
+            # form(queryset=Planet.objects.all())
+            form.answer = questions[i].answers.all()
+            # print('== form.answer', form.answer)
+
+            list_questions.append(questions[i].id)  # Дополняем список (id) который выпал рекруту
+            list_questions_text.append(questions[i].question)  # Список вопросов (текст) для (в) "label"
+        print('===list_questions_text:', list_questions_text)
+        recruit.answers = list_questions         # Сохраняем список вопросов (id) который выпал рекруту
+        recruit.save()                           # в базу
+        list_questions_text.reverse()       # реверс, потому как в шаблоне вытаскиваем через ".pop" (с конца)
+        print('=== List_question', list_questions)
+        return render(request, 'si/recruit_questions.html',
+                      context={'formset': formset, 'recruit': recruit, 'questions': list_questions_text})
+
+    def post(self, request, slug):
+        count, question_form_set = RecruitQuestions.get_count_question_form_set()
+        print("=====Req POST: ", request.POST)
+        recruit = get_object_or_404(Recruit, slug__iexact=slug)
+        formset = question_form_set(request.POST)
+        # print('==== Foermset POST: ', formset.forms)
+        # print('====== formset in POST: ', formset)
+        new_obj = []
+        for form in formset:
+            if form.is_valid():
+                print('==== Foermset POST: ', form.cleaned_data)
+                new_obj.append(form.save())
+        print('====new_obj:', new_obj)
+        return render(request, 'si/recruit_questions.html', context={'formset': formset, 'recruit': recruit})
+
+
+# ----------------------------------------
+# uniq = [1,2,3,4,5]
+# fifa = ['q1','q2','q3','q4','q5']
+# uniq_and_fifa = dict(zip(uniq, fifa))  -> {1: 'q1', 2: 'q2', 3: 'q3', 4: 'q4'}
+# -----------------------------------
+# a = [1, 2, 3]
+# >>> c = dict.fromkeys(a)      ->  # {1: None, 2: None, 3: None}
+# >>> d = dict.fromkeys(a, 10)  ->  # {1: 10, 2: 10, 3: 10}
+# ----------------------
+# # class RecruitQuestions(View):
+# #     def get(self, request, slug):
+# #         recruit = get_object_or_404(Recruit, slug__iexact=slug)
+# #         bound_form = RecruitQuestionsForm(instance=recruit)
+# #         return render(request, 'si/recruit_questions.html', context={'form': bound_form, 'recruit': recruit})
+
+
+def siths_planet(request, slug):
+    planet_id = Planet.objects.get(slug__iexact=slug).id
+    siths = Sith.objects.filter(planet=planet_id)
+    # get_object_or_404(Chats, slug__iexact=
+    return render(request, 'si/siths_planet.html', context={'siths': siths})
 
 
 # class RecruitQuestionsView(CreateView):
@@ -52,6 +184,49 @@ class RecruitQuestionsView(View):
         return render(request, 'si/recruit_questions.html', context={'form': formset})
 
 
+# ---------------------------
+    # def get(self, request):
+    #     form = RecruitForm()
+    #     return render(request, 'si/recruit_create.html', context={'form': form})
+    #
+    # def post(self, request):
+    #     bound_form = RecruitForm(request.POST)
+    #
+    #     if bound_form.is_valid():
+    #         new_recruit = bound_form.save()
+    #         return redirect(new_recruit)
+    #     return render(request, 'si/recruit_create.html', context={'form': bound_form})
+# -------------------------------
+    # def get(self, request):
+    #     form = SithForm()
+    #     return render(request, 'si/sith_create.html', context={'form': form})
+    #
+    # def post(self, request):
+    #     bound_form = SithForm(request.POST)
+    #
+    #     if bound_form.is_valid():
+    #         new_sith = bound_form.save()
+    #         return redirect(new_sith)
+    #     return render(request, 'si/sith_create.html', context={'form': bound_form})
+# ---------------------------
+# class RecruitCreateView(CreateView):
+#     template_name = 'si/recruit_create.html'
+#     # template_name = 'si/recruit_questions.html'
+#     form_class = RecruitForm
+#     success_url = reverse_lazy('index')
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['planet'] = Planet.objects.all()
+#         return context
+#         # return render(request, 'si/recruit_questions.html', context=context)
+#
+#     def post(self, request, *args, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['planet'] = Planet.objects.all()
+#         return redirect(reverse('recruit_questions_url'))
+#     # redirect_url = 'recruit_questions_url'
+# -------------------------------
         # return render(request, 'si/recruit_questions.html', context={'form': form, 'context': questions})
         # form.label_suffix = random.choice(Test.objects.all())
         # QuestionsFormSet = formset_factory(QuestionsForm, extra=3)
@@ -76,38 +251,55 @@ def sith_authorization(request):
 def task_view(request):
     return render(request, 'si/the_task.html')
 
+# bound_formset = formset_factory(QuestionForm)()
+# print("==bound formset: ", bound_formset)
+# ArticleFormSet = formset_factory(ArticleForm, extra=2)
+# formset = ArticleFormSet(initial={'title': 'Django is now open source',
+#                                   'pub_date': datetime.date.today(),}])
+# formset = ArticleFormSet(request.POST, initial=[...])
 
-def recruits_list(request):
-    recruits = Recruit.objects.all()
-    return render(request, 'si/recruits_list.html', context={'recruits': recruits})
+# if bound_form.is_valid():
+# new_recruit = bound_form.save()
+# new_recruit = bound_form.cleaned_data
+# return redirect(new_recruit)
 
+# --------------------------
+    # def get(self, request, slug):
+    #     # recruit = Recruit.objects.get(slug__iexact=slug)
+    #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
+    #     bound_form = RecruitForm(instance=recruit)
+    #     return render(request, 'si/recruit_update.html', context={'form': bound_form, 'recruit': recruit})
+    #
+    # def post(self, request, slug):
+    #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
+    #     bound_form = RecruitForm(request.POST, instance=recruit)
+    #
+    #     if bound_form.is_valid():
+    #         new_recruit = bound_form.save()
+    #         return redirect(new_recruit)
+    #     return render(request, 'si/recruit_update.html', context={'form': bound_form, 'recruit': recruit})
+# -----------------------------------
+    # print(dir(request))
+    # print()
+    # print(request.POST)
+    # print()
 
-def recruit_detail(request, slug):
-    recruit = Recruit.objects.get(slug__exact=slug)
-    return render(request, 'si/recruit_detail.html', context={'recruit': recruit})
+    # def get(self, request, slug):
+    #     # recruit = Recruit.objects.get(slug__exact=slug)
+    #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
+    #     return render(request, 'si/recruit_detail.html', context={'recruit': recruit})
+    # def get(self, request, slug):
+    #     # sith = Sith.objects.get(slug__iexact=slug)
+    #     sith = get_object_or_404(Sith, slug__iexact=slug)
+    #     return render(request, 'si/sith_detail.html', context={'sith': sith})
 
+# def recruit_detail(request, slug):
+#     recruit = Recruit.objects.get(slug__exact=slug)
+#     return render(request, 'si/recruit_detail.html', context={'recruit': recruit})
 
-def siths_list(request):
-    siths = Sith.objects.all()
-    return render(request, 'si/siths_list.html', context={'siths': siths})
-
-
-def siths_count_hands(request, count):
-    # siths = Sith.objects.all()
-    queryset = []
-    for si in Sith.objects.all():
-        if si.get_count_hands() >= count:
-            queryset.append(si)
-    print(queryset)
-    print(request.path)
-
-    return render(request, 'si/siths_count_hands.html', context={'siths': queryset})
-
-
-def sith_detail(request, slug):
-    sith = Sith.objects.get(slug__iexact=slug)
-    return render(request, 'si/sith_detail.html', context={'sith': sith})
-
+# def sith_detail(request, slug):
+#     sith = Sith.objects.get(slug__iexact=slug)
+#     return render(request, 'si/sith_detail.html', context={'sith': sith})
 
 # def siths_list(request):
 #     search_query = request.GET.get('search', '')

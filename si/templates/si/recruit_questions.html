@@ -1,19 +1,59 @@
 {% extends 'si/base_si.html' %}
 
 
-{% block title %} Вопрпосы для рекрута: {% endblock %}
+{% block title %} Вопрпосы для рекрута "{{ recruit.name }}" : {% endblock %}
 
 
-{% block content %}
-    <h4 class="mb-4">Вопросы для рекрута:</h4>
+{% block content_1 %}
+    <h4 class="mb-4">Вопросы для рекрута "{{ recruit.name }}" :</h4>
 
-    <form action="{% url 'recruit_questions_url' %}" method="post">
+    <form action="{{ recruit.get_questions_url }}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Сохранить">
     </form>
+{% endblock %}
+
+
+{% block content %}
+    <h4 class="mb-4">Вопросы для рекрута "{{ recruit.name }}" :</h4>
+    <hr>
+
+    <form action="{{ recruit.get_questions_url }}" method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        {% for field in formset %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+{#                <div class="alert alert-secondary" role="alert">#}
+{#                    {{ field.label }}#}
+{#                </div>#}
+                <div class="alert alert-info" role="alert">
+                    {{  questions.pop }}
+                </div>
+                 {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Ответить</button>
+    </form>
 
 {% endblock %}
+
+{#    <h1 class="form-header">Насколько вероятно Вы порекомендуете инструмент </h1>#}
+{#    <div class="rating-wrapper">#}
+{#        {% for radio in form.rate %}#}
+{#            <label for="{{ radio.id_for_label }}" class="rating-wrapper">#}
+{#                {{ radio.choice_label }}#}
+{#                {{ radio.tag }}#}
+{#                <span class="radio-checkmark"></span>#}
+{#            </label>#}
+{#        {% endfor %}#}
+{#    </div>#}
 
 
 {#    {% for sith in page_object.object_list %}#}

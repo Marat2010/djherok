@@ -1,15 +1,40 @@
 {% extends 'si/base_si.html' %}
 
-{% block title %}Добавление рекрута{% endblock %}
+{% block title %}
+    Добавление рекрута - {{ block.super }}
+{% endblock %}
 
 {% block content %}
-    <h2>Добавление рекрута</h2>
-    <form action="{% url 'recruit_create_url' %}" method="post">
+    <h5><b>Укажите свои данные рекрута:</b></h5>
+    <hr>
+    <form action="{% url 'recruit_create_url'%}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Добавить">
-{#        <input type="submit" value="Добавить" formaction="{% url 'recruit_questions_url' %}">#}
+
+        {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class="alert alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+                {{ field.label }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Создать</button>
     </form>
+
 {% endblock %}
+
+
+{#        <button type="submit" class="btn btn-primary" formaction="../../recruit_questions/">Создать</button>#}
+{#http://127.0.0.1:8000/si/recruit/create/si/recruit_questions.html#}
+{#    <h2>Добавление рекрута</h2>#}
+{#    <form action="{% url 'recruit_create_url' %}" method="post">#}
+{#        {% csrf_token %}#}
+{#        {{ form.as_p }}#}
+{#        <input type="submit" value="Добавить">#}
+{#        <input type="submit" value="Добавить" formaction="{% url 'recruit_questions_url' %}">#}
+{#    </form>#}
 
 

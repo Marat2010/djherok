@@ -1,15 +1,15 @@
 {% extends 'si/base_si.html' %}
 
 {% block title %}
-    Список ситхов: - {{ block.super }}
+    Список ситхов по планетам: - {{ block.super }}
 {% endblock %}
 
 {% block content %}
 
     <div class="d-flex justify-content-between">
-        <h4 class="mb-4">Ситхи:</h4>
+        <h4 class="mb-4">Ситхи по планетам:</h4>
         <div>
-            <a href="{%  url 'siths_count_hands_url' count_hands=0 %}" class="btn btn-outline-secondary">Посмотреть по кол-ву рук Тени</a>
+            <a href="{%  url 'siths_planet_url' slug='korusant-1586894870' %}" class="btn btn-outline-secondary">Посмотреть по Планетам</a>
         </div>
     </div>
 

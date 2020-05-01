@@ -24,7 +24,7 @@
 {#                    <li class="nav-item">#}
                     <li {%if 'siths' in request.path %}class="nav-item active"{%endif%} class="nav-item">
 {#                        <a class="nav-link" href="{% url 'siths_list_url' %}">Ситхи</a>#}
-                        <a class="nav-link" href="{% url 'siths_count_hands_url' count=0 %}">Ситхи</a>
+                        <a class="nav-link" href="{% url 'siths_count_hands_url' count_hands=0 %}">Ситхи</a>
                     </li>
                 {% endif %}
 

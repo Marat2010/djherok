@@ -66,6 +66,9 @@ class Sith(models.Model):
     def get_absolute_url(self):
         return reverse('sith_detail_url', kwargs={'slug': self.slug})
 
+    def get_update_url(self):
+        return reverse('sith_update_url', kwargs={'slug': self.slug})
+
     def __str__(self):
         return self.name
 
@@ -96,6 +99,12 @@ class Recruit(models.Model):
     def get_absolute_url(self):
         return reverse('recruit_detail_url', kwargs={'slug': self.slug})
 
+    def get_update_url(self):
+        return reverse('recruit_update_url', kwargs={'slug': self.slug})
+
+    def get_questions_url(self):
+        return reverse('recruit_questions_url', kwargs={'slug': self.slug})
+
     def __str__(self):
         return self.name
 
@@ -115,6 +124,10 @@ class Test(models.Model):
     question = models.TextField(blank=True, null=True, verbose_name='Вопрос')
     slug = models.SlugField(max_length=100, blank=True, null=True, unique=True, verbose_name='Слаг(Slug)')
 
+    def get_answers(self):
+        # return ';  '.join(['{} ({})'.format(str(recr.name), recr.email) for recr in self.recruits.all()])
+        return ';  '.join(['{} '.format(str(answ.answer)) for answ in self.answers.all()])
+
     def __str__(self):
         return self.question
 
@@ -127,5 +140,22 @@ class Test(models.Model):
         verbose_name_plural = 'Тесты'
         verbose_name = 'Тест'
         ordering = ['order']
+
+
+class Answer(models.Model):
+    answer = models.CharField(max_length=100, blank=True, null=True, verbose_name='Ответ', unique=True)
+    tests = models.ManyToManyField('Test', blank=True, related_name='answers', verbose_name='Вопрос')
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name_plural = 'Ответы'
+        verbose_name = 'Ответ'
+        ordering = ['id']
+
+
+
+
 
 

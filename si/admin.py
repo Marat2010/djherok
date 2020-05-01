@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Planet, Order, Sith, Recruit, Test
+from .models import Planet, Order, Sith, Recruit, Test, Answer
 
 
 class PlanetAdmin(admin.ModelAdmin):
@@ -28,9 +28,15 @@ class RecruitAdmin(admin.ModelAdmin):
 
 
 class TestAdmin(admin.ModelAdmin):
-    list_display = ('order', 'question', 'slug')
+    list_display = ('order', 'question', 'slug', 'get_answers')
     list_display_links = ('order', 'question')
     search_fields = ('order', 'question')
+
+
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('answer',)
+    list_display_links = ('answer',)
+    search_fields = ('answer',)
 
 
 admin.site.register(Planet, PlanetAdmin)
@@ -38,4 +44,5 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(Sith, SithAdmin)
 admin.site.register(Recruit, RecruitAdmin)
 admin.site.register(Test, TestAdmin)
+admin.site.register(Answer, AnswerAdmin)
 
