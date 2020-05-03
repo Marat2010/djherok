@@ -40,7 +40,7 @@ ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  'localhost',
                  # 'g62.dlinkddns.com',
                  # '178.204.133.11',
-                 '0.0.0.0',
+                 # '0.0.0.0',
                  ]
 
 # Application definition

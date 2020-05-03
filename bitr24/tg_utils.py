@@ -20,8 +20,10 @@ file_answ = './bitr24/answer.json'  # Файл для временного хр�
 local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
 if local_launch:
     token_telegram = os.environ['token_telegram3']
+    file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 else:
     token_telegram = os.environ['token_telegram2']
+    file_last_bindings = 'https://djherok.s3.us-east-2.amazonaws.com/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 # proxies = {'https': 'https://70.89.113.137:443/'}     # proxy_url = 'https://telegg.ru/orig/bot'
 proxies = {'https': 'https://94.135.230.163:443/'}
@@ -36,7 +38,6 @@ client_id = os.environ['bx24_code_app']     # Битрикс24 код прило
 client_secret = os.environ['bx24_key_app']  # Битрикс24 ключ приложения
 file_b24 = './bitr24/bx24.json'             # Файл для временного хранения словаря от Битрикс24
 file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
-file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 
 # Использование библиотеки bitrix24-python3-client
 # bx24 = Bitrix24('telebot.bitrix24.ru', client_id, client_secret)  # Создание экземпляра Bitrix24.
