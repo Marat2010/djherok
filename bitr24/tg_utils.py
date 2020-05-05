@@ -12,18 +12,43 @@ import os
 from bitrix24.bitrix24 import Bitrix24
 from .models import Bitr, Chat, Messages
 from django.core.exceptions import ObjectDoesNotExist
+import boto3
+import botocore
 
 file_answ = './bitr24/answer.json'  # Файл для временного хранения словаря от Телеграмм
 # file_data_bot = './bitr24/data_bot.json'  # Файл для хранения данных всех чатов (без БД)
 
+# SECRET_KEY = os.environ['SECRET_KEY']
 # local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
-local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
+# local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
+
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+region = 'us-east-2'
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']  # S3_BUCKET_NAME = 'djherok'
+AWS_URL = 'https://djherok.s3.us-east-2.amazonaws.com/'
+file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
+key_last_bindings = 'last_bindings.json'
+# # ----------------------------
+s3 = boto3.resource('s3')
+# # Upload a new file
+# data = open(file_last_bindings, 'rb')
+# s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=key_last_bindings, Body=data)
+# # Download
+# s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(key_last_bindings, file_last_bindings)
+
+# # s3.Bucket('djherok').put_object(Key=file_last_bindings, Body=data)
+# # s3.Bucket('mybucket').download_file('hello.txt', '/tmp/hello.txt')
+# # ----------------------------
+
+local_launch = bool(os.environ['local_launch'])
 if local_launch:
     token_telegram = os.environ['token_telegram3']
-    file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
+    # file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 else:
     token_telegram = os.environ['token_telegram2']
-    file_last_bindings = 'https://djherok.s3.us-east-2.amazonaws.com/last_bindings.json'  # Файл последней связки chat_id и bx24_id
+    # s3 = boto3.resource('s3')
+
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 # proxies = {'https': 'https://70.89.113.137:443/'}     # proxy_url = 'https://telegg.ru/orig/bot'
 proxies = {'https': 'https://94.135.230.163:443/'}
@@ -43,12 +68,21 @@ file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временн�
 # bx24 = Bitrix24('telebot.bitrix24.ru', client_id, client_secret)  # Создание экземпляра Bitrix24.
 
 
+# def write_json(data, filename=file_answ, wa='w'):
+#     with open(filename, wa) as f:
+#         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
+
 def write_json(data, filename=file_answ, wa='w'):
     with open(filename, wa) as f:
         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
+    if not local_launch:
+        data = open(filename, 'rb')
+        s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=filename[2:], Body=data)
 
 
 def read_json(filename=file_answ):
+    if not local_launch:
+        s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(filename[2:], filename)
     with open(filename, 'r') as f:
         r = json.load(f)
     return r
