@@ -6,6 +6,8 @@ backcall==0.1.0
 bitrix24-python3-client==0.4.0
 bleach==3.1.0
 blessings==1.7
+boto3==1.13.2
+botocore==1.16.2
 bpython==0.18
 bx24-orm==0.0.3
 certifi==2019.9.11
@@ -19,6 +21,7 @@ diff-match-patch==20181111
 Django==2.2.11
 django-import-export==1.2.0
 django-restframework-apiview==1.3.17
+django-storages==1.9.1
 djangorestframework==3.10.3
 docutils==0.15.2
 et-xmlfile==1.0.1
@@ -34,6 +37,7 @@ ipython-genutils==0.2.0
 jdcal==1.4.1
 jedi==0.15.1
 jeepney==0.4.1
+jmespath==0.9.5
 keyring==21.0.0
 MarkupPy==1.14
 more-itertools==8.0.2
@@ -52,11 +56,13 @@ pycparser==2.19
 Pygments==2.5.2
 pyowm==2.10.0
 python-dateutil==2.8.1
+pytils==0.3
 pytz==2019.3
 PyYAML==5.1.2
 readme-renderer==24.0
 requests==2.22.0
 requests-toolbelt==0.9.1
+s3transfer==0.3.3
 SecretStorage==3.1.1
 six==1.12.0
 sqlparse==0.3.0
