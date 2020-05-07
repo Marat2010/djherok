@@ -1,21 +1,19 @@
 {
   "message": {
     "chat": {
-      "first_name": "Linux",
-      "id": 1080498053,
-      "last_name": "Mint",
+      "first_name": "Гамир",
+      "id": 1213466945,
       "type": "private"
     },
-    "date": 1585160471,
+    "date": 1588809718,
     "from": {
-      "first_name": "Linux",
-      "id": 1080498053,
+      "first_name": "Гамир",
+      "id": 1213466945,
       "is_bot": false,
-      "language_code": "ru",
-      "last_name": "Mint"
+      "language_code": "ru"
     },
-    "message_id": 1767,
-    "text": "sdsds"
+    "message_id": 1860,
+    "text": "P"
   },
-  "update_id": 555291452
+  "update_id": 555291499
 }

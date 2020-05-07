@@ -42,6 +42,7 @@ s3 = boto3.resource('s3')
 # # ----------------------------
 
 local_launch = bool(os.environ['local_launch'])
+print('== Local Launch: ', local_launch)
 if local_launch:
     token_telegram = os.environ['token_telegram3']
     # file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
@@ -51,7 +52,12 @@ else:
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 # proxies = {'https': 'https://70.89.113.137:443/'}     # proxy_url = 'https://telegg.ru/orig/bot'
-proxies = {'https': 'https://94.135.230.163:443/'}
+# proxies = {'https': 'https://94.135.230.163:443/'}
+
+proxies = {'https': 'https://138.201.5.34:8080/'}
+
+# proxies = {'https': 'https://203.189.89.153:8080/'}
+# proxies = {'tg://proxy?server=ireland.proxy.telegram.ads.notata.pro&port=443&secret=dd6154f6c2404d6a57ec08e585dd7d2c44/'}
 
 # Использовали веб хук(входящий) - всё от одного пользователя admin (bx24_webhook_in)
 # Теперь "Серверное локальное приложение без интерфейса в Битрикс24". Код(client_id) и ключ(client_secret) - REST
@@ -73,18 +79,23 @@ file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временн�
 #         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 def write_json(data, filename=file_answ, wa='w'):
+    print('---=== Запись в файл: ', filename)
     with open(filename, wa) as f:
         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
     if not local_launch:
-        data = open(filename, 'rb')
+        print('---=== Запись в файл "local launch" : ', filename)
+        # data = open(filename, 'rb')
         s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=filename[2:], Body=data)
 
 
 def read_json(filename=file_answ):
+    print('---=== Чтение из файла: ', filename)
     if not local_launch:
+        print('---=== Чтение из файла: "local launch" ', filename)
         s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(filename[2:], filename)
     with open(filename, 'r') as f:
         r = json.load(f)
+        print('---=== Чтение из файла: "local launch" , Значение r= ', r)
     return r
 
 
@@ -129,7 +140,7 @@ class Bx24(Bitrix24):
         last_bindings = read_json(file_last_bindings)
     except json.decoder.JSONDecodeError:
         last_bindings = {}
-    # print('== Загруженные привязки: {}'.format(last_bindings))
+    print('== Загруженные привязки: {}'.format(last_bindings))
 
     def __init__(self, chat_id=None, message=None):
         super().__init__(domain='telebot.bitrix24.ru', client_id=client_id, client_secret=client_secret)
@@ -314,12 +325,15 @@ def read_ans():    # Чтение данных чата бота из файла
         date_msg = data_answer["message"]['date']
         date_msg = datetime.fromtimestamp(int(date_msg)).strftime('%H:%M:%S %d-%m-%Y')
         ch_id = data_answer['message']['chat']['id']
+        f_name = data_answer['message']['chat']['first_name']
         try:
             lang = data_answer['message']['from']['language_code']
         except KeyError:
             lang = 'en'
-        f_name = data_answer['message']['chat']['first_name']
-        last_name = data_answer['message']['chat']['last_name']
+        try:
+            last_name = data_answer['message']['chat']['last_name']
+        except KeyError:
+            last_name = '-'
         try:
             username = data_answer['message']['chat']['username']
         except Exception:
