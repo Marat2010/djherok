@@ -40,9 +40,9 @@ s3 = boto3.resource('s3')
 # # s3.Bucket('djherok').put_object(Key=file_last_bindings, Body=data)
 # # s3.Bucket('mybucket').download_file('hello.txt', '/tmp/hello.txt')
 # # ----------------------------
-
+print('== 1 Local Launch: ', os.environ['local_launch'])
 local_launch = bool(os.environ['local_launch'])
-print('== Local Launch: ', local_launch)
+print('== 2 Local Launch: ', local_launch)
 if local_launch:
     token_telegram = os.environ['token_telegram3']
     # file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
@@ -84,7 +84,7 @@ def write_json(data, filename=file_answ, wa='w'):
         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
     if not local_launch:
         print('---=== Запись в файл "local launch" : ', filename)
-        # data = open(filename, 'rb')
+        data = open(filename, 'rb')
         s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=filename[2:], Body=data)
 
 
