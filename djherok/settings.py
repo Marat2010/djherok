@@ -93,9 +93,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djherok.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+FIXTURE_DIRS = (
+   # '/path/to/myapp/fixtures/',
+   os.path.join(BASE_DIR, 'fixtures'),
+)
 
 # DATABASES = {
 #     'default': {
@@ -177,4 +178,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'si/static'),
 ]
+
+# Database
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
