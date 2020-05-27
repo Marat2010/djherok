@@ -1,0 +1,23 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Список рекрутов по планетам: - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-between">
+        <h4 class="mb-4">Рекруты по планетам:</h4>
+        <div>
+{#            <a href="{{ sith.get_planet_url }}" class="btn btn-outline-secondary">Посмотреть по Планетам</a>#}
+            <h4><b> {{ planet }} </b></h4>
+
+        </div>
+    </div>
+
+    {% for recruit in recruits %}
+        {% include 'si/includes/recruit_card_template.html' %}
+    {% endfor %}
+
+{% endblock %}
+

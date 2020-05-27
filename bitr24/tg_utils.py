@@ -16,47 +16,28 @@ import boto3
 import botocore
 
 file_answ = './bitr24/answer.json'  # Файл для временного хранения словаря от Телеграмм
-# file_data_bot = './bitr24/data_bot.json'  # Файл для хранения данных всех чатов (без БД)
-
-# SECRET_KEY = os.environ['SECRET_KEY']
-# local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
-# local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
+file_b24 = './bitr24/bx24.json'             # Файл для временного хранения словаря от Битрикс24
+file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 region = 'us-east-2'
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']  # S3_BUCKET_NAME = 'djherok'
 AWS_URL = 'https://djherok.s3.us-east-2.amazonaws.com/'
-file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
-key_last_bindings = 'last_bindings.json'
-# # ----------------------------
 s3 = boto3.resource('s3')
-# # Upload a new file
-# data = open(file_last_bindings, 'rb')
-# s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=key_last_bindings, Body=data)
-# # Download
-# s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(key_last_bindings, file_last_bindings)
 
-# # s3.Bucket('djherok').put_object(Key=file_last_bindings, Body=data)
-# # s3.Bucket('mybucket').download_file('hello.txt', '/tmp/hello.txt')
-# # ----------------------------
-print('== 1 Local Launch: ', os.environ['local_launch'])
 local_launch = bool(os.environ['local_launch'])
-print('== 2 Local Launch: ', local_launch)
+print('== Local Launch: ', local_launch)
 if local_launch:
     token_telegram = os.environ['token_telegram3']
-    # file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
 else:
     token_telegram = os.environ['token_telegram2']
-    # s3 = boto3.resource('s3')
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
-# proxies = {'https': 'https://70.89.113.137:443/'}     # proxy_url = 'https://telegg.ru/orig/bot'
-# proxies = {'https': 'https://94.135.230.163:443/'}
 
 proxies = {'https': 'https://138.201.5.34:8080/'}
-
-# proxies = {'https': 'https://203.189.89.153:8080/'}
+# proxies = {'https': 'https://70.89.113.137:443/'}     # proxy_url = 'https://telegg.ru/orig/bot'
+# proxies = {'https': 'https://94.135.230.163:443/'}  # proxies = {'https': 'https://203.189.89.153:8080/'}
 # proxies = {'tg://proxy?server=ireland.proxy.telegram.ads.notata.pro&port=443&secret=dd6154f6c2404d6a57ec08e585dd7d2c44/'}
 
 # Использовали веб хук(входящий) - всё от одного пользователя admin (bx24_webhook_in)
@@ -67,16 +48,10 @@ URL_bx24 = 'https://telebot.bitrix24.ru/rest/1/' + bx24_webhook_in + '/'
 # Bitrix24 server app without UI
 client_id = os.environ['bx24_code_app']     # Битрикс24 код приложения
 client_secret = os.environ['bx24_key_app']  # Битрикс24 ключ приложения
-file_b24 = './bitr24/bx24.json'             # Файл для временного хранения словаря от Битрикс24
-file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
 
 # Использование библиотеки bitrix24-python3-client
 # bx24 = Bitrix24('telebot.bitrix24.ru', client_id, client_secret)  # Создание экземпляра Bitrix24.
 
-
-# def write_json(data, filename=file_answ, wa='w'):
-#     with open(filename, wa) as f:
-#         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
 
 def write_json(data, filename=file_answ, wa='w'):
     print('---=== Запись в файл: ', filename)
@@ -89,13 +64,15 @@ def write_json(data, filename=file_answ, wa='w'):
 
 
 def read_json(filename=file_answ):
-    print('---=== Чтение из файла: ', filename)
+    # print('---=== Чтение из файла: ', filename)
     if not local_launch:
-        print('---=== Чтение из файла: "local launch" ', filename)
+        # print('---=== Чтение из файла: "local launch" ', filename)
+        #  "./bitr24/last_bindings.json" преобразуем в "bitr24/last_bindings.json" так как в AWS S3 путь к ключу файла
+        #  без точек, потому пропуск двух символов -> filename[2:]
         s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(filename[2:], filename)
     with open(filename, 'r') as f:
         r = json.load(f)
-        print('---=== Чтение из файла: "local launch" , Значение r= ', r)
+        # print('---=== Чтение из файла "local launch" , Значение r= ', r)
     return r
 
 
@@ -360,6 +337,34 @@ def send_bx24_webhook(method='', **kwargs):     # отправка запрос�
     #     self.access_token = self.access_token
     #     self.refresh_token = self.refresh_token
     #     self.bx24_name = bx24_name
+
+
+    # file_last_bindings = './bitr24/last_bindings.json'  # Файл последней связки chat_id и bx24_id
+    # s3 = boto3.resource('s3')
+
+# def write_json(data, filename=file_answ, wa='w'):
+#     with open(filename, wa) as f:
+#         json.dump(data, f, indent=2, ensure_ascii=False, sort_keys=True)
+
+# file_bx24_tok = './bitr24/bx24_tok_file.json'  # Файл для временного хранения словаря токенов от Битрикс24
+# file_data_bot = './bitr24/data_bot.json'  # Файл для хранения данных всех чатов (без БД)
+
+# SECRET_KEY = os.environ['SECRET_KEY']
+# local_launch = True    # True - если локально с прокси и ngrok (для Телеграмм).
+# local_launch = False    # False - если хостинг, без прокси (для Телеграмм).
+
+# key_last_bindings = 'last_bindings.json'
+# # ----------------------------
+# # Upload a new file
+# data = open(file_last_bindings, 'rb')
+# s3.Bucket(AWS_STORAGE_BUCKET_NAME).put_object(Key=key_last_bindings, Body=data)
+# # Download
+# s3.Bucket(AWS_STORAGE_BUCKET_NAME).download_file(key_last_bindings, file_last_bindings)
+
+# # s3.Bucket('djherok').put_object(Key=file_last_bindings, Body=data)
+# # s3.Bucket('mybucket').download_file('hello.txt', '/tmp/hello.txt')
+# # ----------------------------
+# print('== 1 Local Launch: ', os.environ['local_launch'])
 
 # https://djherok.herokuapp.com/bitr24/tg/
 

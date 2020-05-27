@@ -4,18 +4,19 @@
 {% block title %} Вопрпосы для рекрута "{{ recruit.name }}" : {% endblock %}
 
 
-{% block content_1 %}
+{% block content %}
     <h4 class="mb-4">Вопросы для рекрута "{{ recruit.name }}" :</h4>
 
     <form action="{{ recruit.get_questions_url }}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
+{#        {{ form }}#}
         <input type="submit" value="Сохранить">
     </form>
 {% endblock %}
 
 
-{% block content %}
+{% block content2 %}
     <h4 class="mb-4">Вопросы для рекрута "{{ recruit.name }}" :</h4>
     <hr>
 

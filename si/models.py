@@ -37,12 +37,18 @@ class Planet(models.Model):
 class Order(models.Model):
     name = models.CharField(max_length=100, verbose_name='Название ордена')
     code = models.SlugField(max_length=100, unique=True, verbose_name='Код ордена')
+    slug = models.SlugField(max_length=100, blank=True, null=True, unique=True, verbose_name='Слаг(Slug)')
 
     def get_siths(self):
         return ';  '.join(['{} (планета: {})'.format(str(si.name), si.planet) for si in self.siths.all()])
 
     def __str__(self):
         return self.code
+
+    def save(self, *args, **kwargs):
+        if not self.id or not self.slug:
+            self.slug = gen_slug(self.name)
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = 'Ордена'
@@ -58,6 +64,12 @@ class Sith(models.Model):
 
     def get_recruits(self):
         return ';  '.join(['{} ({})'.format(str(recr.name), recr.email) for recr in self.recruits.all()])
+
+    def get_planet_url(self):
+        return reverse('siths_planet_url', kwargs={'slug': self.planet.slug})
+
+    def get_order_url(self):
+        return reverse('siths_order_url', kwargs={'slug': self.order.slug})
 
     def get_count_hands(self):   # siths_count_hands
         return len(self.recruits.all())
@@ -96,6 +108,9 @@ class Recruit(models.Model):
     def get_sith(self):
         return '{} (планета: {})'.format(self.sith.name, self.sith.planet) if self.sith else ' -'
 
+    def get_planet_url(self):
+        return reverse('recruits_planet_url', kwargs={'slug': self.planet.slug})
+
     def get_absolute_url(self):
         return reverse('recruit_detail_url', kwargs={'slug': self.slug})
 
@@ -123,6 +138,7 @@ class Test(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT, verbose_name='Код ордена')
     question = models.TextField(blank=True, null=True, verbose_name='Вопрос')
     slug = models.SlugField(max_length=100, blank=True, null=True, unique=True, verbose_name='Слаг(Slug)')
+    answers = models.ManyToManyField('Answer', blank=True, related_name='tests', verbose_name='Ответ')
 
     def get_answers(self):
         # return ';  '.join(['{} ({})'.format(str(recr.name), recr.email) for recr in self.recruits.all()])
@@ -144,7 +160,7 @@ class Test(models.Model):
 
 class Answer(models.Model):
     answer = models.CharField(max_length=100, blank=True, null=True, verbose_name='Ответ', unique=True)
-    tests = models.ManyToManyField('Test', blank=True, related_name='answers', verbose_name='Вопрос')
+    # tests = models.ManyToManyField('Test', blank=True, related_name='answers', verbose_name='Вопрос')
 
     def __str__(self):
         return self.answer

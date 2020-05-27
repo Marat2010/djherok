@@ -7,9 +7,13 @@
     </div>
     <div class="card-footer">
         <i>Планета:</i>
-        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
-        <i>Орден:</i>
-        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>#}
+        <a href="{{ recruit.get_planet_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
+{#        &nbsp#}
+        &#8195
+        <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
+{#        <a href="{{ recruit.get_order_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
     </div>
 </div>
 

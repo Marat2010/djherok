@@ -9,9 +9,14 @@
     </div>
     <div class="card-footer">
         <i>Планета:</i>
-        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.planet }}</a>
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.planet }}</a>#}
+        <a href="{{ sith.get_planet_url }}" class="btn btn-outline-secondary">{{ sith.planet }}</a>
+{#        &nbsp#}
+        &#8195
+
         <i>Орден:</i>
-        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.order.name }}</a>
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ sith.order.name }}</a>#}
+        <a href="{{ sith.get_order_url }}" class="btn btn-outline-secondary">{{ sith.order.name }}</a>
     </div>
 </div>
 
