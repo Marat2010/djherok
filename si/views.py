@@ -80,7 +80,7 @@ def siths_planet(request, slug):
 
 
 def siths_order(request, slug):
-    order_id = Order.objects.get(slug__iexact=slug).id
+    order_id = Order.objects.get(slug__iexact=slug).pk
     order_name = Order.objects.get(slug__iexact=slug).name
     siths = Sith.objects.filter(order=order_id)
     # get_object_or_404(Chats, slug__iexact=
