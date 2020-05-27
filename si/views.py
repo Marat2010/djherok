@@ -72,7 +72,7 @@ class SithUpdate(ObjectUpdateMixin, View):
 
 
 def siths_planet(request, slug):
-    planet_id = Planet.objects.get(slug__iexact=slug).id
+    planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
     siths = Sith.objects.filter(planet=planet_id)
     # get_object_or_404(Chats, slug__iexact=
@@ -88,7 +88,7 @@ def siths_order(request, slug):
 
 
 def recruits_planet(request, slug):
-    planet_id = Planet.objects.get(slug__iexact=slug).id
+    planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
     recruits = Recruit.objects.filter(planet=planet_id)
     # get_object_or_404(Chats, slug__iexact=
