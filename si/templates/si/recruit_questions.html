@@ -9,8 +9,8 @@
 
     <form action="{{ recruit.get_questions_url }}" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-{#        {{ form }}#}
+{#        {{ form.as_p }}#}
+        {{ form }}
         <input type="submit" value="Сохранить">
     </form>
 {% endblock %}

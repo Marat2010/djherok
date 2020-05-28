@@ -49,16 +49,19 @@ class ChoiceRadioSelect(forms.RadioSelect):
 
 class RecruitQuestionsForm(forms.ModelForm):
     class Meta:
-        model = Test
-        fields = ['answers']
+        # model = Test
+        model = Answer
+        fields = ['answer']
 
-        widgets = {
-            # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'answers': forms.Select(attrs={'class': 'form-control', 'label': ''}),
-            # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
-        }
+    # widgets = {
+    #     'answer': forms.TextInput(attrs={'class': 'form-control'}),
+    #     # 'answers': forms.Select(attrs={'class': 'form-control', 'label': ' '}),
+    #     # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
+    # }
 
-    # queryset = Answer.objects.all()
+    queryset = Answer.objects.all()
+    # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect)
+    answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
     # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
     # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label=' ')
 

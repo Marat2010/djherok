@@ -115,10 +115,11 @@ class RecruitQuestions(View):
         form = RecruitQuestionsForm()
 
         form.label_suffix = question
-        # return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
-        return render(request, 'si/recruit_questions.html', context={'form': form})
+        return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
+        # return render(request, 'si/recruit_questions.html', context={'form': form})
 
-    # def post(self, request, slug):
+    def post(self, request, slug):
+        pass
     #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
     #     bound_form = RecruitQuestionsForm('', request.POST)
     #     print('===2=bound_form:', bound_form.fields['q'].label, '==data:', bound_form.data['q'])
