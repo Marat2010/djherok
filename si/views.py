@@ -7,7 +7,6 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Sith, Recruit, Planet, Test, Order
 from .forms import RecruitForm, SithForm, RecruitQuestionsForm
-# RecruitQuestionsForm
 import random
 from django.forms import formset_factory
 from django.shortcuts import redirect
@@ -29,7 +28,6 @@ def siths_list(request):
 
 
 def siths_count_hands(request, count_hands):
-    # siths = Sith.objects.all()
     queryset = []
     for si in Sith.objects.all():
         if si.get_count_hands() >= count_hands:
@@ -49,9 +47,12 @@ class SithDetail(ObjectDetailMixin, View):
     template = 'si/sith_detail.html'
 
 
-class RecruitCreate(ObjectCreateMixin, View):
-    model_form = RecruitForm
-    template = 'si/recruit_create.html'
+class RecruitCreate(CreateView):
+    model = Recruit
+    template_name = 'si/recruit_create.html'
+    context_object_name = 'form'
+    form_class = RecruitForm
+    success_url = '../{slug}/questions/'
 
 
 class SithCreate(ObjectCreateMixin, View):
@@ -109,12 +110,15 @@ class RecruitQuestions(View):
     def get(self, request, slug):
         recruit = get_object_or_404(Recruit, slug__iexact=slug)
         question = random.sample(list(Test.objects.all()), 1)[0].question
+        # question = random.sample(list(Test.objects.all()), 2)
         print('====question: ', question)
 
         # form = RecruitQuestionsForm(question)
-        form = RecruitQuestionsForm()
+        # form = RecruitQuestionsForm(label_suffix=question)
+        form = RecruitQuestionsForm(label_suffix=question)
 
-        form.label_suffix = question
+        # form.label_suffix = question
+        # form.label = question
         return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
         # return render(request, 'si/recruit_questions.html', context={'form': form})
 
@@ -128,6 +132,42 @@ class RecruitQuestions(View):
     #     return render(request, 'si/recruit_questions.html', context={'form': bound_form, 'recruit': recruit})
 
 
+
+    # class RecruitCreate2(ObjectCreateMixin, View):
+    #     model_form = RecruitForm
+    #     template = 'si/recruit_create.html'
+    #     # success_url = Recruit.get_questions_url
+    #     # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': Recruit.get_questions_url})
+
+    # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': '{slug}'})
+    # print('--Success URL: ', success_url())
+    # success_url = redirect('recruit_detail_url')
+    # success_url = reverse_lazy('get_absolute_url')
+
+    # def form_valid(self, form):
+    #     obj = form.save(commit=False)
+    #     obj.profile_id = self.request.user.id
+    #     # obj.slug = self.get_success_url()
+    #     print('====slug: ', obj.slug)
+    #     obj.save()
+    #     self.success_url = self.model.get_absolute_url(obj)
+
+    # def get_success_url(self):
+    #     if 'slug' in self.kwargs:
+    #         slug = self.kwargs['slug']
+    #     else:
+    #         slug = 'demo'
+    #     return reverse_lazy('recruit_questions_url', kwargs={'slug': slug})
+
+# def recruit_create(request):
+#     if request.method == 'POST':
+#         form = RecruitForm(request.POST)
+#         if form.is_valid():
+#             recruit = form.save()
+#             return redirect(recruit.get_questions_url())
+#     else:
+#         form = RecruitForm()
+#     return render(request, 'si/recruit_create.html', {'form': form})
 
 # # class RecruitQuestionsView(CreateView):
 # class RecruitQuestionsView(View):

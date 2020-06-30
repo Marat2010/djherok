@@ -49,19 +49,26 @@ class ChoiceRadioSelect(forms.RadioSelect):
 
 class RecruitQuestionsForm(forms.ModelForm):
     class Meta:
-        # model = Test
-        model = Answer
-        fields = ['answer']
+        model = Test
+        # model = Answer
+        fields = ['answers']
 
-    # widgets = {
+    widgets = {
     #     'answer': forms.TextInput(attrs={'class': 'form-control'}),
-    #     # 'answers': forms.Select(attrs={'class': 'form-control', 'label': ' '}),
+    #     'answers': forms.Select(attrs={'class': 'form-control', 'label': ' '}),
     #     # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
-    # }
+    }
 
-    queryset = Answer.objects.all()
-    # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect)
-    answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
+    # queryset = Answer.objects.all()
+    queryset = Test.objects.get(pk=1).answers
+
+    # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
+
+    # answers = forms.ModelChoiceField(queryset=queryset, widget=forms.RadioSelect, label=' ')
+    answers = forms.ModelChoiceField(queryset=queryset, label=' ')
+    # answers = forms.RadioSelect()
+
+
     # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
     # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label=' ')
 
@@ -82,6 +89,10 @@ class RecruitQuestionsForm(forms.ModelForm):
     #     new_obj = {'quest': self.label_suffix, 'answ': self.cleaned_data}
     #     return new_obj
 
+# class RecruitForm2(forms.ModelForm):
+#     class Meta:
+#         model = Recruit
+#         fields = ['name', 'planet', 'age', 'email']
 
 # -------------
 # class QuestionForm_2(forms.ModelForm):

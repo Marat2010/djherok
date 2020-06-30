@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-# from .models import Sith, Recruit, Planet, Test
+from .models import Sith, Recruit, Planet, Test
+from .forms import RecruitForm
 
 
 class ObjectDetailMixin:

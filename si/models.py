@@ -113,6 +113,7 @@ class Recruit(models.Model):
 
     def get_absolute_url(self):
         return reverse('recruit_detail_url', kwargs={'slug': self.slug})
+        # return reverse('recruit_questions_url', kwargs={'slug': self.slug})
 
     def get_update_url(self):
         return reverse('recruit_update_url', kwargs={'slug': self.slug})

@@ -11,7 +11,10 @@
         {% csrf_token %}
 {#        {{ form.as_p }}#}
         {{ form }}
-        <input type="submit" value="Сохранить">
+        <hr>
+        <div>
+            <input type="submit" value="Сохранить">
+        </div>
     </form>
 {% endblock %}
 
@@ -40,7 +43,9 @@
                  {{ field }}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Ответить</button>
+        <div>
+            <button type="submit" class="btn btn-primary">Ответить</button>
+        </div>
     </form>
 
 {% endblock %}

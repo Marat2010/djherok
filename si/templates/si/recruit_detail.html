@@ -19,10 +19,11 @@
         </div>
         <div class="card-footer">
             <i>Планета:</i>
-            <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
-            <i>Орден:</i>
-            <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
+            <a href="{{ recruit.get_planet_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
+            &#8195  {#&nbsp#}
+            <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>
         </div>
     </div>
 
 {% endblock %}
+
