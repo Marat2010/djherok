@@ -1,21 +1,21 @@
 {% extends 'si/base_si.html' %}
 
 {% block title %}
-    Список ситхов по Ордену: - {{ block.super }}
+    Список Рекрутов по Ордену: - {{ block.super }}
 {% endblock %}
 
 {% block content %}
 
     <div class="d-flex justify-content-between">
-        <h4 class="mb-4">Ситхи (кол-во: {{ siths|length }}) ордена:</h4>
+        <h4 class="mb-4">Рекруты (кол-во: {{ recruits|length }}) ордена:</h4>
         <div>
 {#            <a href="{{ sith.get_order_url }}" class="btn btn-outline-secondary">Посмотреть по Ордену</a>#}
             <h4><b> {{ order }} </b></h4>
         </div>
     </div>
 
-    {% for sith in siths %}
-        {% include 'si/includes/sith_card_template.html' %}
+    {% for recruit in recruits %}
+        {% include 'si/includes/recruit_card_template.html' %}
     {% endfor %}
 
 {% endblock %}

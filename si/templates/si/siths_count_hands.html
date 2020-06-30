@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <h4 class="mb-4">Ситхи:</h4>
+    <h4 class="mb-4">Ситхи (кол-во: {{ siths|length }}):</h4>
     <b><i>Кол-во рук Тени : </i></b>
 
     <a href="{%  url 'siths_count_hands_url' count_hands=1 %}" {%if '/1/' in request.path %}aria-pressed="true"{%endif%}

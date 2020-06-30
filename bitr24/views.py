@@ -73,7 +73,7 @@ def chats_list(request):
     else:
         chats = Chat.objects.all()
 
-    paginator = Paginator(chats, 5)
+    paginator = Paginator(chats, 3)
 
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

@@ -19,6 +19,35 @@ def index(request):
 
 def recruits_list(request):
     recruits = Recruit.objects.all()
+
+    # paginator = Paginator(recruits, 3)
+    #
+    # page_number = request.GET.get('page', 1)
+    # page = paginator.get_page(page_number)
+    #
+    # is_paginated = page.has_other_pages()
+    #
+    # if page.has_previous():
+    #     prev_url = '?page={}'.format(page.previous_page_number())
+    # else:
+    #     prev_url = ''
+    #
+    # if page.has_next():
+    #     next_url = '?page={}'.format(page.next_page_number())
+    # else:
+    #     next_url = ''
+    #
+    # context = {
+    #     'page_object': page,
+    #     'is_paginated': is_paginated,
+    #     'prev_url': prev_url,
+    #     'next_url': next_url,
+    #     'recruits': recruits
+    # }
+    #
+    # # return render(request, 'bitr24/index.html', context=context)
+    # return render(request, 'si/recruits_list.html', context=context)
+
     return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
@@ -94,6 +123,26 @@ def recruits_planet(request, slug):
     recruits = Recruit.objects.filter(planet=planet_id)
     # get_object_or_404(Chats, slug__iexact=
     return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name})
+
+
+def recruits_order(request, slug):
+    print('-- SLug:  ', slug, type(slug))
+    recruits = []
+    recruits_not_sith = []
+    for recruit in Recruit.objects.all():
+        if recruit.sith:
+            if recruit.sith.order.slug == slug:
+                recruits.append(recruit)
+        else:
+            recruits_not_sith.append(recruit)
+    if slug != 'None':
+        order_name = Order.objects.get(slug__iexact=slug).name
+    else:
+        order_name = 'None'
+        recruits = recruits_not_sith
+    print('---recruits: ', recruits)
+
+    return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name})
 
 
 def sith_authorization(request):

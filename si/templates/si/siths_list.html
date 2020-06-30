@@ -7,7 +7,7 @@
 {% block content %}
 
     <div class="d-flex justify-content-between">
-        <h4 class="mb-4">Ситхи:</h4>
+        <h4 class="mb-4">Ситхи (кол-во: {{ siths|length }}):</h4>
         <div>
             <a href="{%  url 'siths_count_hands_url' count_hands=0 %}" class="btn btn-outline-secondary">Посмотреть по кол-ву рук Тени</a>
         </div>

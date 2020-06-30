@@ -111,9 +111,14 @@ class Recruit(models.Model):
     def get_planet_url(self):
         return reverse('recruits_planet_url', kwargs={'slug': self.planet.slug})
 
+    def get_order_url(self):
+        if self.sith:
+            return reverse('recruits_order_url', kwargs={'slug': self.sith.order.slug})
+        return reverse('recruits_order_url', kwargs={'slug': 'None'})
+        # return reverse('recruits_list_url')
+
     def get_absolute_url(self):
         return reverse('recruit_detail_url', kwargs={'slug': self.slug})
-        # return reverse('recruit_questions_url', kwargs={'slug': self.slug})
 
     def get_update_url(self):
         return reverse('recruit_update_url', kwargs={'slug': self.slug})

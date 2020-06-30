@@ -1,7 +1,8 @@
 <div class="card mt-2">
     <div class="card-body">
         <h5 class="card-title"><b>{{ sith.name }}</b></h5>
-        <p class="card-text"> <i>Его Руки Тени (кол-во: <b>{{ sith.get_count_hands }}</b> ):</i>
+{#        <p class="card-text"> <i>Его Руки Тени (кол-во: <b>{{ sith.get_count_hands }}</b> ):</i>#}
+        <p class="card-text"> <i>Его Руки Тени (кол-во: <b>{{ sith.recruits.all|length }}</b> ):</i>
             <b>{{ sith.get_recruits|truncatewords:6 }}</b>
         </p>
         <a href="{{ sith.get_absolute_url }}" class="btn btn-primary">Вход</a>

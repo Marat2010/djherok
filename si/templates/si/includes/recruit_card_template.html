@@ -1,7 +1,16 @@
 <div class="card mb-2">
     <div class="card-body">
         <h5 class="card-title"><b>{{ recruit.name }}</b></h5>
-        <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>
+{#        <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>#}
+
+        <p class="card-text"> <i>Является Рукой Тени:</i>
+            {%  if recruit.sith %}
+                <b> <a href="{% url 'sith_detail_url' slug=recruit.sith.slug %}" class="btn btn-light">
+                    {{ recruit.get_sith }}</a>
+                </b>
+            {% endif %}
+        </p>
+
         <a href="{{ recruit.get_absolute_url }}" class="btn btn-primary">Посмотреть</a>
         {# <a href="{%  url 'recruit_detail_url' slug=recruit.slug %}" class="btn btn-primary">Посмотреть</a>#}
     </div>
@@ -11,9 +20,10 @@
         <a href="{{ recruit.get_planet_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
 {#        &nbsp#}
         &#8195
-        <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>
+{#        <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>#}
+        <i>Орден: </i>
 {#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
-{#        <a href="{{ recruit.get_order_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
+        <a href="{{ recruit.get_order_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
     </div>
 </div>
 

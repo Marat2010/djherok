@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <h4 class="mb-4">Рекруты:</h4>
+    <h4 class="mb-4">Рекруты (кол-во: {{ recruits|length }}):</h4>
 
     {% for recruit in recruits %}
         {% include 'si/includes/recruit_card_template.html' %}
