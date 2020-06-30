@@ -7,9 +7,11 @@ import django.views.decorators.csrf
 import os
 import datetime
 
-local_launch = False    # True - если локально с прокси и ngrok.
+# local_launch = False    # True - если локально с прокси и ngrok.
+local_launch = bool(os.environ['local_launch'])
+print('== Local Launch: ', local_launch)
 if local_launch:
-    token_telegram = os.environ['token_telegram2']
+    token_telegram = os.environ['token_telegram3']
 else:
     token_telegram = os.environ['token_telegram']
 token_pyowm = os.environ['token_pyowm']
