@@ -1,8 +1,9 @@
 from django.urls import path
 from .views import index, recruits_list, siths_list, siths_count_hands, RecruitCreate, RecruitDetail, RecruitUpdate
 from .views import SithCreate, SithDetail, SithUpdate
-from .views import task_view, RecruitQuestions,  sith_authorization, siths_planet, siths_order,\
-    recruits_planet, recruits_order
+from .views import task_view, sith_authorization, siths_planet, siths_order,\
+    recruits_planet, recruits_order, recruit_questions, recruit_questions2
+    # , RecruitQuestions,
 # from .views import recruit_create
 
 urlpatterns = [
@@ -30,7 +31,8 @@ urlpatterns = [
 
 
 
-    path('recruit/<str:slug>/questions/', RecruitQuestions.as_view(), name='recruit_questions_url'),
+    # path('recruit/<str:slug>/questions/', RecruitQuestions.as_view(), name='recruit_questions_url'),
+    path('recruit/<str:slug>/questions/', recruit_questions2, name='recruit_questions_url'),
 
 
 

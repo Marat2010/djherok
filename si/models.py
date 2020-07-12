@@ -3,6 +3,8 @@ from django.db import models
 from django.utils.text import slugify
 from time import time
 from django.shortcuts import reverse
+from django.core.exceptions import ValidationError
+from django.dispatch import receiver
 
 
 def gen_slug(s):
@@ -126,6 +128,13 @@ class Recruit(models.Model):
     def get_questions_url(self):
         return reverse('recruit_questions_url', kwargs={'slug': self.slug})
 
+    def get_questions(self):
+        # recruit = get_object_or_404(Recruit, slug__iexact=slug)
+        # question = random.sample(list(Test.objects.all()), 1)[0].question
+        # # question = random.sample(list(Test.objects.all()), 2)
+        # print('====question: ', question)
+        pass
+
     def __str__(self):
         return self.name
 
@@ -140,11 +149,29 @@ class Recruit(models.Model):
         ordering = ['name']
 
 
+class Answer(models.Model):
+    answer = models.CharField(max_length=100, blank=True, null=True, verbose_name='Ответ', unique=True)
+    # tests = models.ManyToManyField('Test', blank=True, related_name='answers', verbose_name='Вопрос')
+
+    def __str__(self):
+        return self.answer
+
+    class Meta:
+        verbose_name_plural = 'Ответы'
+        verbose_name = 'Ответ'
+        ordering = ['id']
+
+
 class Test(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT, verbose_name='Код ордена')
     question = models.TextField(blank=True, null=True, verbose_name='Вопрос')
     slug = models.SlugField(max_length=100, blank=True, null=True, unique=True, verbose_name='Слаг(Slug)')
-    answers = models.ManyToManyField('Answer', blank=True, related_name='tests', verbose_name='Ответ')
+    right_answ = models.ForeignKey(Answer, blank=True, null=True, on_delete=models.PROTECT, related_name='right_answ',
+                                   verbose_name='Правильный ответ')
+    answers = models.ManyToManyField(Answer, blank=True, related_name='tests', verbose_name='Ответ')
+
+    def get_absolute_url(self):
+        return reverse('recruit_detail_url', kwargs={'pk': self.pk})
 
     def get_answers(self):
         # return ';  '.join(['{} ({})'.format(str(recr.name), recr.email) for recr in self.recruits.all()])
@@ -161,23 +188,58 @@ class Test(models.Model):
     class Meta:
         verbose_name_plural = 'Тесты'
         verbose_name = 'Тест'
-        ordering = ['order']
+        ordering = ['-pk']
 
 
-class Answer(models.Model):
-    answer = models.CharField(max_length=100, blank=True, null=True, verbose_name='Ответ', unique=True)
-    # tests = models.ManyToManyField('Test', blank=True, related_name='answers', verbose_name='Вопрос')
+class RecruitAnswer(models.Model):
+    recruit = models.ForeignKey(Recruit, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Рекрут')
+    question = models.ForeignKey(Test, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Вопрос')
+    answer = models.ForeignKey(Answer, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Ответ')
 
     def __str__(self):
-        return self.answer
+        return '{}-{}'.format(self.recruit, self.question)
 
     class Meta:
-        verbose_name_plural = 'Ответы'
-        verbose_name = 'Ответ'
-        ordering = ['id']
+        verbose_name_plural = 'Ответы Рекрутов'
+        verbose_name = 'Ответы Рекрута'
+        ordering = ['recruit']
 
 
+        # else:
+            # new_test = Answer.objects.update_or_create(self)
+            # new_test = super(Test, self).save(*args, **kwargs)
 
+            # super(Test, self).save(*args, **kwargs)
+            # right_answ = self.right_answ
 
+            # self.right_answ.save()
+            # ans = self.answers.all()
+            # Answer.objects.update_or_create(self)
+            # self.answers.update_or_create()
+            # yes_no = right_answ.save() in list(self.answers.all())
+            # self.right_answ
+            # ans = Answer.objects.update_or_create(answer=new_test)
+            # self.answers.set()
+            # self.answers.update()
+            # print('----new-test: ', type(new_test))
+            # Использовать "m2m_changed" или "TabularInline"
+            # print('----кшпре-test: ', self.right_answ, self.answers.all())
 
+    # @receiver
+    # def pre_save(self, instance, **kwargs):
+    #     # instance.answers.update = instance.period_duration()
+    #     instance.answers.update()
+
+    # def create(self, *args, **kwargs):
+    #     if
+    #     validated_data['slug'] = slugify(validated_data['name'])
+    #     return budgets.models.BudgetCategory.objects.create(**validated_data)
+
+    # self.answers = Answer.objects.none()
+    # self.answers = ''
+    # if not commit:
+    #     raise NotImplementedError("Can't create User and Userextended without database save")
+
+    # right = models.ForeignObject(answers)
+    # right_answ = models.ForeignKey(Answer, blank=True, related_name='tests_right', on_delete=models.PROTECT, verbose_name='Правильный ответ')
 

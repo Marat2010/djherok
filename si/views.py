@@ -6,7 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Sith, Recruit, Planet, Test, Order
-from .forms import RecruitForm, SithForm, RecruitQuestionsForm
+from .forms import RecruitForm, SithForm, RecruitQuestionsForm, RecruitQuestionsForm2
 import random
 from django.forms import formset_factory
 from django.shortcuts import redirect
@@ -154,59 +154,95 @@ def task_view(request):
 
 
 # -----------------------------------------------------
-
-class RecruitQuestions(View):
-    def get(self, request, slug):
-        recruit = get_object_or_404(Recruit, slug__iexact=slug)
-        question = random.sample(list(Test.objects.all()), 1)[0].question
-        # question = random.sample(list(Test.objects.all()), 2)
-        print('====question: ', question)
-
-        # form = RecruitQuestionsForm(question)
-        # form = RecruitQuestionsForm(label_suffix=question)
-        form = RecruitQuestionsForm(label_suffix=question)
-
-        # form.label_suffix = question
-        # form.label = question
-        return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
-        # return render(request, 'si/recruit_questions.html', context={'form': form})
-
-    def post(self, request, slug):
-        pass
-    #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
-    #     bound_form = RecruitQuestionsForm('', request.POST)
-    #     print('===2=bound_form:', bound_form.fields['q'].label, '==data:', bound_form.data['q'])
-    #     bound_form.save()
-    #     # print('===BOUND_FOR: ', bound_form)
-    #     return render(request, 'si/recruit_questions.html', context={'form': bound_form, 'recruit': recruit})
+def recruit_questions(request, slug):
+    questions = random.sample(list(Test.objects.all()), 3)
+    recruit = Recruit.objects.get(slug=slug)
+    if request.method == 'POST':
+        form = RecruitQuestionsForm(request.POST)
+    else:
+        form = RecruitQuestionsForm()
+        # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': ''})
+        return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug,
+                                                             'recruit': recruit, 'questions': questions})
 
 
+def recruit_questions2(request, slug):
+    recruit = Recruit.objects.get(slug=slug)
+    if request.method == 'POST':
+        form = RecruitQuestionsForm2
+    else:
+        #         formset = question_form_set(QuestionForm)
+        #         formset = formset_factory(QForm, extra=count)()
+        #         count = 3
+        #         questions = random.sample(list(Test.objects.all()), count)
+        #         formset = formset_factory(QForm, extra=count)()
+        #         for i, form in enumerate(formset):
+        #             form.label_suffix = questions[i]        #
+        #         return render(request, 'si/recruit_questions.html', context={'form': formset})
 
-    # class RecruitCreate2(ObjectCreateMixin, View):
-    #     model_form = RecruitForm
-    #     template = 'si/recruit_create.html'
-    #     # success_url = Recruit.get_questions_url
-    #     # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': Recruit.get_questions_url})
+        questions = random.sample(list(Test.objects.all()), 3)
+        # form = RecruitQuestionsForm2
+        formset = formset_factory(RecruitQuestionsForm2, extra=3)
+        for i, form in enumerate(formset):
+            form.label = questions[i]
+    # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': ''})
+    # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug, 'recruit': recruit})
+    return render(request, 'si/recruit_questions.html', {'form': formset, 'slug': slug, 'recruit': recruit})
 
-    # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': '{slug}'})
-    # print('--Success URL: ', success_url())
-    # success_url = redirect('recruit_detail_url')
-    # success_url = reverse_lazy('get_absolute_url')
 
-    # def form_valid(self, form):
-    #     obj = form.save(commit=False)
-    #     obj.profile_id = self.request.user.id
-    #     # obj.slug = self.get_success_url()
-    #     print('====slug: ', obj.slug)
-    #     obj.save()
-    #     self.success_url = self.model.get_absolute_url(obj)
+# class RecruitQuestions(View):
+#     def get(self, request, slug):
+#         recruit = get_object_or_404(Recruit, slug__iexact=slug)
+#         question = random.sample(list(Question.objects.all()), 1)[0].question
+#         # question = random.sample(list(Test.objects.all()), 2)
+#         print('====question: ', question)
+#
+#         # form = RecruitQuestionsForm(question)
+#         # form = RecruitQuestionsForm(label_suffix=question)
+#         form = RecruitQuestionsForm(label_suffix=question)
+#
+#         # form.label_suffix = question
+#         # form.label = question
+#         return render(request, 'si/recruit_questions.html', context={'form': form, 'recruit': recruit})
+#         # return render(request, 'si/recruit_questions.html', context={'form': form})
+#
+#     def post(self, request, slug):
+#         pass
+#     #     recruit = get_object_or_404(Recruit, slug__iexact=slug)
+#     #     bound_form = RecruitQuestionsForm('', request.POST)
+#     #     print('===2=bound_form:', bound_form.fields['q'].label, '==data:', bound_form.data['q'])
+#     #     bound_form.save()
+#     #     # print('===BOUND_FOR: ', bound_form)
+#     #     return render(request, 'si/recruit_questions.html', context={'form': bound_form, 'recruit': recruit})
+#
+#
+#
+#     # class RecruitCreate2(ObjectCreateMixin, View):
+#     #     model_form = RecruitForm
+#     #     template = 'si/recruit_create.html'
+#     #     # success_url = Recruit.get_questions_url
+#     #     # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': Recruit.get_questions_url})
+#
+#     # success_url = reverse_lazy('recruit_questions_url', kwargs={'slug': '{slug}'})
+#     # print('--Success URL: ', success_url())
+#     # success_url = redirect('recruit_detail_url')
+#     # success_url = reverse_lazy('get_absolute_url')
+#
+#     # def form_valid(self, form):
+#     #     obj = form.save(commit=False)
+#     #     obj.profile_id = self.request.user.id
+#     #     # obj.slug = self.get_success_url()
+#     #     print('====slug: ', obj.slug)
+#     #     obj.save()
+#     #     self.success_url = self.model.get_absolute_url(obj)
+#
+#     # def get_success_url(self):
+#     #     if 'slug' in self.kwargs:
+#     #         slug = self.kwargs['slug']
+#     #     else:
+#     #         slug = 'demo'
+#     #     return reverse_lazy('recruit_questions_url', kwargs={'slug': slug})
 
-    # def get_success_url(self):
-    #     if 'slug' in self.kwargs:
-    #         slug = self.kwargs['slug']
-    #     else:
-    #         slug = 'demo'
-    #     return reverse_lazy('recruit_questions_url', kwargs={'slug': slug})
 
 # def recruit_create(request):
 #     if request.method == 'POST':

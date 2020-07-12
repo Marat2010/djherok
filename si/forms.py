@@ -3,7 +3,7 @@ from django import forms
 import random
 from django.forms import formset_factory
 from django.core.exceptions import ValidationError
-from .models import Recruit, Sith, Planet, Test, Answer
+from .models import Recruit, Sith, Planet, Test, Answer, RecruitAnswer
 
 
 class RecruitForm(forms.ModelForm):
@@ -25,6 +25,23 @@ class RecruitForm(forms.ModelForm):
         return new_email
 
 
+class TestForm(forms.ModelForm):  # Для выбора прав.ответа из сущестующих в 'admin'
+    class Meta:
+        model = Test
+        fields = ['right_answ', 'question', 'answers', 'order']
+        widgets = {'question': forms.Textarea(attrs={"rows": 5, "class": "vLargeTextField"})}
+        labels = {'answers': 'Ответы'}
+
+    def clean(self):
+        print('==cl:', self.cleaned_data)
+        if self.cleaned_data["right_answ"] not in self.cleaned_data["answers"]:
+            # raise forms.ValidationError('Выберите правильный ответ из предоставленных ответов!!!')
+            raise forms.ValidationError('Правильный ответ должен быть одним из в "Ответах"!')
+        super(TestForm, self).clean()  # important- let admin do its work on data!
+        print('--slef', self.cleaned_data)
+        return self.cleaned_data
+
+
 class SithForm(forms.ModelForm):
     class Meta:
         model = Sith
@@ -39,6 +56,25 @@ class SithForm(forms.ModelForm):
 
 # ----------------------------------------
 # class NullBooleanRadioSelect(forms.RadioSelect):
+
+class RecruitQuestionsForm(forms.ModelForm):
+    class Meta:
+        model = RecruitAnswer
+        fields = ['question', 'answer']
+        # fields = ['answer']
+        # labels = 'question'
+
+
+class RecruitQuestionsForm2(forms.Form):
+    pass
+    # questions = random.sample(list(Test.objects.all()), 3)
+    # print('---question:   ', questions)
+    # for question in questions:
+    #     queryset = question.answers.all()
+    #     label = question.question
+    #     answers = forms.ModelChoiceField(queryset=queryset, label=label)
+
+
 class ChoiceRadioSelect(forms.RadioSelect):
     def __init__(self, *args, **kwargs):
         choices = ((True, 'Да'), (False, 'Нет'), (3, 'ответ 3'), (3, 'ответ 4'))
@@ -47,47 +83,74 @@ class ChoiceRadioSelect(forms.RadioSelect):
     _empty_value = None
 
 
-class RecruitQuestionsForm(forms.ModelForm):
-    class Meta:
-        model = Test
-        # model = Answer
-        fields = ['answers']
+class RecruitQuestionsForm1(forms.ModelForm):
+    pass
+    # class Meta:
+    #     model = Test
+    #     # model = Answer
+    #     fields = ['answers']
+    #
+    # widgets = {
+    # #     'answer': forms.TextInput(attrs={'class': 'form-control'}),
+    # #     'answers': forms.Select(attrs={'class': 'form-control', 'label': ' '}),
+    # #     # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
+    # }
+    #
+    # # queryset = Answer.objects.all()
+    # queryset = Test.objects.get(pk=1).answers
+    #
+    # # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
+    #
+    # # answers = forms.ModelChoiceField(queryset=queryset, widget=forms.RadioSelect, label=' ')
+    # answers = forms.ModelChoiceField(queryset=queryset, label=' ')
+    # # answers = forms.RadioSelect()
+    #
+    #
+    # # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
+    # # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label=' ')
+    #
+    # # answer = forms.ModelChoiceField(queryset=queryset, label='')
+    # # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label='')
+    #
+    #
+    #
+    # # def clean_q(self):
+    # #     new_q = self.cleaned_data['q']
+    # #     print('===new_q: ', new_q)
+    # #     if new_q is None:
+    # #         raise ValidationError('Поле: {}, надо заполнить'.format(new_q))
+    # #     return new_q
+    #
+    # # def save(self):
+    # #     self.clean()
+    # #     new_obj = {'quest': self.label_suffix, 'answ': self.cleaned_data}
+    # #     return new_obj
 
-    widgets = {
-    #     'answer': forms.TextInput(attrs={'class': 'form-control'}),
-    #     'answers': forms.Select(attrs={'class': 'form-control', 'label': ' '}),
-    #     # 'answer': forms.TextInput(attrs={'class': 'form-control'}),
-    }
+# ------------------------------------------------------
+    # question = forms.CharField(label='fdfdf', widget=forms.Textarea(attrs={"rows": 5, "class": "vLargeTextField"}))
 
-    # queryset = Answer.objects.all()
-    queryset = Test.objects.get(pk=1).answers
+    # question.labels = 'sdfd'
+    # question = forms.CharField(widget=forms.Textarea(attrs={"rows": 5, "cols": 50,
+    # "class": "vLargeTextField"}))
 
-    # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
+    # def clean_answers(self):
+    #     print('--claen:::: ', self.cleaned_data)
+    #     if self.cleaned_data["right_answ"] not in self.cleaned_data["answers"]:
+    #         # raise forms.ValidationError('Выберите правильный ответ из предоставленных ответов!!!')
+    #         raise forms.ValidationError('Правильный ответ должен быть одним из в ответах!')
+    #     super(FormTest, self).clean()  # important- let admin do its work on data!
+    #     print('--slef', self.cleaned_data)
+    #     return self.cleaned_data
 
-    # answers = forms.ModelChoiceField(queryset=queryset, widget=forms.RadioSelect, label=' ')
-    answers = forms.ModelChoiceField(queryset=queryset, label=' ')
-    # answers = forms.RadioSelect()
-
-
-    # answer = forms.ModelChoiceField(queryset=queryset, widget=ChoiceRadioSelect, label=' ')
-    # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label=' ')
-
-    # answer = forms.ModelChoiceField(queryset=queryset, label='')
-    # answer = forms.ModelChoiceField(widget=ChoiceRadioSelect, label='')
-
-
-
-    # def clean_q(self):
-    #     new_q = self.cleaned_data['q']
-    #     print('===new_q: ', new_q)
-    #     if new_q is None:
-    #         raise ValidationError('Поле: {}, надо заполнить'.format(new_q))
-    #     return new_q
-
-    # def save(self):
-    #     self.clean()
-    #     new_obj = {'quest': self.label_suffix, 'answ': self.cleaned_data}
-    #     return new_obj
+    # def clean_right_answ(self):
+# ------------------------------------------------------
+# class MyTestAdminForm(forms.ModelForm):
+#     def clean_right_answ(self):
+#         # do something that validates your data
+#         # object_id = request.resolver_match.kwargs['object_id']
+#         if self.right_answ not in self.answers.all():
+#             raise ValidationError('Выберите правильный ответ из предоставленных ответов!!!')
+#         return self.cleaned_data["right_answ"]
 
 # class RecruitForm2(forms.ModelForm):
 #     class Meta:
