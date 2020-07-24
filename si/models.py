@@ -5,7 +5,7 @@ from time import time
 from django.shortcuts import reverse
 from django.core.exceptions import ValidationError
 from django.dispatch import receiver
-
+import random
 
 def gen_slug(s):
     new_slug = slugify(s, allow_unicode=True)
@@ -103,7 +103,6 @@ class Recruit(models.Model):
     age = models.IntegerField(default=1, verbose_name='Возраст')
     email = models.EmailField(max_length=50, unique=True, verbose_name='Емаил')
     slug = models.SlugField(max_length=100, blank=True, null=True, unique=True, verbose_name='Слаг(Slug)')
-    answers = models.CharField(max_length=200, blank=True, null=True, verbose_name='Ответы')
     sith = models.ForeignKey(Sith, blank=True, null=True, related_name='recruits', on_delete=models.PROTECT,
                              verbose_name='Рука Тени')
 
@@ -128,12 +127,16 @@ class Recruit(models.Model):
     def get_questions_url(self):
         return reverse('recruit_questions_url', kwargs={'slug': self.slug})
 
-    def get_questions(self):
-        # recruit = get_object_or_404(Recruit, slug__iexact=slug)
-        # question = random.sample(list(Test.objects.all()), 1)[0].question
-        # # question = random.sample(list(Test.objects.all()), 2)
-        # print('====question: ', question)
-        pass
+    def refresh_question(self):  # Возвращает queryset вопросов RecruitAnswer (без ответов - новый)
+        # number_questions = 3    # Кол-во вопросов для рекрута, можно сформировать случайное в диапазоне, например так:
+        number_questions = random.randint(2, 5)
+        old_questions = RecruitAnswer.objects.filter(recruit=self)
+        old_questions.delete()
+        # questions = random.sample(list(Test.objects.all()), 1)[0]
+        questions = random.sample(list(Test.objects.all()), number_questions)
+        for question in questions:
+            RecruitAnswer.objects.create(question=question, recruit=self)
+        return RecruitAnswer.objects.filter(recruit=self)
 
     def __str__(self):
         return self.name
@@ -192,18 +195,58 @@ class Test(models.Model):
 
 
 class RecruitAnswer(models.Model):
-    recruit = models.ForeignKey(Recruit, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Рекрут')
+    recruit = models.ForeignKey(Recruit, related_name='recruitanswers', on_delete=models.CASCADE, verbose_name='Рекрут')
     question = models.ForeignKey(Test, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Вопрос')
-    answer = models.ForeignKey(Answer, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Ответ')
+    answer = models.ForeignKey(Answer, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Ответ',
+                               blank=True, null=True)
+
+    # def _get_answer_display(self, answer):
+    # def _get_answer(self):
+        # answer = self.question.answers.all()
+    # def __getattr__(self, name):
+    #     if name == 'answer':
+    #         answer = self.question.answers
+    #         print('____GETATTR', answer)
+    #         return answer
+    #     return super(RecruitAnswer, self).__getattribute__(name)
+    #     # return super(RecruitAnswer, self).__getattr__(name)
+
+    # answer = property(_get_answer)
+    @classmethod  # Возвращает queryset вопросов RecruitAnswer (без ответов - новый), перенесен в модель Recruit.
+    def refresh_question(cls, recruit):  # надо чтобы возвращал queryset
+        number_questions = 2
+
+        old_questions = cls.objects.filter(recruit=recruit)
+        old_questions.delete()
+        # questions = random.sample(list(Test.objects.all()), 1)[0]
+        questions = random.sample(list(Test.objects.all()), number_questions)
+        for question in questions:
+            cls.objects.create(question=question, recruit=recruit)
+        recruitanswer = cls.objects.filter(recruit=recruit)
+
+        return recruitanswer
+        # return reverse('recruits_order_url', kwargs={'slug': 'None'})
+        # return reverse('recruits_list_url')
 
     def __str__(self):
-        return '{}-{}'.format(self.recruit, self.question)
+        return '{}: {}'.format(self.recruit, self.question)
 
     class Meta:
         verbose_name_plural = 'Ответы Рекрутов'
         verbose_name = 'Ответы Рекрута'
         ordering = ['recruit']
 
+
+# ----------------
+    # def get_questions(self):
+    #     # recruit = get_object_or_404(Recruit, slug__iexact=slug)
+    #     # question = random.sample(list(Test.objects.all()), 1)[0].question
+    #     # # question = random.sample(list(Test.objects.all()), 2)
+    #     # print('====question: ', question)
+    #     pass
+
+# ---------------
+        # recruit = models.ForeignKey(Recruit, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Рекрут')
 
         # else:
             # new_test = Answer.objects.update_or_create(self)
@@ -224,6 +267,7 @@ class RecruitAnswer(models.Model):
             # print('----new-test: ', type(new_test))
             # Использовать "m2m_changed" или "TabularInline"
             # print('----кшпре-test: ', self.right_answ, self.answers.all())
+    # answers = models.CharField(max_length=200, blank=True, null=True, verbose_name='Ответы')
 
     # @receiver
     # def pre_save(self, instance, **kwargs):

@@ -5,12 +5,12 @@ from django.views.generic import View, CreateView
 from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Sith, Recruit, Planet, Test, Order
-from .forms import RecruitForm, SithForm, RecruitQuestionsForm, RecruitQuestionsForm2
+from .models import Sith, Recruit, Planet, Test, Order, Answer, RecruitAnswer
+from .forms import RecruitForm, SithForm, RecruitQuestionsForm
 import random
-from django.forms import formset_factory
 from django.shortcuts import redirect
 from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin
+from django.forms import modelformset_factory, inlineformset_factory, formset_factory, modelform_factory
 
 
 def index(request):
@@ -69,6 +69,7 @@ def siths_count_hands(request, count_hands):
 class RecruitDetail(ObjectDetailMixin, View):
     model = Recruit
     template = 'si/recruit_detail.html'
+    answers = True
 
 
 class SithDetail(ObjectDetailMixin, View):
@@ -153,42 +154,166 @@ def task_view(request):
     return render(request, 'si/the_task.html')
 
 
-# -----------------------------------------------------
 def recruit_questions(request, slug):
-    questions = random.sample(list(Test.objects.all()), 3)
     recruit = Recruit.objects.get(slug=slug)
+    recruitanswer_formset = modelformset_factory(RecruitAnswer, form=RecruitQuestionsForm, extra=0)
+
     if request.method == 'POST':
-        form = RecruitQuestionsForm(request.POST)
+        recruitanswer = RecruitAnswer.objects.filter(recruit=recruit)
+
+        formset = recruitanswer_formset(request.POST, queryset=recruitanswer)
+        if formset.is_valid():
+            formset.save()
+            # print('==RECRUIT method POST', formset.fields['answer'].label)
+            return redirect(recruit)
     else:
-        form = RecruitQuestionsForm()
-        # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': ''})
-        return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug,
-                                                             'recruit': recruit, 'questions': questions})
+        recruitanswer = recruit.refresh_question()  # Обновление вопросов при каждом запросе
 
-
-def recruit_questions2(request, slug):
-    recruit = Recruit.objects.get(slug=slug)
-    if request.method == 'POST':
-        form = RecruitQuestionsForm2
-    else:
-        #         formset = question_form_set(QuestionForm)
-        #         formset = formset_factory(QForm, extra=count)()
-        #         count = 3
-        #         questions = random.sample(list(Test.objects.all()), count)
-        #         formset = formset_factory(QForm, extra=count)()
-        #         for i, form in enumerate(formset):
-        #             form.label_suffix = questions[i]        #
-        #         return render(request, 'si/recruit_questions.html', context={'form': formset})
-
-        questions = random.sample(list(Test.objects.all()), 3)
-        # form = RecruitQuestionsForm2
-        formset = formset_factory(RecruitQuestionsForm2, extra=3)
+        formset = recruitanswer_formset(queryset=recruitanswer)
         for i, form in enumerate(formset):
-            form.label = questions[i]
-    # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': ''})
-    # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug, 'recruit': recruit})
+            form.instance = recruitanswer[i]
+            # form.label_suffix = questions[i]
     return render(request, 'si/recruit_questions.html', {'form': formset, 'slug': slug, 'recruit': recruit})
 
+
+
+# # -----------------------------------------------------
+# def recruit_questions_one(request, slug):  # Для одного вопроса без formset-а
+#     recruit = Recruit.objects.get(slug=slug)
+#
+#     if request.method == 'POST':
+#         recruitanswer = RecruitAnswer.objects.filter(recruit=recruit)[0]
+#         form = RecruitQuestionsForm(request.POST, instance=recruitanswer)
+#         if form.is_valid():
+#             form.save()
+#             print('==RECRUIT method POST', form.fields['answer'].label)
+#             return redirect(recruit)
+#     else:
+#         recruitanswer = recruit.refresh_question()[0]
+#         form = RecruitQuestionsForm(instance=recruitanswer)
+#         print('==instance: ===Recr: {}, \t===Quest: {}, \t===ANSw: {}'.
+#               format(recruitanswer.recruit, recruitanswer.question,
+#                      Test.objects.get(question=recruitanswer.question).answers.all()))
+#     return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug, 'recruit': recruit})
+# # -----------------------------------------------------
+
+
+
+
+# def recruit_questions2(request, slug):
+#     recruit = Recruit.objects.get(slug=slug)
+#     if request.method == 'POST':
+#         form = RecruitQuestionsForm2
+#     else:
+#         #         formset = question_form_set(QuestionForm)
+#         #         formset = formset_factory(QForm, extra=count)()
+#         #         count = 3
+#         #         questions = random.sample(list(Test.objects.all()), count)
+#         #         formset = formset_factory(QForm, extra=count)()
+#         #         for i, form in enumerate(formset):
+#         #             form.label_suffix = questions[i]        #
+#         #         return render(request, 'si/recruit_questions.html', context={'form': formset})
+#
+#         questions = random.sample(list(Test.objects.all()), 3)
+#         # form = RecruitQuestionsForm2
+#         formset = formset_factory(RecruitQuestionsForm2, extra=3)
+#         for i, form in enumerate(formset):
+#             form.label = questions[i]
+#     # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': ''})
+#     # return render(request, 'si/recruit_questions.html', {'form': form, 'slug': slug, 'recruit': recruit})
+#     return render(request, 'si/recruit_questions.html', {'form': formset, 'slug': slug, 'recruit': recruit})
+
+
+
+
+
+
+
+# -----------------------------------------------------
+# ------------------------------------------------------
+# questions = Test.objects.filter(pk__in=(i.question.pk for i in recruitanswer))
+# print('==Questions from recruitanswer: ', questions)
+
+# form = RecruitQuestionsForm(instance=recruitanswer)
+# recruit_questions_formset = modelformset_factory(RecruitQuestionsForm1())
+# recruit_questions_formset = formset_factory(RecruitQuestionsForm1(instance=recruitanswer))
+# formset_ra = modelformset_factory(RecruitAnswer, fields=('answer',), labels={'answer': Test.question})
+
+# RecruitQuestionsFormSet = modelformset_factory(RecruitAnswer, form=RecruitQuestionsForm1(instance=recruitanswer), fields=('answer',))
+# formset_ra = inlineformset_factory(Test, RecruitAnswer, form=RecruitQuestionsForm1, extra=1)
+
+# labels={'answer': recruitanswer.first().question})
+# recruit_questions_formset = modelformset_factory(RecruitAnswer, form=RecruitQuestionsForm1(instance=recruitanswer[0]))
+# recruit_questions_formset = modelformset_factory(RecruitAnswer, fields=('answer',),
+#                                                  form=RecruitQuestionsForm1(),
+#                                                  labels={'answer': recruitanswer.first().question})
+
+# recruit_questions_formset = modelformset_factory(RecruitAnswer, fields=('answer',), extra=0
+#                         , labels={'answer-0': 'WWWWWWWW-11111', 'id_form-1-answer': 'WWWWWWWW-11111'})
+#                         # , labels={'answer': [i.question.question for i in recruitanswer]})
+#                                                  # form=RecruitQuestionsForm1(),
+
+# print('==FormSET', formset_ra())
+# print('==instance: ===Recr: {}, \t===Quest: {}, \t===ANSw: {}'.
+#       format(recruitanswer[0].recruit, recruitanswer[0].question,
+#              Test.objects.get(question=recruitanswer[0].question).answers.all()))
+
+# formset = formset_ra(instance=recruitanswer[0].question)
+
+# formset = formset_ra(queryset=questions)
+# ----------------------------------------------------
+# form.instance.answer = form.cleaned_data['answer']
+# form.instance.question = form.fields['answer'].label
+# -------------------------------------------
+# form = modelform_factory(RecruitAnswer, fields=('answer',),
+#                          labels={'answer': recruitanswer.question})
+
+# RecruitAnswerFormSet = modelformset_factory(RecruitAnswer, form=form, max_num=3)
+
+# form = RecruitQuestionsForm(instance=recruitanswer, label_suffix=recruitanswer.question)
+# queryset = Test.objects.get(question=recruitanswer.question).answers.all()}
+# form = RecruitQuestionsForm(instance=recruitanswer, label_suffix=recruitanswer.question)
+
+# old_questions = RecruitAnswer.objects.filter(recruit=recruit)
+# old_questions.delete()
+#
+# # questions = random.sample(list(Test.objects.all()), 1)[0]
+# questions = random.sample(list(Test.objects.all()), number_questions)
+# recruitanswer = RecruitAnswer.objects.none()
+# for question in questions:
+#     recruitanswer = RecruitAnswer.objects.create(question=question, recruit=recruit)
+
+# ------------------------------------------
+# -----------------------------
+# instance = form.save(commit=False)
+# form.instance.recruit = recruit
+# form.instance.question = form.questions
+# new_obj = form.save()
+# return redirect('index')
+# return redirect('recruit_detail_url', {'slug': slug})
+# return reverse_lazy('recruit_detail_url')
+
+# --------------------------------------------------------------------
+# class RecruitAnswers(ObjectDetailMixin, View):  # Ненужен (Перенос в RecruitDetail)
+#     model = Recruit
+#     template = 'si/recruit_detail.html'
+#     answers = True
+#     # answers = 'asasas---------'
+#     # recruit = get_object_or_404(Recruit, slug__iexact=slug)
+
+# def recruit_answer(request, slug):
+#     pass
+#     # recruit = Recruit.objects.get(slug=slug)
+#     # return render(request, 'si/recruit_answers.html', {'form': form, 'slug': slug,
+#     #                                                      'recruit': recruit})
+# ------------------------------------------
+# form = RecruitQuestionsForm(question='1111111111111qqqqqqqqqqqq')
+# question = Test.objects.get(pk=1)
+# form = RecruitQuestionsForm(initial={label: question})
+# form = RecruitQuestionsForm({'question': question})
+
+# print('==form.clean: ', form.Meta.labels)
+# print('==form.xxxx: ', form.Meta.questions, type(form.Meta.questions))
 
 # class RecruitQuestions(View):
 #     def get(self, request, slug):

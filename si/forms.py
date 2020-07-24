@@ -32,13 +32,19 @@ class TestForm(forms.ModelForm):  # Для выбора прав.ответа и
         widgets = {'question': forms.Textarea(attrs={"rows": 5, "class": "vLargeTextField"})}
         labels = {'answers': 'Ответы'}
 
+    # right_answ = forms.ModelChoiceField(queryset=Answer.objects.all(),
+    #                                     # empty_label='Выберите',
+    #                                     empty_label=None,
+    #                                     # initial=Answer.objects.get(pk=1),
+    #                                     to_field_name='answer',
+    #                                     label='Правильный ответ'
+    #                                     )
+
     def clean(self):
-        print('==cl:', self.cleaned_data)
         if self.cleaned_data["right_answ"] not in self.cleaned_data["answers"]:
-            # raise forms.ValidationError('Выберите правильный ответ из предоставленных ответов!!!')
             raise forms.ValidationError('Правильный ответ должен быть одним из в "Ответах"!')
-        super(TestForm, self).clean()  # important- let admin do its work on data!
-        print('--slef', self.cleaned_data)
+        super(TestForm, self).clean()  # ? important- let admin do its work on data!
+        print('--self.cleaned_data: ', self.cleaned_data)
         return self.cleaned_data
 
 
@@ -54,25 +60,30 @@ class SithForm(forms.ModelForm):
         }
 
 
-# ----------------------------------------
-# class NullBooleanRadioSelect(forms.RadioSelect):
-
 class RecruitQuestionsForm(forms.ModelForm):
     class Meta:
         model = RecruitAnswer
-        fields = ['question', 'answer']
-        # fields = ['answer']
-        # labels = 'question'
+        fields = ['answer']
+        # labels = {'answer': ' '}    # Первый способ используем 'label_suffix' для самого
+        # вопроса из View (Как альтернатива)
+        # Второй (правильный) способ использователь переопределение "label" здесь:
+
+    def __init__(self, *args, **kwargs):
+        super(RecruitQuestionsForm, self).__init__(*args, **kwargs)
+        self.fields['answer'].label = self.instance.question  # change required label ... and answers
+        self.fields['answer'].queryset = Test.objects.get(question=self.instance.question).answers.all()
+        # print('---Form Instans1: {} \t =={} '.format(self.instance.question, self.instance.answer))
 
 
 class RecruitQuestionsForm2(forms.Form):
-    pass
-    # questions = random.sample(list(Test.objects.all()), 3)
-    # print('---question:   ', questions)
-    # for question in questions:
-    #     queryset = question.answers.all()
-    #     label = question.question
-    #     answers = forms.ModelChoiceField(queryset=queryset, label=label)
+    # pass
+    questions = random.sample(list(Test.objects.all()), 3)
+    print('---question:   ', questions)
+
+    for question in questions:
+        queryset = question.answers.all()
+        label = question.question
+        answers = forms.ModelChoiceField(queryset=queryset, label=label)
 
 
 class ChoiceRadioSelect(forms.RadioSelect):
@@ -83,8 +94,24 @@ class ChoiceRadioSelect(forms.RadioSelect):
     _empty_value = None
 
 
-class RecruitQuestionsForm1(forms.ModelForm):
-    pass
+# # -----------------------------------------------------
+# class RecruitQuestionsForm_one(forms.ModelForm):  # Для одного вопроса без formset-а
+#     class Meta:
+#         model = RecruitAnswer
+#         fields = ['answer']
+#         # labels = {'answer': ' '}    # Используем 'label_suffix' для самого вопроса из View
+#
+#     # Второй способ использователь переопределение "label" здесь:
+#     def __init__(self, *args, **kwargs):
+#         super(RecruitQuestionsForm_one, self).__init__(*args, **kwargs)
+#         self.fields['answer'].label = self.instance.question  # change required label ... and answers
+#         self.fields['answer'].queryset = Test.objects.get(question=self.instance.question).answers.all()
+#         print('---Form Instans: {} \t =={} '.format(self.instance.question, self.instance.answer))
+# # -----------------------------------------------------
+
+
+# class RecruitQuestionsForm11(forms.ModelForm):
+#     pass
     # class Meta:
     #     model = Test
     #     # model = Answer
@@ -125,6 +152,63 @@ class RecruitQuestionsForm1(forms.ModelForm):
     # #     self.clean()
     # #     new_obj = {'quest': self.label_suffix, 'answ': self.cleaned_data}
     # #     return new_obj
+
+
+
+# ----------------------------------------
+# class NullBooleanRadioSelect(forms.RadioSelect):
+# -----------------------------------------------------
+
+
+# ---------------------------------------------------
+# -----------------------------------------------------
+    # # questions = random.sample(list(Test.objects.all()), 1)[0]
+    # questions = RecruitAnswer.objects.get(question=s)
+    #
+    #
+    # answer = forms.ModelChoiceField(queryset=Answer.objects.filter(tests=questions), label=questions)
+    # print('dsdfd---------', answer, Answer.objects.filter(tests=questions))
+# ---------------------------------------------------
+# print('------Instans ', self.instance.question)
+# print('------answLABEL ', self.fields['answer'].__dict__)
+# ------Instans  Кайло Рен тренировался как джедай у своего дяди Люка Скайуокера?
+# ------answLABEL  {'empty_label': '---------', 'required': False,
+#  'label': <Test: Кайло Рен тренировался как джедай у своего дяди Люка Скайуокера?>,
+#  'initial': None, 'show_hidden_initial': False, 'help_text': '', 'disabled': False,
+#  'label_suffix': None, 'localize': False,
+#  'widget': <django.forms.widgets.Select object at 0x7ff861bd5390>,
+#  'error_messages': {'required': 'Обязательное поле.',
+#  'invalid_choice': 'Выберите корректный вариант. Вашего варианта нет среди допустимых значений.'},
+#  'validators': [], '_queryset': <QuerySet [<Answer: Да>, <Answer: Нет>, <Answer: Робот-дровосек>, <Answer: Хорошие парни>, <Answer: Камино>, <Answer: Альдераан>, <Answer: Мемит Надилл>, <Answer: Аэроспидер>, <Answer: Не знаю>]>, 'limit_choices_to': {}, 'to_field_name': 'id'}
+# ==instance: Recr: Andrey, Quest: Кайло Рен тренировался как джедай у своего дяди Люка Скайуокера? - Answ: None
+# -----------------------------------------------------
+# if self.instance:
+#     if self.instance.answer:
+#     # if self.instance.answer == 'value':
+#         # del self.fields['my_field']  # remove 'my_field'
+        # fields = ['answer', 'question']
+        # labels = {'answer': ''}
+
+        # widgets = {'question': HiddenInput()}
+        # question = forms.widgets.HiddenInput()
+        # question = forms.widgets.MultipleHiddenInput()
+    # label = 'fdfdfdf==========='
+        # widgets = forms.ModelChoiceField(**kwargs)
+
+# ------------------
+    # labels = {'answer': questions.question}
+        # labels = {'answer': question}
+    # label = 'zzzzzzzz'
+        # fields = ['answer']
+        # labels = 'question'
+    # print('== quest: ', self.instance.question)
+    #     print('== quest: ', question)
+
+    # def __init__(self, *args, **kwargs):
+    #     print('=======KWARG', kwargs)
+    #     labels = kwargs['question']
+    #     super(RecruitQuestionsForm, self).__init__(*args, **kwargs)
+    #     self.label_suffix = labels
 
 # ------------------------------------------------------
     # question = forms.CharField(label='fdfdf', widget=forms.Textarea(attrs={"rows": 5, "class": "vLargeTextField"}))

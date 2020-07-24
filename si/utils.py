@@ -1,17 +1,24 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-from .models import Sith, Recruit, Planet, Test
-from .forms import RecruitForm
+# from .models import Sith, Recruit, Planet, Test
+# from .forms import RecruitForm
 
 
 class ObjectDetailMixin:
     model = None
     template = None
+    answers = None
 
     def get(self, request, slug):
         obj = get_object_or_404(self.model, slug__iexact=slug)
-        return render(request, self.template, context={self.model.__name__.lower(): obj})
+
+        if self.answers:
+            print('==Mixin ===: ', obj.recruitanswers.all())
+            return render(request, self.template, context={self.model.__name__.lower(): obj,
+                                                           'answers': obj.recruitanswers.all()})
+        else:
+            return render(request, self.template, context={self.model.__name__.lower(): obj})
 
 
 class ObjectCreateMixin:
@@ -52,6 +59,17 @@ class ObjectUpdateMixin:
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form, self.model.__name__.lower(): obj})
 
+
+        # try:
+        #     obj.recruitanswers.all()
+        #     print('==Mixin ===: ', self.answers, self.model, obj.recruitanswers.all(), type(obj))
+        #     return render(request, self.template, context={self.model.__name__.lower(): obj,
+        #                                                    'answers': obj.recruitanswers.all()})
+
+
+        # except AttributeError:
+
+# obj.recruitanswers.all()
 
 # --------------------------
     # def get(self, request, slug):

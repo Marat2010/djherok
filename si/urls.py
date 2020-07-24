@@ -2,9 +2,8 @@ from django.urls import path
 from .views import index, recruits_list, siths_list, siths_count_hands, RecruitCreate, RecruitDetail, RecruitUpdate
 from .views import SithCreate, SithDetail, SithUpdate
 from .views import task_view, sith_authorization, siths_planet, siths_order,\
-    recruits_planet, recruits_order, recruit_questions, recruit_questions2
-    # , RecruitQuestions,
-# from .views import recruit_create
+    recruits_planet, recruits_order, recruit_questions
+
 
 urlpatterns = [
     path('', index, name='index'),
@@ -29,10 +28,7 @@ urlpatterns = [
     path('recruit/planet/<str:slug>/', recruits_planet, name='recruits_planet_url'),
     path('recruit/order/<str:slug>/', recruits_order, name='recruits_order_url'),
 
-
-
-    # path('recruit/<str:slug>/questions/', RecruitQuestions.as_view(), name='recruit_questions_url'),
-    path('recruit/<str:slug>/questions/', recruit_questions2, name='recruit_questions_url'),
+    path('recruit/<str:slug>/questions/', recruit_questions, name='recruit_questions_url'),
 
 
 
@@ -42,6 +38,13 @@ urlpatterns = [
 ]
 
 
+# ----------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
+# path('recruit/<str:slug>/answers/', recruit_answer, name='recruit_answer_url'),
+# path('recruit/<str:slug>/answers/', RecruitAnswers.as_view(), name='recruit_detail_url'),
+
+# path('recruit/<str:slug>/questions/', RecruitQuestions.as_view(), name='recruit_questions_url'),
 # path('recruit_create/', RecruitCreateView.as_view(), name='recruit_create_url'),
 # path('recruit_questions/', RecruitQuestionsView.as_view(), name='recruit_questions_url'),
 # path('sith/<str:slug>/', sith_detail, name='sith_detail_url'),

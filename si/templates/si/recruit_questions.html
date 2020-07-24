@@ -8,11 +8,15 @@ fdfdfd
 
 {#    <form action="{{ recruit.get_questions_url }}" method="post">#}
     <form action="{% url 'recruit_questions_url' slug %}" method="post">
+{#    <form action="{% url 'recruit_detail_url' slug %}" method="post">#}
         {% csrf_token %}
 {#        <label for="{{ form.answer.id_for_label }}">Название: </label>#}
+
         {{ form.as_p }}
-{#        {% for question in form %}#}
-{#            {{ question }}#}
+
+{#        {{ form.content.as_p }}#}
+{#        {% for question in questions %}#}
+{#            <p>{{ question }}</p>#}
 {#        {% endfor %}#}
 {#        {{ form }}  #}
         <hr>

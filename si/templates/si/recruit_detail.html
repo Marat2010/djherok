@@ -14,16 +14,35 @@
             <h6 class="card-title">Возраст: <b>{{ recruit.age }}</b></h6>
             <h6 class="card-title">Емаил: <b>{{ recruit.email }}</b></h6>
             <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>
-            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>
-
+{#            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>#}
+            <h6 class="card-title"><u>Ответы теста:</u></h6>
+            <ol>
+                {% for answer in answers %}
+                    <b><li>{{ answer.question }} </li></b>
+                    {% if answer.answer == answer.question.right_answ %}
+                        <div class="alert alert-success" role="alert">
+                    {% else %}
+                        <div class="alert alert-danger" role="alert">
+                    {% endif %}
+                            <i>Ответ:</i> <b>{{ answer.answer }}</b>&#8195
+                            (<i>Правильный ответ:</i> <b>{{ answer.question.right_answ }}</b>)
+                        </div>
+                {% endfor %}
+            </ol>
         </div>
         <div class="card-footer">
             <i>Планета:</i>
             <a href="{{ recruit.get_planet_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
-            &#8195  {#&nbsp#}
+            &#8195
             <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>
         </div>
     </div>
 
 {% endblock %}
 
+
+{#&nbsp#}
+{#            {% if recruit.answers %}#}
+{#            {% endif %}#}
+{#                    <h6 class="card-title">{{ answer.question|linenumbers }}</h6>#}
+    {#                    <p class="card-text"> <i>   Ответ:</i> <b>{{ answer.answer|rjust:"40" }}</b></p>#}

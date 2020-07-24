@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from .models import Planet, Order, Sith, Recruit, Test, Answer, RecruitAnswer
 from .forms import TestForm
-from django.core.exceptions import ValidationError
 
 
 class PlanetAdmin(admin.ModelAdmin):
@@ -24,9 +23,9 @@ class SithAdmin(admin.ModelAdmin):
 
 
 class RecruitAdmin(admin.ModelAdmin):
-    list_display = ('name', 'planet', 'age', 'email', 'slug', 'answers', 'sith')
-    list_display_links = ('name', 'planet', 'age', 'email', 'answers', 'sith')
-    search_fields = ('name', 'planet', 'age', 'email', 'slug', 'answers', 'sith')
+    list_display = ('name', 'planet', 'age', 'email', 'slug', 'sith')
+    list_display_links = ('name', 'planet', 'age', 'email', 'sith')
+    search_fields = ('name', 'planet', 'age', 'email', 'slug', 'sith')
 
 
 class TestAdmin(admin.ModelAdmin):
@@ -71,6 +70,7 @@ admin.site.register(Answer, AnswerAdmin)
 admin.site.register(RecruitAnswer, RecruitAnswerAdmin)
 
 
+# from django.core.exceptions import ValidationError
 # -------------------------------------------------
 # def save_model(self, request, obj, form, change):
 #     form.save()
