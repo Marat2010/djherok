@@ -11,6 +11,7 @@ import random
 from django.shortcuts import redirect
 from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin
 from django.forms import modelformset_factory, inlineformset_factory, formset_factory, modelform_factory
+from django.core.exceptions import ValidationError
 
 
 def index(request):
@@ -130,6 +131,7 @@ def recruits_order(request, slug):
     print('-- SLug:  ', slug, type(slug))
     recruits = []
     recruits_not_sith = []
+
     for recruit in Recruit.objects.all():
         if recruit.sith:
             if recruit.sith.order.slug == slug:
@@ -175,6 +177,31 @@ def recruit_questions(request, slug):
             # form.label_suffix = questions[i]
     return render(request, 'si/recruit_questions.html', {'form': formset, 'slug': slug, 'recruit': recruit})
 
+
+def recruit_take(request, slug):
+    recruit = Recruit.objects.get(slug=slug)
+    sith_visit = request.session.get('sith_visit', 'You must enter under the Sith ')
+    try:
+        sith = Sith.objects.get(slug=sith_visit)
+        sith.recruits.add(recruit)
+    except Exception as e:
+        raise ValidationError('ВЫ не вошли под ситхом!!! "{}"'.format(e))
+
+    # Сделать отправку почты!!!
+
+    num_visits = request.session.get('num_visits', 0)  # Подсчет заходов ситха
+    request.session['num_visits'] = num_visits + 1
+
+    print('====ЗАЧИСЛЕН========== {}  Кем: {}, Входил: {}'.format(recruit, sith_visit, num_visits))
+    if request.method == 'GET':
+        return redirect(recruit)
+
+# ---------------------------
+    # sith_visit = request.session.get('sith_visit', 'mini')
+    # # session_info = request.session['ep10ts2w1s2odxtw50yt8ppbsuocekcc']
+    # num_visits = request.session.get('num_visits', 0)
+    # request.session['num_visits'] = num_visits + 1
+    # print('===Session_info: {} --Second-: {} '.format(sith_visit, num_visits))
 
 
 # # -----------------------------------------------------

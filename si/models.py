@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.dispatch import receiver
 import random
 
+
 def gen_slug(s):
     new_slug = slugify(s, allow_unicode=True)
     return new_slug + '-' + str(int(time()))

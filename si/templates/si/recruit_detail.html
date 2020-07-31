@@ -13,7 +13,18 @@
         <div class="card-body">
             <h6 class="card-title">Возраст: <b>{{ recruit.age }}</b></h6>
             <h6 class="card-title">Емаил: <b>{{ recruit.email }}</b></h6>
-            <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>
+            <p class="card-text"> <i>Является Рукой Тени :</i>
+                {% if recruit.get_sith == ' -' %}
+{#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
+                    <a href="{% url 'recruit_take_url' slug=recruit.slug %}" class="btn btn-outline-primary">
+                        Зачислить к себе рукой тени
+                    </a>
+                {% else %}
+                    <span class="alert alert-primary" role="alert">
+                        <b>{{ recruit.get_sith }}</b>
+                    </span>
+                {% endif %}
+            </p>
 {#            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>#}
             <h6 class="card-title"><u>Ответы теста:</u></h6>
             <ol>

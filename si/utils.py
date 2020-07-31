@@ -14,11 +14,17 @@ class ObjectDetailMixin:
         obj = get_object_or_404(self.model, slug__iexact=slug)
 
         if self.answers:
-            print('==Mixin ===: ', obj.recruitanswers.all())
             return render(request, self.template, context={self.model.__name__.lower(): obj,
                                                            'answers': obj.recruitanswers.all()})
         else:
-            return render(request, self.template, context={self.model.__name__.lower(): obj})
+            sith_visit = request.session.get('sith_visit', slug)
+            request.session['sith_visit'] = slug
+
+            print('===SITH Seccc: {} ===: {}'.format(sith_visit, slug))
+            return render(request, self.template, context={self.model.__name__.lower(): obj,
+                                                           'sith_visit': sith_visit})
+
+            # return render(request, self.template, context={self.model.__name__.lower(): obj})
 
 
 class ObjectCreateMixin:
@@ -68,6 +74,24 @@ class ObjectUpdateMixin:
 
 
         # except AttributeError:
+
+
+# --------------------------------
+# sith_visit = request.session.get('sith_visit', 'You must enter under the Sith ')
+# num_visits = request.session.get('num_visits', 0)
+# request.session['num_visits'] = num_visits + 1
+# print('===Session_info: {} --Second-: {} '.format(sith_visit, num_visits))
+
+# -----------------------
+        # if self.model == 'Sith':
+        #     sith_visit = request.session.get('sith_visit', slug)
+        #     print('===SITH Seccc: '.format(sith_visit))
+        #     return render(request, self.template, context={self.model.__name__.lower(): obj,
+        #                                                    'sith_visit': sith_visit})
+
+# print('==Mixin ===: ', obj.recruitanswers.all())
+# sith_visit = request.session.get('sith_visit', slug)
+# print('===RECR Seccc: {} ===: {}'.format(sith_visit, slug))
 
 # obj.recruitanswers.all()
 
