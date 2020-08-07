@@ -34,6 +34,16 @@ DEBUG = True
 # TASTYPIE_FULL_DEBUG = True
 # SECURE_SSL_REDIRECT = True
 
+EMAIL_HOST = 'smtp.bk.ru'
+EMAIL_HOST_USER = 'si.recruit@bk.ru'
+DEFAULT_FROM_EMAIL = 'si.recruit@bk.ru'
+EMAIL_HOST_PASSWORD = os.environ['Si_EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 587
+# EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True
+
+
 ALLOWED_HOSTS = ['djherok.herokuapp.com',
                  '127.0.0.1',
                  '.ngrok.io',

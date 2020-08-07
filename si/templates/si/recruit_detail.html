@@ -13,18 +13,29 @@
         <div class="card-body">
             <h6 class="card-title">Возраст: <b>{{ recruit.age }}</b></h6>
             <h6 class="card-title">Емаил: <b>{{ recruit.email }}</b></h6>
-            <p class="card-text"> <i>Является Рукой Тени :</i>
-                {% if recruit.get_sith == ' -' %}
-{#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
-                    <a href="{% url 'recruit_take_url' slug=recruit.slug %}" class="btn btn-outline-primary">
-                        Зачислить к себе рукой тени
-                    </a>
-                {% else %}
-                    <span class="alert alert-primary" role="alert">
-                        <b>{{ recruit.get_sith }}</b>
-                    </span>
-                {% endif %}
-            </p>
+
+            {% if request.user.is_authenticated and request.user.is_staff %}
+                <p class="card-text"> <i>Является Рукой Тени :</i>
+                    {% if recruit.get_sith == ' -' %}
+    {#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
+                        <a href="{% url 'recruit_take_url' slug=recruit.slug %}" class="btn btn-outline-primary">
+                            Зачислить к себе рукой тени
+                        </a>
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+{#                        <span class="alert alert-primary" role="alert">#}
+                            <b>{{ recruit.get_sith }}</b>
+{#                        </span>#}
+                        </div>
+                    {% endif %}
+                </p>
+            {% else %}
+                <div class="alert alert-info" role="alert">
+                Ваши данные и ответы приняты, ждите оповещение результатов по e-mail.
+                </div>
+            {% endif %}
+
+
 {#            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>#}
             <h6 class="card-title"><u>Ответы теста:</u></h6>
             <ol>

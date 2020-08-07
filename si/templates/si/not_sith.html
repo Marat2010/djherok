@@ -1,0 +1,11 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Вы не вошли - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+        <a href="{%  url 'siths_list_url' %}" class="btn btn-primary">Необходимо войти под ситхом</a>
+{% endblock %}
+
+

@@ -12,7 +12,6 @@
     <a href="{% url 'recruit_create_url' %}" type="button" class="btn btn-outline-secondary">Рекрут</a>
     <img src='/static/si/Yoda.png' class="img-fluid">
     {% if request.user.is_authenticated and request.user.is_staff %}
-{#        <a href="{% url 'siths_count_hands_url' count_hands=0 %}" type="button" class="btn btn-outline-secondary"> &nbsp; Ситх &nbsp;</a>#}
         <a href="{% url 'siths_list_url' %}" type="button" class="btn btn-outline-secondary"> &nbsp; Ситх &nbsp;</a>
     {% else %}
         <a href="{% url 'sith_authorization_url' %}" type="button" class="btn btn-outline-secondary"> &nbsp; Ситх &nbsp;</a>
@@ -21,6 +20,12 @@
 
 {% endblock %}
 
+
+{#-------------------------------#}
+{#        <a href="{% url 'siths_count_hands_url' count_hands=0 %}" type="button" class="btn btn-outline-secondary"> &nbsp; Ситх &nbsp;</a>#}
+{#{% block admin-panel %}#}
+{#    <a href="{% url 'siths_list_url' %}" class="btn btn-outline-info">Вы не вошли под ситхом</a>#}
+{#{% endblock %}#}
 
 
 {#    <a href="{% url 'siths_list_url' %}" class="btn btn-primary btn-lg btn-outline-primary" data-toggle="button" tabindex="-1" role="button">Рекруты</a>#}

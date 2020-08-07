@@ -64,6 +64,9 @@ class RecruitQuestionsForm(forms.ModelForm):
     class Meta:
         model = RecruitAnswer
         fields = ['answer']
+
+    # answer = forms.ModelChoiceField(queryset=queryset, empty_label='выберите')
+
         # labels = {'answer': ' '}    # Первый способ используем 'label_suffix' для самого
         # вопроса из View (Как альтернатива)
         # Второй (правильный) способ использователь переопределение "label" здесь:
@@ -72,6 +75,7 @@ class RecruitQuestionsForm(forms.ModelForm):
         super(RecruitQuestionsForm, self).__init__(*args, **kwargs)
         self.fields['answer'].label = self.instance.question  # change required label ... and answers
         self.fields['answer'].queryset = Test.objects.get(question=self.instance.question).answers.all()
+        self.fields['answer'].empty_label='Выберите'
         # print('---Form Instans1: {} \t =={} '.format(self.instance.question, self.instance.answer))
 
 
@@ -83,7 +87,7 @@ class RecruitQuestionsForm2(forms.Form):
     for question in questions:
         queryset = question.answers.all()
         label = question.question
-        answers = forms.ModelChoiceField(queryset=queryset, label=label)
+        # answers = forms.ModelChoiceField(queryset=queryset, label=label, empty_label=)
 
 
 class ChoiceRadioSelect(forms.RadioSelect):

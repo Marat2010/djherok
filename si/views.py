@@ -7,11 +7,14 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Sith, Recruit, Planet, Test, Order, Answer, RecruitAnswer
 from .forms import RecruitForm, SithForm, RecruitQuestionsForm
-import random
 from django.shortcuts import redirect
 from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin
-from django.forms import modelformset_factory, inlineformset_factory, formset_factory, modelform_factory
+from django.forms import modelformset_factory
+from django.core.mail import send_mail
+import random
 from django.core.exceptions import ValidationError
+from django.contrib import messages
+from django.core.mail import EmailMessage
 
 
 def index(request):
@@ -62,8 +65,8 @@ def siths_count_hands(request, count_hands):
     for si in Sith.objects.all():
         if si.get_count_hands() >= count_hands:
             queryset.append(si)
-    print(queryset)
-    print(request.path)
+    # print(queryset)
+    # print(request.path)
     return render(request, 'si/siths_count_hands.html', context={'siths': queryset})
 
 
@@ -128,7 +131,6 @@ def recruits_planet(request, slug):
 
 
 def recruits_order(request, slug):
-    print('-- SLug:  ', slug, type(slug))
     recruits = []
     recruits_not_sith = []
 
@@ -143,7 +145,6 @@ def recruits_order(request, slug):
     else:
         order_name = 'None'
         recruits = recruits_not_sith
-    print('---recruits: ', recruits)
 
     return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name})
 
@@ -166,8 +167,10 @@ def recruit_questions(request, slug):
         formset = recruitanswer_formset(request.POST, queryset=recruitanswer)
         if formset.is_valid():
             formset.save()
-            # print('==RECRUIT method POST', formset.fields['answer'].label)
-            return redirect(recruit)
+            # return render(request, 'si/recruit_detail.html', {'slug': slug, 'recruit': recruit})
+            # return render(request, 'si/recruit_answer.html', {'slug': slug, 'recruit': recruit})
+            return redirect('recruit_detail_url', slug=slug)
+
     else:
         recruitanswer = recruit.refresh_question()  # Обновление вопросов при каждом запросе
 
@@ -180,21 +183,56 @@ def recruit_questions(request, slug):
 
 def recruit_take(request, slug):
     recruit = Recruit.objects.get(slug=slug)
-    sith_visit = request.session.get('sith_visit', 'You must enter under the Sith ')
+    sith_visit = request.session.get('sith_visit', None)
     try:
         sith = Sith.objects.get(slug=sith_visit)
         sith.recruits.add(recruit)
-    except Exception as e:
-        raise ValidationError('ВЫ не вошли под ситхом!!! "{}"'.format(e))
+    except Sith.DoesNotExist:
+        print('===== Ситх не вошел: ', sith_visit)
+        return redirect('not_sith_url')
 
-    # Сделать отправку почты!!!
+    message_email = ' Наши поздравления {} с планеты {}!!!\n<br>'.format(recruit.name, recruit.planet)
+    message_email += '\n Вы зачислены рукой тени к {}'.format(recruit.sith)
+    html_message = '<h4>{}</h4>'.format(message_email)
 
-    num_visits = request.session.get('num_visits', 0)  # Подсчет заходов ситха
-    request.session['num_visits'] = num_visits + 1
+    rezult_send = send_mail('Служба рекрутинга для ордена Ситхов', message_email, 'si.recruit@bk.ru',
+              [recruit.email], fail_silently=True, html_message=html_message)
+    rezult_send = 'Отправлено' if rezult_send == 1 else 'НЕ УШЛО!!!'
+    print('===== Письмо отправлено: ', rezult_send)
+    print('====ЗАЧИСЛЕН===Рекрут: {},  Кем: {}, Письмо: {} '.format(recruit, sith_visit, rezult_send))
 
-    print('====ЗАЧИСЛЕН========== {}  Кем: {}, Входил: {}'.format(recruit, sith_visit, num_visits))
     if request.method == 'GET':
         return redirect(recruit)
+
+
+def not_sith(request):
+    return render(request, 'si/not_sith.html')
+
+
+# --------------------------------------
+#     self.model._meta.object_name
+# si.models.Sith.DoesNotExist: Sith matching query does not exist.
+# [07/Aug/2020 11:38:27] "GET /si/recruit/marat-1596747586/take/ HTTP/1.1" 500 81965
+    # except Exception as e:
+# print('-===========EEEEEEE: ', e)
+# ------------------------------------
+# raise ValidationError('ВЫ не вошли под ситхом!!! "{}"'.format(e))
+# return redirect('siths_list_url')
+# messages.success(request, 'Необходимо войти под ситхом!!!')
+# messages.add_message(request, messages.INFO, 'Необходимо войти под ситхом')
+
+# html_message += '<img src="/static/si/Yoda.png">'
+    # em = EmailMessage(subject='Результаты отбора!', body=message_email, to=[recruit.email])
+    # em.send()
+    # em.send(fail_silently=True)
+# ------------------------------------
+    # num_visits = request.session.get('num_visits', 0)  # Подсчет заходов ситха
+    # request.session['num_visits'] = num_visits + 1
+# ---------------------------------------
+# def recruit_answer(request, slug):
+#     recruit = Recruit.objects.get(slug=slug)
+#     # return redirect('recruit_answer_url')
+#     return render(request, 'si/recruit_answer.html', {'slug': slug, 'recruit': recruit})
 
 # ---------------------------
     # sith_visit = request.session.get('sith_visit', 'mini')
