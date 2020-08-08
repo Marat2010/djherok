@@ -64,8 +64,7 @@ class RecruitQuestionsForm(forms.ModelForm):
     class Meta:
         model = RecruitAnswer
         fields = ['answer']
-
-    # answer = forms.ModelChoiceField(queryset=queryset, empty_label='выберите')
+        widgets = {'answer': forms.RadioSelect()}
 
         # labels = {'answer': ' '}    # Первый способ используем 'label_suffix' для самого
         # вопроса из View (Как альтернатива)
@@ -75,8 +74,7 @@ class RecruitQuestionsForm(forms.ModelForm):
         super(RecruitQuestionsForm, self).__init__(*args, **kwargs)
         self.fields['answer'].label = self.instance.question  # change required label ... and answers
         self.fields['answer'].queryset = Test.objects.get(question=self.instance.question).answers.all()
-        self.fields['answer'].empty_label='Выберите'
-        # print('---Form Instans1: {} \t =={} '.format(self.instance.question, self.instance.answer))
+        self.fields['answer'].empty_label = None
 
 
 class RecruitQuestionsForm2(forms.Form):
@@ -98,6 +96,13 @@ class ChoiceRadioSelect(forms.RadioSelect):
     _empty_value = None
 
 
+
+# -------------------------------
+# -------------------------------
+# ------------------------------
+# print('---Form Instans1: {} \t =={} '.format(self.instance.question, self.instance.answer))
+# answer = forms.ModelChoiceField(queryset=queryset, empty_label='выберите')
+# ----------------------------------------
 # # -----------------------------------------------------
 # class RecruitQuestionsForm_one(forms.ModelForm):  # Для одного вопроса без formset-а
 #     class Meta:
