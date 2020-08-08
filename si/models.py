@@ -108,7 +108,7 @@ class Recruit(models.Model):
                              verbose_name='Рука Тени')
 
     def get_sith(self):
-        return '{} (планета: {})'.format(self.sith.name, self.sith.planet) if self.sith else ' -'
+        return '{} (планета: {})'.format(self.sith.name, self.sith.planet) if self.sith else None
 
     def get_planet_url(self):
         return reverse('recruits_planet_url', kwargs={'slug': self.planet.slug})
@@ -201,6 +201,32 @@ class RecruitAnswer(models.Model):
     answer = models.ForeignKey(Answer, related_name='recruitanswers', on_delete=models.PROTECT, verbose_name='Ответ',
                                blank=True, null=True)
 
+    def __str__(self):
+        return '{}: {}'.format(self.recruit, self.question)
+
+    class Meta:
+        verbose_name_plural = 'Ответы Рекрутов'
+        verbose_name = 'Ответы Рекрута'
+        ordering = ['recruit']
+
+
+# --------------------------
+# ------------------------------
+    # @classmethod  # Возвращает queryset вопросов RecruitAnswer (без ответов - новый), перенесен в модель Recruit.
+    # def refresh_question(cls, recruit):  # надо чтобы возвращал queryset
+    #     number_questions = 2
+    #
+    #     old_questions = cls.objects.filter(recruit=recruit)
+    #     old_questions.delete()
+    #     # questions = random.sample(list(Test.objects.all()), 1)[0]
+    #     questions = random.sample(list(Test.objects.all()), number_questions)
+    #     for question in questions:
+    #         cls.objects.create(question=question, recruit=recruit)
+    #     recruitanswer = cls.objects.filter(recruit=recruit)
+    #
+    #     return recruitanswer
+# ----------------------------
+# ------------------------
     # def _get_answer_display(self, answer):
     # def _get_answer(self):
         # answer = self.question.answers.all()
@@ -213,31 +239,10 @@ class RecruitAnswer(models.Model):
     #     # return super(RecruitAnswer, self).__getattr__(name)
 
     # answer = property(_get_answer)
-    @classmethod  # Возвращает queryset вопросов RecruitAnswer (без ответов - новый), перенесен в модель Recruit.
-    def refresh_question(cls, recruit):  # надо чтобы возвращал queryset
-        number_questions = 2
-
-        old_questions = cls.objects.filter(recruit=recruit)
-        old_questions.delete()
-        # questions = random.sample(list(Test.objects.all()), 1)[0]
-        questions = random.sample(list(Test.objects.all()), number_questions)
-        for question in questions:
-            cls.objects.create(question=question, recruit=recruit)
-        recruitanswer = cls.objects.filter(recruit=recruit)
-
-        return recruitanswer
-        # return reverse('recruits_order_url', kwargs={'slug': 'None'})
-        # return reverse('recruits_list_url')
-
-    def __str__(self):
-        return '{}: {}'.format(self.recruit, self.question)
-
-    class Meta:
-        verbose_name_plural = 'Ответы Рекрутов'
-        verbose_name = 'Ответы Рекрута'
-        ordering = ['recruit']
-
-
+# -------------------
+# --------------------
+# ------------------------
+        # return '{} (планета: {})'.format(self.sith.name, self.sith.planet) if self.sith else ' -'
 # ----------------
     # def get_questions(self):
     #     # recruit = get_object_or_404(Recruit, slug__iexact=slug)

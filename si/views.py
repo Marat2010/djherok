@@ -15,12 +15,16 @@ import random
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.core.mail import EmailMessage
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def index(request):
     return render(request, 'si/index.html')
 
 
+# @login_required(login_url='/si/sith_authorization/')
+@login_required(login_url='sith_authorization_url')
 def recruits_list(request):
     recruits = Recruit.objects.all()
 
@@ -55,11 +59,13 @@ def recruits_list(request):
     return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
+@login_required(login_url='sith_authorization_url')
 def siths_list(request):
     siths = Sith.objects.all()
     return render(request, 'si/siths_list.html', context={'siths': siths})
 
 
+@login_required(login_url='sith_authorization_url')
 def siths_count_hands(request, count_hands):
     queryset = []
     for si in Sith.objects.all():
@@ -76,7 +82,8 @@ class RecruitDetail(ObjectDetailMixin, View):
     answers = True
 
 
-class SithDetail(ObjectDetailMixin, View):
+class SithDetail(LoginRequiredMixin, ObjectDetailMixin, View):
+    login_url = 'sith_authorization_url'
     model = Sith
     template = 'si/sith_detail.html'
 
@@ -89,23 +96,27 @@ class RecruitCreate(CreateView):
     success_url = '../{slug}/questions/'
 
 
-class SithCreate(ObjectCreateMixin, View):
+class SithCreate(LoginRequiredMixin, ObjectCreateMixin, View):
+    login_url = 'sith_authorization_url'
     model_form = SithForm
     template = 'si/sith_create.html'
 
 
-class RecruitUpdate(ObjectUpdateMixin, View):
+class RecruitUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
+    login_url = 'sith_authorization_url'
     model = Recruit
     model_form = RecruitForm
     template = 'si/recruit_update.html'
 
 
-class SithUpdate(ObjectUpdateMixin, View):
+class SithUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
+    login_url = 'sith_authorization_url'
     model = Sith
     model_form = SithForm
     template = 'si/sith_update.html'
 
 
+@login_required(login_url='sith_authorization_url')
 def siths_planet(request, slug):
     planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
@@ -114,6 +125,7 @@ def siths_planet(request, slug):
     return render(request, 'si/siths_planet.html', context={'siths': siths, 'planet': planet_name})
 
 
+@login_required(login_url='sith_authorization_url')
 def siths_order(request, slug):
     order_id = Order.objects.get(slug__iexact=slug).pk
     order_name = Order.objects.get(slug__iexact=slug).name
@@ -122,6 +134,7 @@ def siths_order(request, slug):
     return render(request, 'si/siths_order.html', context={'siths': siths, 'order': order_name})
 
 
+@login_required(login_url='sith_authorization_url')
 def recruits_planet(request, slug):
     planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
@@ -130,6 +143,7 @@ def recruits_planet(request, slug):
     return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name})
 
 
+@login_required(login_url='sith_authorization_url')
 def recruits_order(request, slug):
     recruits = []
     recruits_not_sith = []
@@ -153,6 +167,7 @@ def sith_authorization(request):
     return render(request, 'si/sith_authorization.html')
 
 
+@login_required(login_url='sith_authorization_url')
 def task_view(request):
     return render(request, 'si/the_task.html')
 
@@ -181,12 +196,18 @@ def recruit_questions(request, slug):
     return render(request, 'si/recruit_questions.html', {'form': formset, 'slug': slug, 'recruit': recruit})
 
 
+@login_required(login_url='sith_authorization_url')
 def recruit_take(request, slug):
+    limit_sith_number = 3  # Количество рекрутов, которое может взять ситх
     recruit = Recruit.objects.get(slug=slug)
     sith_visit = request.session.get('sith_visit', None)
     try:
         sith = Sith.objects.get(slug=sith_visit)
+        print('======== Ситх: {}, кол-во рекрутов: {}'.format(sith.name, len(sith.recruits.all())))
+        if len(sith.recruits.all()) >= limit_sith_number:
+            return redirect('limit_sith_url')
         sith.recruits.add(recruit)
+        sith.save()
     except Sith.DoesNotExist:
         print('===== Ситх не вошел: ', sith_visit)
         return redirect('not_sith_url')
@@ -207,6 +228,10 @@ def recruit_take(request, slug):
 
 def not_sith(request):
     return render(request, 'si/not_sith.html')
+
+
+def limit_sith(request):
+    return render(request, 'si/limit_sith.html')
 
 
 # --------------------------------------

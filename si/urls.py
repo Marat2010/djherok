@@ -2,7 +2,7 @@ from django.urls import path
 from .views import index, recruits_list, siths_list, siths_count_hands, RecruitCreate, RecruitDetail, RecruitUpdate
 from .views import SithCreate, SithDetail, SithUpdate
 from .views import task_view, sith_authorization, siths_planet, siths_order,\
-    recruits_planet, recruits_order, recruit_questions, recruit_take, not_sith
+    recruits_planet, recruits_order, recruit_questions, recruit_take, not_sith, limit_sith
 
 
 urlpatterns = [
@@ -29,6 +29,7 @@ urlpatterns = [
 
     path('recruit/<str:slug>/take/', recruit_take, name='recruit_take_url'),
     path('take/not_sith/', not_sith, name='not_sith_url'),
+    path('take/limit_sith/', limit_sith, name='limit_sith_url'),
 
 
 

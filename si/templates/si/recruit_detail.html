@@ -16,7 +16,7 @@
 
             {% if request.user.is_authenticated and request.user.is_staff %}
                 <p class="card-text"> <i>Является Рукой Тени :</i>
-                    {% if recruit.get_sith == ' -' %}
+                    {% if recruit.get_sith == None %}
     {#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
                         <a href="{% url 'recruit_take_url' slug=recruit.slug %}" class="btn btn-outline-primary">
                             Зачислить к себе рукой тени
@@ -64,6 +64,10 @@
 {% endblock %}
 
 
+
+{#---------------------#}
+{#                    {% if recruit.get_sith == ' -' %}#}
+{#--------------------------#}
 {#&nbsp#}
 {#            {% if recruit.answers %}#}
 {#            {% endif %}#}

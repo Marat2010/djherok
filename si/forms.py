@@ -80,7 +80,7 @@ class RecruitQuestionsForm(forms.ModelForm):
 class RecruitQuestionsForm2(forms.Form):
     # pass
     questions = random.sample(list(Test.objects.all()), 3)
-    print('---question:   ', questions)
+    # print('---question:   ', questions)
 
     for question in questions:
         queryset = question.answers.all()

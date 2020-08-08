@@ -1,0 +1,11 @@
+{% extends 'si/base_si.html' %}
+
+{% block title %}
+    Превышение лимита - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+        <a href="{%  url 'recruits_list_url' %}" class="btn btn-warning">Превышение лимита! (не более 3-х рекрутов)</a>
+{% endblock %}
+
+
