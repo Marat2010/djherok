@@ -7,6 +7,7 @@
 # from django.urls import reverse_lazy, reverse
 # from django.core.paginator import Paginator
 # from django.db.models import Q
+# from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render
 from django.views.generic import View, CreateView
 from .models import Sith, Recruit, Planet, Test, Order, Answer, RecruitAnswer
@@ -17,16 +18,13 @@ from django.forms import modelformset_factory
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
     return render(request, 'si/index.html')
 
 
-# @login_required(login_url='/si/sith_authorization/')
-# @login_required(login_url='sith_authorization_url')
-@staff_member_required()
+@login_required(login_url='sith_authorization_url')
 def recruits_list(request):
     recruits = Recruit.objects.all()
 
@@ -61,15 +59,13 @@ def recruits_list(request):
     return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
-# @login_required(login_url='sith_authorization_url')
-@staff_member_required()
+@login_required(login_url='sith_authorization_url')
 def siths_list(request):
     siths = Sith.objects.all()
     return render(request, 'si/siths_list.html', context={'siths': siths})
 
 
-# @login_required(login_url='sith_authorization_url')
-@staff_member_required()
+@login_required(login_url='sith_authorization_url')
 def siths_count_hands(request, count_hands):
     queryset = []
     for si in Sith.objects.all():
@@ -125,7 +121,6 @@ def siths_planet(request, slug):
     planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
     siths = Sith.objects.filter(planet=planet_id)
-    # get_object_or_404(Chats, slug__iexact=
     return render(request, 'si/siths_planet.html', context={'siths': siths, 'planet': planet_name})
 
 
@@ -134,7 +129,6 @@ def siths_order(request, slug):
     order_id = Order.objects.get(slug__iexact=slug).pk
     order_name = Order.objects.get(slug__iexact=slug).name
     siths = Sith.objects.filter(order=order_id)
-    # get_object_or_404(Chats, slug__iexact=
     return render(request, 'si/siths_order.html', context={'siths': siths, 'order': order_name})
 
 
@@ -167,8 +161,9 @@ def recruits_order(request, slug):
 
 
 def sith_authorization(request):
-    # print('=== redir: ', request.GET['next'])
-    return render(request, 'si/sith_authorization.html')
+    print('=== Redirect: ', request.GET['next'])
+    link = '/admin/login/?next={}'.format(request.GET['next'])
+    return render(request, 'si/sith_authorization.html', context={'link': link})
 
 
 @login_required(login_url='sith_authorization_url')
@@ -230,16 +225,20 @@ def recruit_take(request, slug):
         return redirect(recruit)
 
 
+@login_required(login_url='sith_authorization_url')
 def not_sith(request):
     return render(request, 'si/not_sith.html')
 
 
+@login_required(login_url='sith_authorization_url')
 def limit_sith(request):
     return render(request, 'si/limit_sith.html')
 
 
 # -----------------------------
 # http://127.0.0.1:8000/admin/login/?next=/si/recruits/
+# @login_required(login_url='/si/sith_authorization/')
+# @staff_member_required()
 # -----------------------------
     # username = request.POST['username']
     # password = request.POST['password']
