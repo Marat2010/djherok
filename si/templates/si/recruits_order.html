@@ -9,8 +9,11 @@
     <div class="d-flex justify-content-between">
         <h4 class="mb-4">Рекруты (кол-во: {{ recruits|length }}) ордена:</h4>
         <div>
-{#            <a href="{{ sith.get_order_url }}" class="btn btn-outline-secondary">Посмотреть по Ордену</a>#}
-            <h4><b> {{ order }} </b></h4>
+            {%  if order == 'не принятые' %}
+                <h4 class="btn btn-outline-info"> {{ order }} </h4>
+            {% else %}
+                <h4><b> {{ order }}  </b></h4>
+            {% endif %}
         </div>
     </div>
 
@@ -19,3 +22,9 @@
     {% endfor %}
 
 {% endblock %}
+
+
+{#                <h4> --- </h4>#}
+{#                <h4> {{ order }} </h4>#}
+{#                <h1 class="badge badge-info"> {{ order }} </h1>#}
+

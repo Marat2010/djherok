@@ -5,12 +5,9 @@
 {% block content %}
     <h4 class="mb-4">Вопросы для Рекрута "{{ recruit.name }}" :</h4>
 
-{#    <form action="{{ recruit.get_questions_url }}" method="post">#}
     <form action="{% url 'recruit_questions_url' slug %}" method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
-
         <hr>
         <div>
             <input type="submit" value="Сохранить">
@@ -19,6 +16,8 @@
 {% endblock %}
 
 
+{#----------------------------#}
+{#    <form action="{{ recruit.get_questions_url }}" method="post">#}
 {# #--------------------------------------#}
 {#{% block content1 %}#}
 {#    <h4 class="mb-4">Вопросы для рекрута "{{ recruit.name }}" :</h4>#}

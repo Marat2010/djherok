@@ -1,7 +1,7 @@
 <div class="card mb-2">
+
     <div class="card-body">
         <h5 class="card-title"><b>{{ recruit.name }}</b></h5>
-{#        <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>#}
 
         <p class="card-text"> <i>Является Рукой Тени:</i>
             {%  if recruit.sith %}
@@ -10,22 +10,29 @@
                 </b>
             {% endif %}
         </p>
-
         <a href="{{ recruit.get_absolute_url }}" class="btn btn-primary">Посмотреть</a>
-        {# <a href="{%  url 'recruit_detail_url' slug=recruit.slug %}" class="btn btn-primary">Посмотреть</a>#}
     </div>
+
     <div class="card-footer">
         <i>Планета:</i>
-{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>#}
         <a href="{{ recruit.get_planet_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>
-{#        &nbsp#}
         &#8195
-{#        <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>#}
         <i>Орден: </i>
-{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
-        <a href="{{ recruit.get_order_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
+        {%  if recruit.sith %}
+            <a href="{{ recruit.get_order_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>
+        {% else %}
+            <a href="{{ recruit.get_order_url }}" class="btn btn-outline-info">свободен</a>
+        {% endif %}
     </div>
+
 </div>
 
+
+
+{#        <i>Орден: </i> <b> {{ recruit.sith.order.name }} </b>#}
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.sith.order.name }}</a>#}
+{#        <a href="{{ sith.get_absolute_url }}" class="btn btn-outline-secondary">{{ recruit.planet }}</a>#}
+        {# <a href="{%  url 'recruit_detail_url' slug=recruit.slug %}" class="btn btn-primary">Посмотреть</a>#}
+{#        <p class="card-text"> <i>Является Рукой Тени:</i> <b>{{ recruit.get_sith }}</b></p>#}
 {# <i>Планета:</i> <b>{{ recruit.planet }}</b>.  <i>Орден: </i><b>{{ recruit.sith.order.name }}</b>#}
 {#&nbsp;&nbsp;&nbsp;(возраст: {{ recruit.age }}; &nbsp;&nbsp;Емаил: {{ recruit.email }})#}

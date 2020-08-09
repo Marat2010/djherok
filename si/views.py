@@ -1,20 +1,20 @@
 # from django.http import HttpResponse
+# import random
+# from django.core.exceptions import ValidationError
+# from django.contrib import messages
+# from django.core.mail import EmailMessage
+# from django.shortcuts import get_object_or_404
+# from django.urls import reverse_lazy, reverse
+# from django.core.paginator import Paginator
+# from django.db.models import Q
 from django.shortcuts import render
-from django.shortcuts import get_object_or_404
 from django.views.generic import View, CreateView
-from django.urls import reverse_lazy, reverse
-from django.core.paginator import Paginator
-from django.db.models import Q
 from .models import Sith, Recruit, Planet, Test, Order, Answer, RecruitAnswer
 from .forms import RecruitForm, SithForm, RecruitQuestionsForm
 from django.shortcuts import redirect
 from .utils import ObjectDetailMixin, ObjectCreateMixin, ObjectUpdateMixin
 from django.forms import modelformset_factory
 from django.core.mail import send_mail
-import random
-from django.core.exceptions import ValidationError
-from django.contrib import messages
-from django.core.mail import EmailMessage
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -139,7 +139,6 @@ def recruits_planet(request, slug):
     planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
     recruits = Recruit.objects.filter(planet=planet_id)
-    # get_object_or_404(Chats, slug__iexact=
     return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name})
 
 
@@ -157,7 +156,7 @@ def recruits_order(request, slug):
     if slug != 'None':
         order_name = Order.objects.get(slug__iexact=slug).name
     else:
-        order_name = 'None'
+        order_name = 'не принятые'
         recruits = recruits_not_sith
 
     return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name})
@@ -234,6 +233,8 @@ def limit_sith(request):
     return render(request, 'si/limit_sith.html')
 
 
+# -----------------------------------
+    # get_object_or_404(Chats, slug__iexact=
 # --------------------------------------
 #     self.model._meta.object_name
 # si.models.Sith.DoesNotExist: Sith matching query does not exist.

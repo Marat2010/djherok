@@ -4,7 +4,6 @@
     {{ sith.name }} - {{ block.super }}
 {% endblock %}
 
-
 {% block content %}
 
     <div class="d-flex justify-content-between">
@@ -12,15 +11,13 @@
             <b>{{ sith.name }}</b>
         </h3>
         <div>
-{#            <a href="{{ sith.get_absolute_url }}" class="btn btn-primary">Посмотреть Рекрутов</a>#}
-            <a href="{% url 'recruits_order_url' slug='None' %}" class="btn btn-primary">Посмотреть свободных Рекрутов</a>
+            <a href="{% url 'recruits_order_url' slug='None' %}" class="btn btn-outline-info">Посмотреть свободных Рекрутов</a>
         </div>
     </div>
 
-
     <p><i>Планета:</i> <b>{{ sith.planet }}</b></p>
     <p><i>Орден:</i>  <b>{{ sith.order.name }}</b></p>
-    <p><i><u>Руки Тени (кол-во: {{ sith.recruits.all|length }}):</u></i></p>
+    <p style="color:#0000ff"><i><b>Руки Тени (кол-во: {{ sith.recruits.all|length }}):</b></i></p>
 
     {% for recruit in sith.recruits.all %}
         {% include 'si/includes/recruit_card_template.html' %}
@@ -29,3 +26,4 @@
 {% endblock %}
 
 
+{# <a href="{{ sith.get_absolute_url }}" class="btn btn-primary">Посмотреть Рекрутов</a>#}

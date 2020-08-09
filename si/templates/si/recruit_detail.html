@@ -4,10 +4,8 @@
     {{ recruit.name }} - {{ block.super }}
 {% endblock %}
 
-
 {% block content %}
     <h3 class="mt-5"> Рекрут: <b>{{ recruit.name }}</b></h3>
-{#    <hr>#}
 
     <div class="card mb-2">
         <div class="card-body">
@@ -17,27 +15,21 @@
             {% if request.user.is_authenticated and request.user.is_staff %}
                 <p class="card-text"> <i>Является Рукой Тени :</i>
                     {% if recruit.get_sith == None %}
-    {#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
                         <a href="{% url 'recruit_take_url' slug=recruit.slug %}" class="btn btn-outline-primary">
                             Зачислить к себе рукой тени
                         </a>
                     {% else %}
                         <div class="alert alert-info" role="alert">
-{#                        <span class="alert alert-primary" role="alert">#}
                             <b>{{ recruit.get_sith }}</b>
-{#                        </span>#}
                         </div>
                     {% endif %}
                 </p>
             {% else %}
                 <div class="alert alert-info" role="alert">
-                Ваши данные и ответы приняты, ждите оповещение результатов по e-mail.
+                    Ваши данные и ответы приняты, ждите оповещение результатов по e-mail.
                 </div>
-{#             endif - Можно перенести ниже, для того чтобы рекрут не видел свои ответы#}
             {% endif %}
 
-
-{#            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>#}
             <h6 class="card-title"><u>Ответы теста:</u></h6>
             <ol>
                 {% for answer in answers %}
@@ -47,9 +39,9 @@
                     {% else %}
                         <div class="alert alert-danger" role="alert">
                     {% endif %}
-                            <i>Ответ:</i> <b>{{ answer.answer }}</b>&#8195
-                            (<i>Правильный ответ:</i> <b>{{ answer.question.right_answ }}</b>)
-                        </div>
+                <i>Ответ:</i> <b>{{ answer.answer }}</b>&#8195
+                (<i>Правильный ответ:</i> <b>{{ answer.question.right_answ }}</b>)
+                </div>
                 {% endfor %}
             </ol>
         </div>
@@ -64,6 +56,11 @@
 {% endblock %}
 
 
+{#-------------------------------------------#}
+{#                    <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">#}
+{#                        <span class="alert alert-primary" role="alert">#}
+{#             endif - Можно перенести ниже, для того чтобы рекрут не видел свои ответы#}
+{#            <a href="{{ recruit.get_absolute_url }}" class="btn btn-secondary">Ответы теста</a>#}
 
 {#---------------------#}
 {#                    {% if recruit.get_sith == ' -' %}#}
@@ -72,4 +69,4 @@
 {#            {% if recruit.answers %}#}
 {#            {% endif %}#}
 {#                    <h6 class="card-title">{{ answer.question|linenumbers }}</h6>#}
-    {#                    <p class="card-text"> <i>   Ответ:</i> <b>{{ answer.answer|rjust:"40" }}</b></p>#}
+{#                    <p class="card-text"> <i>   Ответ:</i> <b>{{ answer.answer|rjust:"40" }}</b></p>#}

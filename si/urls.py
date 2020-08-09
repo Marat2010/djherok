@@ -32,8 +32,6 @@ urlpatterns = [
     path('take/limit_sith/', limit_sith, name='limit_sith_url'),
 
 
-
-
     path('sith_authorization/', sith_authorization, name='sith_authorization_url'),
     path('task/', task_view, name='task_view_url'),
 ]

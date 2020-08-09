@@ -33,7 +33,7 @@ class TestAdmin(admin.ModelAdmin):
     list_display_links = ('order', 'question', 'right_answ')
     search_fields = ('order', 'question')
 
-    form = TestForm     # # Для выбора прав.ответа из сущестующих
+    form = TestForm     # Для выбора прав.ответа из сущестующих
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):  # Для выбора прав.ответа из сущестующих
         if db_field.name == 'right_answ':
