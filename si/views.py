@@ -17,6 +17,7 @@ from django.forms import modelformset_factory
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def index(request):
@@ -24,7 +25,8 @@ def index(request):
 
 
 # @login_required(login_url='/si/sith_authorization/')
-@login_required(login_url='sith_authorization_url')
+# @login_required(login_url='sith_authorization_url')
+@staff_member_required()
 def recruits_list(request):
     recruits = Recruit.objects.all()
 
@@ -59,13 +61,15 @@ def recruits_list(request):
     return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
-@login_required(login_url='sith_authorization_url')
+# @login_required(login_url='sith_authorization_url')
+@staff_member_required()
 def siths_list(request):
     siths = Sith.objects.all()
     return render(request, 'si/siths_list.html', context={'siths': siths})
 
 
-@login_required(login_url='sith_authorization_url')
+# @login_required(login_url='sith_authorization_url')
+@staff_member_required()
 def siths_count_hands(request, count_hands):
     queryset = []
     for si in Sith.objects.all():
@@ -163,6 +167,7 @@ def recruits_order(request, slug):
 
 
 def sith_authorization(request):
+    # print('=== redir: ', request.GET['next'])
     return render(request, 'si/sith_authorization.html')
 
 
@@ -233,6 +238,12 @@ def limit_sith(request):
     return render(request, 'si/limit_sith.html')
 
 
+# -----------------------------
+# http://127.0.0.1:8000/admin/login/?next=/si/recruits/
+# -----------------------------
+    # username = request.POST['username']
+    # password = request.POST['password']
+    # print('===uUSER: {} ===pass: {}'.format(username, password))
 # -----------------------------------
     # get_object_or_404(Chats, slug__iexact=
 # --------------------------------------
