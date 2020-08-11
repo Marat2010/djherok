@@ -29,9 +29,9 @@ s3 = boto3.resource('s3')
 local_launch = bool(os.environ['local_launch'])
 print('== Local Launch: ', local_launch)
 if local_launch:
-    token_telegram = os.environ['token_telegram3']
+    token_telegram = os.environ['token_telegram_local']
 else:
-    token_telegram = os.environ['token_telegram2']
+    token_telegram = os.environ['token_telegram_bitrix24']
 
 URL = 'https://api.telegram.org/bot' + token_telegram + '/'
 

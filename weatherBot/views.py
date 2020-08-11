@@ -11,9 +11,9 @@ import datetime
 local_launch = bool(os.environ['local_launch'])
 print('== Local Launch: ', local_launch)
 if local_launch:
-    token_telegram = os.environ['token_telegram3']
+    token_telegram = os.environ['token_telegram_local']
 else:
-    token_telegram = os.environ['token_telegram']
+    token_telegram = os.environ['token_telegram_weather']
 token_pyowm = os.environ['token_pyowm']
 file_answ = './weatherBot/answer.json'              # Для heroku и pythonanywhere
 file_data_bot = './weatherBot/data_bot.json'             # Для heroku и pythonanywhere
