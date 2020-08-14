@@ -74,7 +74,7 @@
                     Планета
                 </a>
                 {% for pl in planets %}
-                    <a href="{% url 'siths_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl }}c</a>
+                    <a href="{% url 'siths_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl }}</a>
                 {% endfor %}
             </div>
 
@@ -83,7 +83,7 @@
                     Орден
                 </a>
                 {% for ord in orders %}
-                    <a href="{% url 'siths_order_url' slug=ord.slug %}" class="list-group-item list-group-item-action">{{ ord }}c</a>
+                    <a href="{% url 'siths_order_url' slug=ord.slug %}" class="list-group-item list-group-item-action">{{ ord.name }}</a>
                 {% endfor %}
             </div>
 
