@@ -18,6 +18,7 @@ from django.forms import modelformset_factory
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 
 def index(request):
@@ -26,7 +27,14 @@ def index(request):
 
 @login_required(login_url='sith_authorization_url')
 def recruits_list(request):
-    recruits = Recruit.objects.all()
+    search_query = request.GET.get('search', '')
+    if search_query:
+        recruits = Recruit.objects.filter(Q(name__icontains=search_query) | Q(email__icontains=search_query))
+    else:
+        recruits = Recruit.objects.all()
+    planets = Planet.objects.all()
+    orders = Order.objects.all()
+
 
     # paginator = Paginator(recruits, 3)
     #
@@ -56,13 +64,22 @@ def recruits_list(request):
     # # return render(request, 'bitr24/index.html', context=context)
     # return render(request, 'si/recruits_list.html', context=context)
 
-    return render(request, 'si/recruits_list.html', context={'recruits': recruits})
+    return render(request, 'si/recruits_list.html', context={'recruits': recruits, 'planets': planets, 'orders': orders})
+    # return render(request, 'si/recruits_list.html', context={'recruits': recruits})
 
 
 @login_required(login_url='sith_authorization_url')
 def siths_list(request):
-    siths = Sith.objects.all()
-    return render(request, 'si/siths_list.html', context={'siths': siths})
+    search_query = request.GET.get('search', '')
+    if search_query:
+        siths = Sith.objects.filter(name__icontains=search_query)
+    else:
+        siths = Sith.objects.all()
+
+    planets = Planet.objects.all()
+    orders = Order.objects.all()
+
+    return render(request, 'si/siths_list.html', context={'siths': siths, 'planets': planets, 'orders': orders})
 
 
 @login_required(login_url='sith_authorization_url')
@@ -137,13 +154,22 @@ def recruits_planet(request, slug):
     planet_id = Planet.objects.get(slug__iexact=slug).pk
     planet_name = Planet.objects.get(slug__iexact=slug).name
     recruits = Recruit.objects.filter(planet=planet_id)
-    return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name})
+    planets = Planet.objects.all()
+    orders = Order.objects.all()
+
+    return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name,
+                                                               'planets': planets, 'orders': orders})
+    # return render(request, 'si/recruits_planet.html', context={'recruits': recruits, 'planet': planet_name,
+    #                                                            })
 
 
 @login_required(login_url='sith_authorization_url')
 def recruits_order(request, slug):
     recruits = []
     recruits_not_sith = []
+
+    planets = Planet.objects.all()
+    orders = Order.objects.all()
 
     for recruit in Recruit.objects.all():
         if recruit.sith:
@@ -157,7 +183,10 @@ def recruits_order(request, slug):
         order_name = 'не принятые'
         recruits = recruits_not_sith
 
-    return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name})
+    return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name,
+                                                              'planets': planets, 'orders': orders})
+    # return render(request, 'si/recruits_order.html', context={'recruits': recruits, 'order': order_name,
+    #                                                           })
 
 
 def sith_authorization(request):

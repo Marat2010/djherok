@@ -19,19 +19,25 @@ class OrderAdmin(admin.ModelAdmin):
 class SithAdmin(admin.ModelAdmin):
     list_display = ('name', 'planet', 'order', 'slug', 'get_recruits')
     list_display_links = ('name', 'planet', 'order')
-    search_fields = ('name', 'planet', 'order', 'slug')
+    search_fields = ('name', 'planet__name', 'order__name')
+    # search_fields = ('name', 'planet', 'order', 'slug')
 
 
 class RecruitAdmin(admin.ModelAdmin):
     list_display = ('name', 'planet', 'age', 'email', 'slug', 'sith')
     list_display_links = ('name', 'planet', 'age', 'email', 'sith')
-    search_fields = ('name', 'planet', 'age', 'email', 'slug', 'sith')
+    search_fields = ('name', 'planet__name', 'age', 'email', 'sith__name',)
+    # search_fields = ('name', 'planet', 'age', 'email', 'slug', 'sith')
 
 
 class TestAdmin(admin.ModelAdmin):
     list_display = ('order', 'question', 'slug', 'get_answers', 'right_answ')
+    # list_display = ('order', 'question', 'slug', 'answers', 'right_answ')
     list_display_links = ('order', 'question', 'right_answ')
-    search_fields = ('order', 'question')
+    search_fields = ('question',)
+
+    autocomplete_fields = ('answers', )
+    # autocomplete_fields = ('right_answ', 'answers', )
 
     form = TestForm     # Для выбора прав.ответа из сущестующих
 
@@ -58,7 +64,8 @@ class AnswerAdmin(admin.ModelAdmin):
 class RecruitAnswerAdmin(admin.ModelAdmin):
     list_display = ('recruit', 'question', 'answer',)
     list_display_links = ('recruit', 'question',)
-    search_fields = ('recruit', 'question',)
+    search_fields = ('recruit__name', 'question__question',)
+    # search_fields = ('recruit', 'question',)
 
 
 admin.site.register(Planet, PlanetAdmin)

@@ -22,8 +22,8 @@ urlpatterns = [
 
     path('siths/planet/<str:slug>/', siths_planet, name='siths_planet_url'),
     path('siths/order/<str:slug>/', siths_order, name='siths_order_url'),
-    path('recruit/planet/<str:slug>/', recruits_planet, name='recruits_planet_url'),
-    path('recruit/order/<str:slug>/', recruits_order, name='recruits_order_url'),
+    path('recruits/planet/<str:slug>/', recruits_planet, name='recruits_planet_url'),
+    path('recruits/order/<str:slug>/', recruits_order, name='recruits_order_url'),
 
     path('recruit/<str:slug>/questions/', recruit_questions, name='recruit_questions_url'),
 

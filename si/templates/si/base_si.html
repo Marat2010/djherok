@@ -30,8 +30,13 @@
                 {% endif %}
 
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+
+            {%if  'siths' in request.path %}
+                <form class="form-inline my-2 my-lg-0" action="{% url 'siths_list_url' %}">
+            {% else %}
+                <form class="form-inline my-2 my-lg-0" action="{% url 'recruits_list_url' %}">
+            {%endif%}
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
@@ -39,10 +44,182 @@
 {% endblock %}
 
 
-{% block admin-panel %}
-    <a href="{% url 'task_view_url' %}" class="btn btn-outline-info">Task</a>
+
+{% block sidebar %}
+    <div class="col-md-3">
+        {%if  'recruits' in request.path %}
+            <h4>Фильтр</h4>
+
+            <div class="list-group">
+                <a href="{% url 'recruits_list_url' %}" class="list-group-item list-group-item-action active">
+                    Планета
+                </a>
+                {% for pl in planets %}
+                    <a class="dropdown-item" href="{% url 'recruits_planet_url' slug=pl.slug %}">{{ pl.name }}</a>
+                {% endfor %}
+            </div>
+            <div class="list-group">
+                <a href="{% url 'recruits_list_url' %}" class="list-group-item list-group-item-action active">
+                    Орден
+                </a>
+                {% for ord in orders %}
+                    <a class="dropdown-item" href="{% url 'recruits_order_url' slug=ord.slug %}">{{ ord.name }}</a>
+                {% endfor %}
+            </div>
+
+
+        {% elif 'siths' in request.path %}
+            <div class="list-group">
+                <a href="{% url 'siths_list_url' %}" class="list-group-item list-group-item-action active">
+                    Планета
+                </a>
+                {% for pl in planets %}
+                    <a href="{% url 'siths_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl }}c</a>
+                {% endfor %}
+            </div>
+
+            <div class="list-group">
+                <a href="{% url 'siths_list_url' %}" class="list-group-item list-group-item-action active">
+                    Орден
+                </a>
+                {% for ord in orders %}
+                    <a href="{% url 'siths_order_url' slug=ord.slug %}" class="list-group-item list-group-item-action">{{ ord }}c</a>
+                {% endfor %}
+            </div>
+
+        {%endif%}
+
+    </div>
 {% endblock %}
 
 {% block content %}
 {% endblock %}
+
+{% block admin-panel %}
+    <a href="{% url 'task_view_url' %}" class="btn btn-outline-info">Task</a>
+{% endblock %}
+
+
+{#-----------------------#}
+{#            <div class="dropdown">#}
+{#                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                    Планета:#}
+{#                </button>#}
+{#                <div class="form-control" aria-labelledby="dropdownMenuButton" >#}
+{#                    {% for pl in planets %}#}
+{#                    <a class="dropdown-item" href="{% url 'recruits_planet_url' slug=pl.slug %}">{{ pl.name }}</a>#}
+{#                    {% endfor %}#}
+{#                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                        Орден:#}
+{#                    </button>#}
+{##}
+{#                    {% for ord in orders %}#}
+{#                        <a class="dropdown-item" href="{% url 'recruits_order_url' slug=ord.slug %}">{{ ord.name }}</a>#}
+{#                    {% endfor %}#}
+{##}
+{#                </div>#}
+{#            </div>#}
+
+{#------------------------------------#}
+{#            <form class="form-inline my-2 my-lg-0" action="{% url 'recruits_list_url' %}">#}
+{#----------------------------#}
+{#            <div class="input-group mb-3">#}
+{#                <div class="input-group-prepend">#}
+{#                    <label class="input-group-text" for="inputGroupSelect01">Планета:</label>#}
+{#                </div>#}
+{#                <select class="custom-select" id="inputGroupSelect01">#}
+{#                    <option selected>Выберите...</option>#}
+{#                    {% for pl in planets %}#}
+{#                    <option value="{% url 'recruits_planet_url' slug=pl.slug %}">{{ pl.name }}</option>#}
+{#                    <option value="{{ pl.slug }}" href="{% url 'recruits_planet_url' slug=pl.slug %}">{{ pl.name }}</option>#}
+{#                    <a href="{% url 'recruits_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl }}c</a>#}
+{##}
+{#                    {% endfor %}#}
+{#                inputGroupSelect01#}
+{#                </select>#}
+{#                <a href="{% url 'recruits_planet_url' slug=inputGroupSelect01 %}" class="list-group-item list-group-item-action">Перейтиc</a>#}
+{#            </div>#}
+{#--------------------#}
+{#                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >#}
+{#                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton"  inlist="planetslist">#}
+{#                <datalist id="planetslist">#}
+
+{#------------------------#}
+
+{#            <div class="list-group">#}
+{#                <a href="{% url 'recruits_list_url' %}" class="list-group-item list-group-item-action active">#}
+{#                    Планета#}
+{#                </a>#}
+{##}
+{#                {% for pl in planets %}#}
+{#                    <a href="{% url 'recruits_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl }}c</a>#}
+{#                {% endfor %}#}
+                {#  <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>#}
+{#            </div>#}
+{##}
+{#            <div class="list-group">#}
+{#                <a href="{% url 'recruits_list_url' %}" class="list-group-item list-group-item-action active">#}
+{#                    Орден#}
+{#                </a>#}
+{#                {% for ord in orders %}#}
+{#                    <a href="{% url 'recruits_order_url' slug=ord.slug %}" class="list-group-item list-group-item-action">{{ ord }}c</a>#}
+{#                {% endfor %}#}
+                {#  <a href="#" class="list-group-item list-group-item-action disabled">Vestibulum at eros</a>#}
+{#            </div>#}
+
+{#-----------------------------------#}
+{#            <div class="input-group">#}
+{#                <input type="text" list="planetslist" Placeholder="Search Planet.." class="form-control" style="width:200px;">#}
+{#                <input type="text" class="form-control" list="planetslist" aria-label="Text input with dropdown button">#}
+{#                <datalist id="planetslist">#}
+{#                    {% for pl in planets %}#}
+{#                        <option value="{{ pl.slug}}">{{ pl.name}}</option>#}
+                        {#                        <option href="{% url 'recruits_planet_url' slug=pl.slug %}" value="{{ pl.name }}">#}
+                        {#                        <a href="{% url 'recruits_planet_url' slug=pl.slug %}" class="list-group-item list-group-item-action">{{ pl.name }}c</a>#}
+{#                    {% endfor %}#}
+{#                </datalist>#}
+{#                <a href="{% url 'recruits_planet_url' slug=planetslist %}" class="list-group-item list-group-item-action">{{ pl.name }}c</a>#}
+{#            </div>#}
+{##}
+{##}
+{#            <form>#}
+{#                <p><select name="select" size="3" multiple>#}
+{#                    <option selected value="s1">Чебурашка</option>#}
+{#                    <option value="s2">Крокодил Гена</option>#}
+{#                    <option value="s3">Шапокляк</option>#}
+{#                    <option value="s4">Крыса Лариса</option>#}
+{#                </select>#}
+{#                    <input type="submit" value="Отправить"></p>#}
+{#            </form>#}
+{#--------------------------#}
+{#        <div class="dropdown"><button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1565"#}
+{#                                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">#}
+{#            Планета#}
+{#            <span class="caret"></span>#}
+{#        </button>#}
+{#            <ul class="dropdown-menu" name="xx-selectClient" aria-labelledby="dropdownMenu1565">#}
+{#                {% for pl in planets %}#}
+{#                    <li>#}
+{#                        <a href="{% url 'recruits_planet_url' slug=pl.slug %}" onclick="this">{{ pl }}</a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{##}
+                {#                <li><a id="yy-thomasinaLaney" onclick="dropdownMenu1565Set(this);">Thomasina Laney</a></li>#}
+{#            </ul>#}
+{#        </div>#}
+{##}
+{##}
+{#                {% for pl in planets %}#}
+{#                    <li>#}
+{#                <a href="{% url 'recruits_planet_url' slug=pl.slug %}">{{ pl }}</a>#}
+{#                    </li>#}
+{#                {% endfor %}#}
+{#---------------------------------#}
+{#{% block footer %}#}
+{#    <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>#}
+{##}
+{#    {{ form.media }}#}
+{##}
+{#    <script>#}
+{#{% endblock %}#}
 

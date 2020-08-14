@@ -4,6 +4,7 @@ import random
 from django.forms import formset_factory
 from django.core.exceptions import ValidationError
 from .models import Recruit, Sith, Planet, Test, Answer, RecruitAnswer
+# from dal import autocomplete
 
 
 class RecruitForm(forms.ModelForm):
@@ -17,6 +18,8 @@ class RecruitForm(forms.ModelForm):
             'age': forms.NumberInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+    # autocomplete_fields = ('planet', )
 
     def clean_email(self):
         new_email = self.cleaned_data['email']
