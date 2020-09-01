@@ -70,6 +70,8 @@ INSTALLED_APPS = [
     'weatherBot.apps.WeatherBotConfig',
     'bitr24.apps.Bitr24Config',
     'storages',
+    'rest_framework',
+    'apisi.apps.ApisiConfig',
 ]
 
 MIDDLEWARE = [

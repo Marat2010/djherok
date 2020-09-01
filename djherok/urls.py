@@ -23,6 +23,7 @@ from .views import redirect_to
 urlpatterns = [
     path('', redirect_to),
     path('si/', include('si.urls')),
+    path('si/api/v1/', include('apisi.urls')),
     path('weatherBot/', include('weatherBot.urls')),
     path('admin/', admin.site.urls),
     path('bitr24/', include('bitr24.urls')),
