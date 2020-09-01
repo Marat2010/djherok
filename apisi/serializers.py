@@ -1,18 +1,32 @@
 from rest_framework import serializers
-from si.models import Recruit
+from si.models import Recruit, Sith
 
 
-class RecruitsListSerializer(serializers.ModelSerializer):
+class RecruitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recruit
         fields = ('id', 'name', 'planet', 'age', 'email')
 
 
-# class CarDetailSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Car
-#         fields = '__all__'
-#         # fields = ('vin', 'color', 'brand', 'car_type', 'user')
+class RecruitsDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recruit
+        fields = ('id', 'name', 'planet', 'age', 'email')
+
+
+class SithsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sith
+        fields = ('id', 'name', 'planet', 'order')
+
+
+class SithsDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sith
+        fields = ('id', 'name', 'planet', 'order')
+
+
+#   fields = '__all__'
 
 
 
