@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .serializers import RecruitsSerializer, RecruitsDetailSerializer, SithsSerializer, SithsDetailSerializer
+from .serializers import RecruitsSerializer, RecruitsDetailSerializer,\
+    SithsSerializer, SithsDetailSerializer
 from si.models import Recruit, Sith
 
 
@@ -12,6 +13,10 @@ class RecruitsListView(generics.ListAPIView):
 class RecruitsDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = RecruitsDetailSerializer
     queryset = Recruit.objects.all()
+
+
+class RecruitCreateView(generics.CreateAPIView):
+    serializer_class = RecruitsSerializer
 
 
 class SithsListView(generics.ListAPIView):
