@@ -11,7 +11,7 @@ class RecruitsSerializer(serializers.ModelSerializer):
 class RecruitsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recruit
-        fields = ('id', 'name', 'planet', 'age', 'email')
+        fields = ('id', 'name', 'planet', 'age', 'email', 'sith', 'recruitanswers')
 
 
 class SithsSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class SithsSerializer(serializers.ModelSerializer):
 class SithsDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sith
-        fields = ('id', 'name', 'planet', 'order')
+        fields = ('id', 'name', 'planet', 'order', 'recruits')
 
 
 #   fields = '__all__'
