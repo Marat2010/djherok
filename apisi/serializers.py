@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from si.models import Recruit, Sith
+from si.models import Recruit, Sith, RecruitAnswer
 
 
 class RecruitsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recruit
         fields = ('id', 'name', 'planet', 'age', 'email')
+
+
+class RecruitQuestionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecruitAnswer
+        fields = ('recruit', 'question', 'answer')
 
 
 class RecruitsDetailSerializer(serializers.ModelSerializer):

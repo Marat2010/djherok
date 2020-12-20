@@ -26,6 +26,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = False
+<<<<<<< HEAD
+=======
+local_launch = os.environ['local_launch']
+DEBUG = False
+if local_launch:
+    DEBUG = True
+
+>>>>>>> 5729e92dcf06d2bfada0bfd913c27987f188ddff
 # DEBUG = True
 # DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
