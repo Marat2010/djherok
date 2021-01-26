@@ -191,7 +191,7 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 
 # Bind.objects.update_or_create(chat_id=chat.chat_id, defaults={'message': chat.messages.first().message, 'bx24_id': bx24.user_id})
 # messages.add_message(request, messages.SUCCESS, 'УРААА=========')
-# return redirect('https://telebot.bitrix24.ru/oauth/authorize/?client_id=local.5e04004ad5e626.19578281&response_type=code')
+# return redirect('https://telebot.bitrix24.ru/oauth/authorize/?client_id=local.5e....................81&response_type=code')
 
 # https://552208f0.ngrok.io/bitr24/
 # https://0c374e2c.ngrok.io
@@ -367,7 +367,7 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 # {'access_token': '4117115e0043368600433656000000090000039e6792be2545529a5c67b49fc57d2eeb',
 #  'refresh_token': '3196385e004336860043365600000009000003fa0de52a0b5c1d92b5aa1798f8dfe151'}
 # url_tok = 'https://telebot.bitrix24.ru/oauth/authorize/?client_id={}&response_type=code'.format(client_id)
-# https://telebot.bitrix24.ru/oauth/authorize/?client_id=local.5e04004ad5e626.19578281&response_type=code
+# https://telebot.bitrix24.ru/oauth/authorize/?client_id=local...............281&response_type=code
 
 # https://auth2.bitrix24.net/oauth/authorize/?user_lang=ru
 #   &client_id=b24.5e0366727bb993.76668540&
@@ -379,7 +379,7 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 #   &mode=page&state=site_id%3Ds1%26backurl%3D%252Foauth%252F
 #   authorize%252F%253F
 #   check_key%253D84ef602fd5f52f0d7c6325a9509ea3bf%2526
-#   client_id%253Dlocal.5e04004ad5e626.19578281%2526
+#   client_id%253Dlocal.5e..................81%2526
 #   response_type%253Dcode%26mode%3Dpage
 
 # url_auth = https://eff26c65.ngrok.io/bitr24/?
@@ -403,7 +403,7 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 #   &scope=auth,profile&response_type=code&mode=page
 #   &state=site_id%3Ds1%26backurl%3D%252Foauth%252Fauthorize%252F%253F
 #   check_key%253Dbd60a988da479ab43e49fe3208603fa4%2526client_id%253D
-#   local.5e04004ad5e626.19578281%2526
+#   local.5e...................81%2526
 #   response_type%253Dcode%26mode%3Dpage
 
 # https://f99e84fd.ngrok.io/bitr24/
@@ -415,19 +415,19 @@ class BitrDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 # Мои приложения(серверное без UI)     - https://djherok.herokuapp.com/bitrix/
 # назв: Тест без UI		(Чат и уведомления (im), Задачи (task))
 # Только API: Да
-# Код приложения: local.5e04004ad5e626.19578281
-# Ключ приложения: 0mIMVUBB7hfhWwQBLD8cIIEiVPzKjS7Mlkww7VCAyTnlyU3kne
-# 		1798efe41b0c132c1ea756beae819560
-# 		70a32986f1bf204dec4567147ca6a2af
+# Код приложения: local.5e....................1
+# Ключ приложения: 0mIM....................................kne
+# 		17..........................60
+# 		70...............................2af
 
 # help - Описание
 # task - просмотр задач
 # profile - просмотр своего профиля
 
-# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add
-# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/log.blogpost.add?POST_TITLE=-** Заголовок **-&POST_MESSAGE=---Тело ообщения ---
-# https://telebot.bitrix24.ru/rest/1/jwi2dohttz51o1pk/tasks.task.list
-# https: // telebot.bitr24.ru / rest / 1 / jwi2dohttz51o1pk / tasks.task.list
+# https://telebot.bitrix24.ru/rest/1/j..........k/log.blogpost.add
+# https://telebot.bitrix24.ru/rest/1/j..............k/log.blogpost.add?POST_TITLE=-** Заголовок **-&POST_MESSAGE=---Тело ообщения ---
+# https://telebot.bitrix24.ru/rest/1/jw.................k/tasks.task.list
+# https: // telebot.bitr24.ru / rest / 1 / j...................k / tasks.task.list
 
         # data_bot = json.dumps(data_bot, ensure_ascii=False, sort_keys=True)
 
