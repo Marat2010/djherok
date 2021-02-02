@@ -4,7 +4,7 @@ async-timeout==3.0.1
 attrs==19.3.0
 backcall==0.1.0
 bitrix24-python3-client==0.4.0
-bleach==3.1.0
+bleach==3.3.0
 blessings==1.7
 boto3==1.13.2
 botocore==1.16.2
